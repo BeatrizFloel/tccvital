@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VitalCare — Especificações do Produto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* ============ VitalCare — variáveis ============ */
+:root {
+  --amarelo-hero: #FBEFB0;
+  --azul-card: #A8BCEA;
+  --laranja-card: #FBCB84;
+  --laranja-suave: #FBD3A2;
+  --laranja-interno: #FDEBD8;
+  --azul-interno: #EDF1FA;
+  --rosa: #F86FA6;
+  --ciano: #29B6E8;
+  --azul-escuro: #1F2A44;
+  --texto: #1E2433;
+  --texto-suave: #3A4256;
+  --branco: #FFFFFF;
+  --cinza-rodape: #F5F5F3;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--texto);
+  background: var(--branco);
+  line-height: 1.5;
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ============ HEADER ============ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; padding: 14px 34px; background: var(--branco);
+}
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-mark { width: 30px; height: 30px; }
+.logo-text {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px; font-weight: 700; color: var(--azul-escuro); letter-spacing: .2px;
+}
+.logo-text-alt { color: #2E7D9A; }
+.nav { display: flex; align-items: center; gap: 30px; }
+.nav-link { font-size: 13.5px; font-weight: 600; color: var(--texto-suave); transition: color .2s ease; }
+.nav-link:hover, .nav-link.is-active { color: var(--ciano); }
+.theme-toggle {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  background: transparent; border: none; border-radius: 50%; cursor: pointer;
+}
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle:hover { background: #F1F3F7; }
+
+/* ============ TOPO AMARELO ============ */
+.prod-hero {
+  position: relative;
+  background: var(--amarelo-hero);
+  padding: 58px 24px 66px;
+  text-align: center;
+}
+.prod-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 40px; font-weight: 800; letter-spacing: -.5px;
+  color: var(--azul-escuro);
+}
+.prod-subtitle {
+  margin: 6px auto 0; max-width: 560px;
+  font-size: 13px; font-weight: 600; color: var(--texto-suave);
+}
+.page-tag {
+  position: absolute; left: 24px; top: 6px;
+  font-size: 12px; font-weight: 700; color: rgba(31, 42, 68, .28);
+}
+
+/* ============ BLOCOS (hardware / software) ============ */
+.block {
+  max-width: 1080px;
+  margin: 42px auto 0;
+  border-radius: 16px;
+  padding: 26px 30px 34px;
+}
+.block-blue { background: var(--azul-card); }
+.block-orange {
+  background: var(--laranja-suave);
+  border: 2px solid var(--ciano);
+  margin-bottom: 96px;
+}
+.block-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 21px; font-weight: 800; text-align: center;
+  color: var(--azul-escuro);
+  margin-bottom: 26px;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px 30px;
+}
+.spec-card {
+  display: flex; align-items: center; gap: 14px;
+  border-radius: 12px;
+  padding: 18px 20px;
+  min-height: 132px;
+}
+.block-blue .spec-card { background: var(--azul-interno); }
+.block-orange .spec-card { background: var(--laranja-interno); }
+
+.spec-info { flex: 1; text-align: left; }
+.spec-name {
+  font-size: 13px; font-weight: 800; color: #101828;
+  line-height: 1.35; margin-bottom: 12px;
+}
+.spec-text {
+  font-size: 11.5px; font-weight: 600; color: #6B7280; line-height: 1.5;
+}
+.spec-thumb {
+  flex: 0 0 96px; width: 96px; height: 96px;
+  border-radius: 50%; background: var(--branco);
+  display: grid; place-items: center; overflow: hidden;
+}
+.spec-thumb img { width: 84%; height: 84%; object-fit: contain; }
+
+/* ============ PRODUTO FINAL ============ */
+.final {
+  max-width: 1080px;
+  margin: 0 auto;
+  background: var(--laranja-suave);
+  border-radius: 16px;
+  padding: 34px 40px 40px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 48px;
+  align-items: start;
+}
+.final-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 25px; font-weight: 800; color: var(--azul-escuro);
+  margin-bottom: 10px;
+}
+.final-text {
+  font-size: 12.5px; font-weight: 600; color: #2A3450;
+  line-height: 1.55; max-width: 34em;
+}
+.check-list { list-style: none; margin-top: 26px; }
+.check-list li {
+  display: flex; align-items: center; gap: 22px;
+  font-size: 12.5px; font-weight: 600; color: #2A3450;
+  margin-bottom: 18px;
+}
+.check-list svg { flex: 0 0 14px; width: 14px; height: 14px; }
+
+.price-card {
+  background: #F2F1EC;
+  border-radius: 14px;
+  padding: 30px 26px 26px;
+  text-align: center;
+}
+.price-name {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 23px; font-weight: 800; color: var(--azul-escuro);
+}
+.price-label { font-size: 11.5px; font-weight: 600; color: #6B7280; margin-top: 2px; }
+.price-value {
+  margin-top: 26px;
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 34px; font-weight: 800; color: var(--rosa);
+}
+.price-note { font-size: 11.5px; font-weight: 600; color: #6B7280; margin-top: 2px; }
+.btn-pink {
+  display: block; margin-top: 26px;
+  background: var(--rosa); color: var(--branco);
+  font-size: 12px; font-weight: 800;
+  padding: 12px 18px; border-radius: 8px;
+  transition: background .2s ease;
+}
+.btn-pink:hover { background: #F45C98; }
+
+/* ============ SOBRE O DESIGN ============ */
+.design {
+  max-width: 1080px;
+  margin: 72px auto 56px;
+  background: var(--azul-card);
+  border-radius: 16px;
+  padding: 38px 44px 46px;
+  color: var(--branco);
+}
+.design-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 25px; font-weight: 800; margin-bottom: 26px;
+}
+.design-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+.design-sub { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+.design-list { list-style: none; }
+.design-list li {
+  position: relative; padding-left: 16px; margin-bottom: 12px;
+  font-size: 12.5px; font-weight: 600; color: rgba(255, 255, 255, .92);
+}
+.design-list li::before {
+  content: "•"; position: absolute; left: 0; top: -1px;
+}
+
+/* ============ RODAPÉ ============ */
+.footer {
+  background: var(--cinza-rodape);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 26px 40px;
+  font-size: 11.5px; font-weight: 600; color: #4B5262;
+}
+.heart { color: #E0475F; }
+
+/* ============ RESPONSIVO ============ */
+@media (max-width: 980px) {
+  .nav { display: none; }
+  .prod-title { font-size: 30px; }
+  .block { margin-left: 16px; margin-right: 16px; padding: 22px 18px 26px; }
+  .spec-grid { grid-template-columns: 1fr; }
+  .final { grid-template-columns: 1fr; gap: 28px; margin: 0 16px; padding: 26px 20px 30px; }
+  .design { margin: 46px 16px; padding: 28px 22px 32px; }
+  .design-cols { grid-template-columns: 1fr; gap: 30px; }
+  .footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <a class="logo" href="index.html">
+      <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="21" fill="none" stroke="#4FC3F7" stroke-width="3"/>
+        <path d="M12 26h6l3-6 4 12 4-9 3 3h4" fill="none" stroke="#2E7D9A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text">Vital<span class="logo-text-alt">Care</span></span>
+    </a>
+
+    <nav class="nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="instrucoes.html">Instruções</a>
+      <a class="nav-link is-active" href="produto.html">Produto</a>
+      <a class="nav-link" href="#equipe">Equipe</a>
+      <a class="nav-link" href="#referencias">Referências</a>
+      <a class="nav-link" href="#jogo">Jogo</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" aria-label="Alternar tema">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ================= TOPO AMARELO + HARDWARE ================= -->
+  <section class="prod-hero">
+    <h1 class="prod-title">Especificações do Produto</h1>
+    <p class="prod-subtitle">O VitalCare é uma ferramenta de apoio ao acompanhamento e à organização dos cuidados.</p>
+
+    <div class="block block-blue">
+      <h2 class="block-title">Hardware principal</h2>
+      <div class="spec-grid">
+        <article class="spec-card">
+          <div class="spec-info">
+            <h3 class="spec-name">Kit Raspberry Pi 3</h3>
+            <p class="spec-text">Todos os componentes e tecnologias utilizados no VitalCare</p>
+          </div>
+          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 77.png" alt="Kit Raspberry Pi 3" /></div>
+        </article>
+
+        <article class="spec-card">
+          <div class="spec-info">
+            <h3 class="spec-name">Sensor de temperatura</h3>
+            <p class="spec-text">Monitora a temperatura do ambiente em tempo real.</p>
+          </div>
+          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 79.png" alt="Sensor de temperatura" /></div>
+        </article>
+
+        <article class="spec-card">
+          <div class="spec-info">
+            <h3 class="spec-name">Tela 14.0 Lcd Led<br />Touch Screen</h3>
+            <p class="spec-text">Interface interativa para visualização e controle do sistema.</p>
+          </div>
+          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 78.png" alt="Tela LCD LED touch screen" /></div>
+        </article>
+
+        <article class="spec-card">
+          <div class="spec-info">
+            <h3 class="spec-name">Sensor Frequência<br />batimentos cardíacos</h3>
+            <p class="spec-text">Monitora os batimentos cardíacos do usuário.</p>
+          </div>
+          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 80.png" alt="Sensor de frequência cardíaca" /></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SOFTWARE ================= -->
+  <section class="block block-orange">
+    <h2 class="block-title">Software e Funcionalidades</h2>
+    <div class="spec-grid">
+      <article class="spec-card">
+        <div class="spec-info">
+          <h3 class="spec-name">Banco de dados online</h3>
+          <p class="spec-text">armazena e organiza as informações do sistema de forma segura e acessível.</p>
+        </div>
+        <div class="spec-thumb"><img src="/pages/imagens/Ellipse 81.png" alt="Banco de dados online" /></div>
+      </article>
+
+      <article class="spec-card">
+        <div class="spec-info">
+          <h3 class="spec-name">c</h3>
+          <p class="spec-text">Monitora a temperatura do ambiente em tempo real.</p>
+        </div>
+        <div class="spec-thumb"><img src="/pages/imagens/Ellipse 83.png" alt="Sensor de temperatura" /></div>
+      </article>
+
+      <article class="spec-card">
+        <div class="spec-info">
+          <h3 class="spec-name">b</h3>
+          <p class="spec-text">Interface interativa para visualização e controle do sistema.</p>
+        </div>
+        <div class="spec-thumb"><img src="/pages/imagens/Ellipse 84.png" alt="Tela touch screen" /></div>
+      </article>
+
+      <article class="spec-card">
+        <div class="spec-info">
+          <h3 class="spec-name">d</h3>
+          <p class="spec-text">Monitora os batimentos cardíacos do usuário.</p>
+        </div>
+        <div class="spec-thumb"><img src="/pages/imagens/Ellipse 84.png" alt="Painel do usuário" /></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= PRODUTO FINAL ================= -->
+  <section class="final">
+    <div>
+      <h2 class="final-title">Produto final</h2>
+      <p class="final-text">O VitalCare integra recursos de monitoramento de saúde, segurança ambiental e organização da rotina em um único dispositivo.</p>
+
+      <ul class="check-list">
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sistema integrado de monitoramento
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Painel digital personalizado
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Alertas para medicamentos e compromissos
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Monitoramento de frequência cardíaca e saturação
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Alertas sonoros
+        </li>
+      </ul>
+    </div>
+
+    <div class="price-card">
+      <h3 class="price-name">VitalCare completo</h3>
+      <p class="price-label">Valor total do projeto</p>
+      <p class="price-value">R$ 399,99</p>
+      <p class="price-note">Pagamento único + Software gratuito</p>
+      <a class="btn-pink" href="#orcamento">Solicitar orçamento</a>
+    </div>
+  </section>
+
+  <!-- ================= SOBRE O DESIGN ================= -->
+  <section class="design">
+    <h2 class="design-title">Sobre o Design</h2>
+    <div class="design-cols">
+      <div>
+        <h3 class="design-sub">Carcaça Personalizada</h3>
+        <ul class="design-list">
+          <li>Formato compacto e funcional</li>
+          <li>Tela touch screen de 14 polegadas</li>
+          <li>Material resistente e adequado ao uso diário</li>
+          <li>Design pensado para facilitar o acesso do idoso</li>
+          <li>Componentes organizados em uma única estrutura</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="design-sub">Versatilidade de Instalação</h3>
+        <ul class="design-list">
+          <li>Pode ser utilizado sobre mesas ou móveis</li>
+          <li>Adequado para ambientes residenciais</li>
+          <li>Fácil acesso à tela e aos comandos</li>
+          <li>Estrutura adaptável a diferentes espaços</li>
+          <li>Desenvolvido para integrar-se à rotina do usuário</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RODAPÉ ================= -->
+  <footer class="footer">
+    <p>© 2026 VitalCare•Todos os direitos reservados</p>
+    <p>Feito com <span class="heart">♥</span> para você</p>
+  </footer>
+
+</body>
+</html>

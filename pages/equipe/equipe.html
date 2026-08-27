@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VitalCare — Equipe e Contato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* ============ VitalCare — variáveis ============ */
+:root {
+  --amarelo-hero: #FBEFB0;
+  --amarelo-claro: #FCF4CB;
+  --azul-card: #A8BCEA;
+  --azul-botao: #AFC3EF;
+  --azul-link: #4C7FD6;
+  --laranja-card: #FBCB84;
+  --laranja-borda: #F5C57A;
+  --cinza-pill: #EFF1F0;
+  --cinza-form: #EFEFEC;
+  --rosa: #F86FA6;
+  --ciano: #29B6E8;
+  --azul-escuro: #1F2A44;
+  --texto: #1E2433;
+  --texto-suave: #3A4256;
+  --branco: #FFFFFF;
+  --cinza-rodape: #F5F5F3;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--texto);
+  background: var(--branco);
+  line-height: 1.5;
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ============ HEADER ============ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; padding: 14px 34px; background: var(--branco);
+}
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-mark { width: 30px; height: 30px; }
+.logo-text {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px; font-weight: 700; color: var(--azul-escuro); letter-spacing: .2px;
+}
+.logo-text-alt { color: #2E7D9A; }
+.nav { display: flex; align-items: center; gap: 30px; }
+.nav-link { font-size: 13.5px; font-weight: 600; color: var(--texto-suave); transition: color .2s ease; }
+.nav-link:hover, .nav-link.is-active { color: var(--ciano); }
+.theme-toggle {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  background: transparent; border: none; border-radius: 50%; cursor: pointer;
+}
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle:hover { background: #F1F3F7; }
+
+/* ============ FAIXA AMARELA ============ */
+.equipe {
+  background: var(--amarelo-hero);
+  padding: 46px 34px 70px;
+  position: relative;
+}
+.page-tag {
+  position: absolute; left: 22px; bottom: 14px;
+  font-size: 12px; font-weight: 700; color: #C9BE85;
+}
+.equipe-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 34px; font-weight: 800; color: var(--azul-escuro);
+  text-align: center; letter-spacing: .2px;
+}
+.equipe-sub {
+  text-align: center; font-size: 12.5px; color: #6B6F63;
+  margin-top: 8px;
+}
+
+/* ---- cards da equipe ---- */
+.equipe-grid {
+  max-width: 1000px; margin: 44px auto 0;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;
+}
+.membro {
+  background: var(--branco);
+  border: 1px solid var(--laranja-borda);
+  border-radius: 16px;
+  padding: 26px 22px 20px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,.04);
+}
+.avatar {
+  width: 74px; height: 74px; margin: 0 auto 14px;
+  border-radius: 50%; overflow: hidden;
+  background: #D9D9D9;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.membro-nome { font-size: 14px; font-weight: 800; color: var(--texto); }
+.membro-cargo { font-size: 12px; font-weight: 600; color: var(--azul-link); margin-top: 2px; }
+.membro-desc { font-size: 11.5px; color: #5B6170; margin-top: 10px; line-height: 1.55; }
+.membro-links {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 20px;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600;
+}
+.pill svg { width: 13px; height: 13px; }
+.pill-insta { background: var(--cinza-pill); color: #7A808C; }
+.pill-mail { background: var(--azul-botao); color: #22314F; }
+
+/* ============ CONTATO ============ */
+.contato-wrap { background: var(--amarelo-hero); padding: 40px 34px 0; position: relative; }
+.contato {
+  max-width: 760px; margin: 0 auto;
+  background: var(--cinza-form);
+  border-radius: 18px;
+  padding: 34px 40px 40px;
+}
+.contato-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 26px; font-weight: 800; color: var(--azul-escuro); text-align: center;
+}
+.contato-sub { text-align: center; font-size: 12px; color: #6B6F63; margin-top: 6px; }
+.campo { margin-top: 22px; }
+.campo label { display: block; font-size: 13px; font-weight: 700; color: var(--texto); margin-bottom: 8px; }
+.campo input, .campo textarea {
+  width: 100%; background: var(--branco);
+  border: 1px solid #E3E3DE; border-radius: 9px;
+  padding: 11px 14px; font-family: inherit; font-size: 12.5px; color: var(--texto);
+}
+.campo textarea { min-height: 92px; resize: vertical; }
+.campo input::placeholder, .campo textarea::placeholder { color: #B9BCB4; }
+.campo input:focus, .campo textarea:focus { outline: 2px solid #E7C98F; outline-offset: 1px; }
+.btn-enviar {
+  width: 100%; margin-top: 26px;
+  background: var(--laranja-card); color: #8A6428;
+  border: none; border-radius: 999px;
+  padding: 13px 20px; font-family: inherit;
+  font-size: 12.5px; font-weight: 700; cursor: pointer;
+  transition: filter .2s ease;
+}
+.btn-enviar:hover { filter: brightness(.96); }
+.contato-mail {
+  background: var(--amarelo-hero);
+  text-align: center; padding: 28px 20px 40px;
+  font-size: 11.5px; color: #7C8072;
+}
+.contato-mail a { display: block; margin-top: 5px; color: var(--rosa); font-weight: 700; }
+
+/* ============ RODAPÉ ============ */
+.footer {
+  background: var(--cinza-rodape);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 26px 40px;
+  font-size: 11.5px; font-weight: 600; color: #4B5262;
+}
+.heart { color: #E0475F; }
+
+/* ============ RESPONSIVO ============ */
+@media (max-width: 980px) {
+  .nav { display: none; }
+  .equipe-title { font-size: 27px; }
+  .equipe-grid { grid-template-columns: 1fr; gap: 22px; }
+  .contato { padding: 26px 20px 30px; }
+  .footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <a class="logo" href="index.html">
+      <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="21" fill="none" stroke="#4FC3F7" stroke-width="3"/>
+        <path d="M12 26h6l3-6 4 12 4-9 3 3h4" fill="none" stroke="#2E7D9A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text">Vital<span class="logo-text-alt">Care</span></span>
+    </a>
+
+    <nav class="nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="instrucoes.html">Instruções</a>
+      <a class="nav-link" href="produto.html">Produto</a>
+      <a class="nav-link is-active" href="equipe.html">Equipe</a>
+      <a class="nav-link" href="#referencias">Referências</a>
+      <a class="nav-link" href="#jogo">Jogo</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" aria-label="Alternar tema">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ================= EQUIPE ================= -->
+  <section class="equipe" id="equipe">
+    <span class="page-tag">Equipe - 2</span>
+    <h1 class="equipe-title">Conheça nossa equipe</h1>
+    <p class="equipe-sub">Profissionais dedicados a transformar o acolhimento emocional infantil</p>
+
+    <div class="equipe-grid">
+
+      <!-- Beatriz -->
+      <article class="membro">
+        <div class="avatar"><img src="/pages/imagens/Ellipse 11.png" alt="" onerror="this.style.display='none'" /></div>
+        <h3 class="membro-nome">Beatriz Floel</h3>
+        <p class="membro-cargo">Estudante da UNASP</p>
+        <p class="membro-desc">Responsável pelo design e prototipação no<br />Figma e projeto do VitalCare.</p>
+        <div class="membro-links">
+          <span class="pill pill-insta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1.2" fill="currentColor" stroke="none"/></svg>
+            @floeelbeatriz
+          </span>
+          <a class="pill pill-mail" href="mailto:bfloel@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>
+            bfloel@gmail.com
+          </a>
+        </div>
+      </article>
+
+      <!-- Davi -->
+      <article class="membro">
+        <div class="avatar"><img src="/pages/imagens/Ellipse 12.png" alt="" onerror="this.style.display='none'" /></div>
+        <h3 class="membro-nome">Davi Evangelista</h3>
+        <p class="membro-cargo">Estudante da UNASP</p>
+        <p class="membro-desc">Responsável pelo desenvolvimento do<br />software do VitalCare.</p>
+        <div class="membro-links">
+          <span class="pill pill-insta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1.2" fill="currentColor" stroke="none"/></svg>
+            @davizn.sep
+          </span>
+          <a class="pill pill-mail" href="mailto:davies@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>
+            davies@gmail.com
+          </a>
+        </div>
+      </article>
+
+      <!-- Lucas -->
+      <article class="membro">
+        <div class="avatar"><img src="/pages/imagens/Ellipse 13.png" alt="" onerror="this.style.display='none'" /></div>
+        <h3 class="membro-nome">Lucas Nunes</h3>
+        <p class="membro-cargo">Estudante da UNASP</p>
+        <p class="membro-desc">Responsável pela integração de hardware<br />e eletrônica do VitalCare.</p>
+        <div class="membro-links">
+          <span class="pill pill-insta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1.2" fill="currentColor" stroke="none"/></svg>
+            @nunesz_ls
+          </span>
+          <a class="pill pill-mail" href="mailto:nuneslu@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>
+            nuneslu@gmail.com
+          </a>
+        </div>
+      </article>
+
+      <!-- Giovanna -->
+      <article class="membro">
+        <div class="avatar"><img src="/pages/imagens/Ellipse 14.png" alt="" onerror="this.style.display='none'" /></div>
+        <h3 class="membro-nome">Giovanna Migliorini</h3>
+        <p class="membro-cargo">Estudante da UNASP</p>
+        <p class="membro-desc">Responsável pela documentação e<br />gestão do projeto VitalCare.</p>
+        <div class="membro-links">
+          <span class="pill pill-insta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1.2" fill="currentColor" stroke="none"/></svg>
+            @ggiovnnm
+          </span>
+          <a class="pill pill-mail" href="mailto:giomig1610@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>
+            giomig1610@gmail.com
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= CONTATO ================= -->
+  <div class="contato-wrap">
+    <span class="page-tag">Equipe - 3</span>
+    <section class="contato" id="contato">
+      <h2 class="contato-title">Entre em Contato</h2>
+      <p class="contato-sub">Tem alguma dúvida ou quer saber mais sobre o VitalCare? Envie sua mensagem!</p>
+
+      <form>
+        <div class="campo">
+          <label for="nome">Nome Completo</label>
+          <input id="nome" type="text" placeholder="Seu nome" />
+        </div>
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input id="email" type="email" placeholder="seu@gmail" />
+        </div>
+        <div class="campo">
+          <label for="msg">Mensagem</label>
+          <textarea id="msg" placeholder="Como podemos ajudar?"></textarea>
+        </div>
+        <button class="btn-enviar" type="submit">Enviar mensagem</button>
+      </form>
+    </section>
+  </div>
+
+  <div class="contato-mail">
+    Ou envie um e-mail direto para
+    <a href="mailto:contato@vitalcare.com">contato@vitalcare.com</a>
+  </div>
+
+  <!-- ================= RODAPÉ ================= -->
+  <footer class="footer">
+    <p>© 2026 VitalCare•Todos os direitos reservados</p>
+    <p>Feito com <span class="heart">♥</span> para você</p>
+  </footer>
+
+</body>
+</html>
