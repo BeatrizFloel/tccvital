@@ -1,377 +1,190 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>VitalCare — O Cuidado que Acompanha</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <!-- ================= HEADER ================= -->
-    <header class="header">
-      <a class="logo" href="#home">
-        <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
-          <circle
-            cx="24"
-            cy="24"
-            r="21"
-            fill="none"
-            stroke="#4FC3F7"
-            stroke-width="3"
-          />
-          <path
-            d="M12 26h6l3-6 4 12 4-9 3 3h4"
-            fill="none"
-            stroke="#2E7D9A"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <span class="logo-text"
-          >Vital<span class="logo-text-alt">Care</span></span
-        >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VitalCare — Cuidado que Acompanha</title>
+  <meta name="description" content="VitalCare: sistema inteligente de monitoramento para idosos. Segurança, rotina e bem-estar em um só lugar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== CABEÇALHO ===== -->
+  <header class="topo">
+    <div class="container topo-interno">
+      <a href="#" class="logo">
+        <span class="logo-icone">❤</span>
+        <span>Vital<strong>Care</strong></span>
       </a>
-
-      <nav class="nav">
-        <a class="nav-link is-active" href="#home">Home</a>
-        <a class="nav-link" href="#instrucoes">Instruções</a>
-        <a class="nav-link" href="#produto">Produto</a>
-        <a class="nav-link" href="#equipe">Equipe</a>
-        <a class="nav-link" href="#referencias">Referências</a>
-        <a class="nav-link" href="#jogo">Jogo</a>
+      <nav class="menu">
+        <a href="#">Home</a>
+        <a href="#">Instruções</a>
+        <a href="#">Produto</a>
+        <a href="#">Equipe</a>
+        <a href="#">Referências</a>
+        <a href="#" class="menu-ativo">Jogo</a>
       </nav>
+      <a href="#" class="btn-jogar">Jogar</a>
+    </div>
+  </header>
 
-      <button class="theme-toggle" type="button" aria-label="Alternar tema">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
-            fill="none"
-            stroke="#1F2A44"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
-    </header>
-
-    <!-- ================= HERO ================= -->
-    <section class="hero" id="home">
-      <div class="hero-content">
-        <span class="badge">Cuidado inteligente para idosos</span>
-        <h1 class="hero-title">VITALCARE: O Cuidado que Acompanha</h1>
-        <p class="hero-text">
-          Um sistema inteligente de monitoramento e assistência domiciliar que
-          auxilia no cuidado de idosos, promovendo mais segurança, tranquilidade
-          e autonomia para toda a família.
+  <main>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero-texto">
+        <span class="tag">Cuidado inteligente para idosos</span>
+        <h1>VITALCARE: O Cuidado que Acompanha</h1>
+        <p>
+          Uma solução inteligente de monitoramento e acompanhamento para idosos,
+          promovendo autonomia, segurança e bem-estar para toda a família.
         </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#instrucoes">Como funciona</a>
-          <a class="btn btn-outline" href="#produto">Ver produto</a>
+        <div class="hero-botoes">
+          <a href="#" class="btn btn-primario">Saiba funcione</a>
+          <a href="#diferenciais" class="btn btn-contorno">Ver produto</a>
         </div>
-        <span class="page-tag">Home - 2</span>
       </div>
-
-      <div class="hero-media">
-        <img
-          src="/pages/imagens"
-          alt="Cuidadora sorrindo ao lado de idosa em cadeira de rodas em um jardim"
-        />
+      <div class="hero-foto">
+        <img src="/pages/imagens/old age care 1.png" alt="Cuidadora sorrindo ao lado de idosa em cadeira de rodas no parque" />
       </div>
     </section>
 
-    <!-- ================= DIFERENCIAIS ================= -->
-    <section class="section section-diferenciais" id="produto">
-      <h2 class="section-title cyan">Diferenciais do VitalCare</h2>
-      <p class="section-subtitle">
-        Uma solução integrada para monitoramento, segurança e<br />
-        cuidado do idoso no ambiente domiciliar.
-      </p>
+    <!-- ===== DIFERENCIAIS ===== -->
+    <section class="secao diferenciais" id="diferenciais">
+      <div class="container">
+        <h2 class="titulo-secao">Diferenciais do VitalCare</h2>
+        <p class="subtitulo-secao">
+          Uma solução integrada para monitoramento, segurança e cuidado de idosos
+          no ambiente doméstico
+        </p>
 
-      <div class="cards">
-        <article class="card card-blue">
-          <span class="card-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"
-                fill="none"
-                stroke="#2E4A8A"
-                stroke-width="1.8"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-          <h3 class="card-title">Monitoramento Integrado</h3>
-          <p class="card-text">
-            O VitalCare reúne informações importantes sobre a saúde e o ambiente
-            em um único sistema, facilitando o acompanhamento diário.
-          </p>
-        </article>
-
-        <article class="card card-orange">
-          <span class="card-icon icon-orange">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M12 20s-7-4.6-7-9.2A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7 2.8C19 15.4 12 20 12 20Z"
-                fill="none"
-                stroke="#B45309"
-                stroke-width="1.8"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-          <h3 class="card-title">Rotina Personalizada</h3>
-          <p class="card-text">
-            Medicamentos, horários de medição e compromissos podem ser
-            configurados de acordo com as necessidades de cada usuário.
-          </p>
-        </article>
-
-        <article class="card card-blue">
-          <span class="card-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M12 4l2.3 4.9 5.2.7-3.8 3.7.9 5.2L12 16l-4.6 2.5.9-5.2L4.5 9.6l5.2-.7L12 4Z"
-                fill="none"
-                stroke="#2E4A8A"
-                stroke-width="1.8"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </span>
-          <h3 class="card-title">Segurança domiciliar</h3>
-          <p class="card-text">
-            Sensores ambientais ajudam a identificar situações que exigem
-            atenção, como alterações de temperatura e presença de gás.
-          </p>
-        </article>
+        <div class="grade-3">
+          <article class="cartao cartao-marinho">
+            <span class="cartao-icone">▣</span>
+            <h3>Monitoramento Integrado</h3>
+            <p>
+              O VitalCare reúne sensores de presença, quedas e rotina em um único
+              sistema, garantindo acompanhamento contínuo.
+            </p>
+          </article>
+          <article class="cartao cartao-laranja">
+            <span class="cartao-icone">✚</span>
+            <h3>Rotina Personalizada</h3>
+            <p>
+              Atividades, lembretes de medicamentos e compromissos adaptados à
+              rotina de cada idoso, de forma simples e respeitosa.
+            </p>
+          </article>
+          <article class="cartao cartao-azul">
+            <span class="cartao-icone">⬢</span>
+            <h3>Segurança doméstica</h3>
+            <p>
+              Sensores inteligentes detectam situações de risco, como quedas e
+              inatividade, enviando alertas imediatos à família.
+            </p>
+          </article>
+        </div>
       </div>
-
-      <span class="page-tag page-tag-dark">Home - 3</span>
     </section>
 
-    <!-- ================= PÚBLICO ALVO / OBJETO ================= -->
-    <section class="section section-publico" id="instrucoes">
-      <div class="two-cols">
-        <div class="col">
-          <h2 class="section-title dark center">Público Alvo</h2>
+    <!-- ===== PÚBLICO ALVO + OBJETO ===== -->
+    <section class="secao publico">
+      <div class="container grade-2">
+        <div>
+          <h2 class="titulo-secao esquerda">Público Alvo</h2>
 
-          <div class="list-item">
-            <span class="list-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle
-                  cx="9"
-                  cy="9"
-                  r="3"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                />
-                <circle
-                  cx="16"
-                  cy="10"
-                  r="2.3"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                />
-                <path
-                  d="M3.5 18c.7-2.6 2.9-4 5.5-4s4.8 1.4 5.5 4"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 class="list-title">Idosos</h3>
-              <p class="list-text">
-                Pessoas que desejam mais autonomia e segurança em sua rotina,
-                especialmente aquelas que necessitam de acompanhamento
-                frequente.
+          <div class="item-publico">
+            <span class="item-icone">☻</span>
+            <div class="cartao-mini">
+              <h3>Idosos</h3>
+              <p>
+                Pessoas idosas com autonomia preservada que buscam mais
+                segurança no dia a dia e no ambiente doméstico.
               </p>
             </div>
           </div>
 
-          <div class="list-item">
-            <span class="list-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <rect
-                  x="4"
-                  y="4"
-                  width="16"
-                  height="16"
-                  rx="3"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                />
-                <path
-                  d="M8 12h8M8 16h5"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 class="list-title">Familiares e cuidadores</h3>
-              <p class="list-text">
-                Responsáveis que precisam acompanhar informações importantes e
-                auxiliar na organização dos cuidados diários.
+          <div class="item-publico">
+            <span class="item-icone">♥</span>
+            <div class="cartao-mini">
+              <h3>Famílias e cuidadores</h3>
+              <p>
+                Famílias que precisam acompanhar informações importantes sobre a
+                saúde e segurança de seus entes queridos.
               </p>
             </div>
           </div>
 
-          <div class="list-item">
-            <span class="list-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8Z"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 class="list-title">Profissionais e Instituições de Saúde</h3>
-              <p class="list-text">
-                Profissionais, cuidadores e instituições que atendem idosos e
-                buscam recursos tecnológicos para complementar o acompanhamento.
+          <div class="item-publico">
+            <span class="item-icone">✚</span>
+            <div class="cartao-mini">
+              <h3>Profissionais e instituições de Saúde</h3>
+              <p>
+                Clínicas, casas de repouso e profissionais que desejam oferecer
+                um cuidado mais completo e personalizado.
               </p>
             </div>
           </div>
         </div>
 
-        <div class="col">
-          <h2 class="section-title dark center">Objeto</h2>
+        <div>
+          <h2 class="titulo-secao esquerda">Objeto</h2>
 
-          <div class="obj-item">
-            <span class="obj-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="7"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="3"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 class="obj-title">Monitorar informações de saúde</h3>
-              <p class="obj-text">
-                Registrar e apresentar dados como frequência cardíaca e
-                saturação de oxigênio.
-              </p>
-            </div>
-          </div>
-
-          <div class="obj-item">
-            <span class="obj-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 19V6M12 6l-5 5M12 6l5 5"
-                  fill="none"
-                  stroke="#2E4A8A"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 class="obj-title">Auxiliar na rotina de medicamentos</h3>
-              <p class="obj-text">
-                Emitir alertas nos horários configurados e apresentar
-                informações sobre os medicamentos.
-              </p>
-            </div>
-          </div>
-
-          <div class="obj-item">
-            <span class="obj-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 4l2.3 4.9 5.2.7-3.8 3.7.9 5.2L12 16l-4.6 2.5.9-5.2L4.5 9.6l5.2-.7L12 4Z"
-                  fill="#4C6FBF"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 class="obj-title">Monitorar o ambiente</h3>
-              <p class="obj-text">
-                Acompanhar condições como temperatura e possíveis vazamentos de
-                gás.
-              </p>
-            </div>
-          </div>
-
-          <div class="obj-item">
-            <span class="obj-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M12 20S4 15 4 9.8A4 4 0 0 1 12 7.6 4 4 0 0 1 20 9.8C20 15 12 20 12 20Z"
-                  fill="#4C6FBF"
-                />
-              </svg>
-            </span>
-            <div>
-              <h3 class="obj-title">Organizar compromissos</h3>
-              <p class="obj-text">
-                Exibir lembretes de consultas, exames e outros compromissos
-                importantes.
-              </p>
-            </div>
-          </div>
+          <ul class="lista-objeto">
+            <li class="item-objeto">
+              <span class="objeto-icone">✦</span>
+              <p><strong>Monitoramento e segurança</strong><br />
+                O sistema coleta dados do ambiente e da rotina para oferecer
+                informações relevantes aos cuidadores.</p>
+            </li>
+            <li class="item-objeto">
+              <span class="objeto-icone">♥</span>
+              <p><strong>Qualidade de vida e bem-estar</strong><br />
+                Incentivo à autonomia, com atividades e lembretes adaptados
+                ao perfil de cada idoso.</p>
+            </li>
+            <li class="item-objeto">
+              <span class="objeto-icone">▥</span>
+              <p><strong>Relatórios e controle</strong><br />
+                Relatórios claros sobre medicamentos, sono, humor e atividades
+                diárias para a família.</p>
+            </li>
+            <li class="item-objeto">
+              <span class="objeto-icone">⌂</span>
+              <p><strong>Segurança residencial</strong><br />
+                Detecção de quedas e alertas ambientais para um lar mais
+                protegido e tranquilo.</p>
+            </li>
+          </ul>
         </div>
       </div>
-
-      <span class="page-tag page-tag-dark">Home - 4</span>
     </section>
 
-    <!-- ================= POR QUE VITALCARE ================= -->
-    <section class="section-why" id="equipe">
-      <h2 class="why-title">Por que VitalCare?</h2>
-      <p class="why-text">
-        Enquanto muitos idosos dependem de diferentes dispositivos, anotações
-        ou<br />
-        da supervisão constante de familiares para organizar cuidados básicos,
-        o<br />
-        VitalCare propõe centralizar essas informações em uma única
-        interface.<br />
-        O sistema integra monitoramento de sinais vitais, lembretes, sensores<br />
-        ambientais e alertas, proporcionando uma rotina mais organizada e
-        segura.
-      </p>
-      <a class="btn btn-purple" href="#produto">Conhecer o produto completo</a>
+    <!-- ===== POR QUE VITALCARE ===== -->
+    <section class="secao porque">
+      <div class="container">
+        <h2 class="titulo-secao claro">Por que VitalCare?</h2>
+        <p class="texto-porque">
+          Enquanto muitos idosos dependem de diferentes dispositivos, aplicativos
+          ou cadernos para organizar o dia a dia, o VitalCare concentra tudo em um
+          só lugar. Uma solução integrada que une hardware e software para
+          monitorar, proteger e acompanhar, proporcionando uma rotina mais
+          organizada e segura.
+        </p>
+        <a href="#" class="btn btn-claro">Conhecer o produto completo</a>
+      </div>
     </section>
+  </main>
 
-    <!-- ================= FOOTER ================= -->
-    <footer class="footer" id="referencias">
-      <p class="footer-left">© 2026 VitalCare•Todos os direitos reservados</p>
-      <p class="footer-right">
-        Feito com <span class="heart">♥</span> para você
-      </p>
-    </footer>
-  </body>
+  <!-- ===== RODAPÉ ===== -->
+  <footer class="rodape">
+    <div class="container rodape-interno">
+      <p>© 2026 VitalCare. Todos os direitos reservados.</p>
+      <p>Feito com ❤ pela equipe</p>
+    </div>
+  </footer>
+
+</body>
 </html>
