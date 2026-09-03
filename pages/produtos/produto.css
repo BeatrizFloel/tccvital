@@ -1,0 +1,220 @@
+
+/* ============ VitalCare — variáveis ============ */
+:root {
+  --amarelo-hero: #FBEFB0;
+  --azul-card: #A8BCEA;
+  --laranja-card: #FBCB84;
+  --laranja-suave: #FBD3A2;
+  --laranja-interno: #FDEBD8;
+  --azul-interno: #EDF1FA;
+  --rosa: #F86FA6;
+  --ciano: #29B6E8;
+  --azul-escuro: #1F2A44;
+  --texto: #1E2433;
+  --texto-suave: #3A4256;
+  --branco: #FFFFFF;
+  --cinza-rodape: #F5F5F3;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--texto);
+  background: var(--branco);
+  line-height: 1.5;
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ============ HEADER ============ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; padding: 14px 34px; background: var(--branco);
+}
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-mark { width: 30px; height: 30px; }
+.logo-text {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px; font-weight: 700; color: var(--azul-escuro); letter-spacing: .2px;
+}
+.logo-text-alt { color: #2E7D9A; }
+.nav { display: flex; align-items: center; gap: 30px; }
+.nav-link { font-size: 13.5px; font-weight: 600; color: var(--texto-suave); transition: color .2s ease; }
+.nav-link:hover, .nav-link.is-active { color: var(--ciano); }
+.theme-toggle {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  background: transparent; border: none; border-radius: 50%; cursor: pointer;
+}
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle:hover { background: #F1F3F7; }
+
+/* ============ TOPO AMARELO ============ */
+.prod-hero {
+  position: relative;
+  background: var(--amarelo-hero);
+  padding: 58px 24px 66px;
+  text-align: center;
+}
+.prod-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 40px; font-weight: 800; letter-spacing: -.5px;
+  color: var(--azul-escuro);
+}
+.prod-subtitle {
+  margin: 6px auto 0; max-width: 560px;
+  font-size: 13px; font-weight: 600; color: var(--texto-suave);
+}
+.page-tag {
+  position: absolute; left: 24px; top: 6px;
+  font-size: 12px; font-weight: 700; color: rgba(31, 42, 68, .28);
+}
+
+/* ============ BLOCOS (hardware / software) ============ */
+.block {
+  max-width: 1080px;
+  margin: 42px auto 0;
+  border-radius: 16px;
+  padding: 26px 30px 34px;
+}
+.block-blue { background: var(--azul-card); }
+.block-orange {
+  background: var(--laranja-suave);
+  border: 2px solid var(--ciano);
+  margin-bottom: 96px;
+}
+.block-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 21px; font-weight: 800; text-align: center;
+  color: var(--azul-escuro);
+  margin-bottom: 26px;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px 30px;
+}
+.spec-card {
+  display: flex; align-items: center; gap: 14px;
+  border-radius: 12px;
+  padding: 18px 20px;
+  min-height: 132px;
+}
+.block-blue .spec-card { background: var(--azul-interno); }
+.block-orange .spec-card { background: var(--laranja-interno); }
+
+.spec-info { flex: 1; text-align: left; }
+.spec-name {
+  font-size: 13px; font-weight: 800; color: #101828;
+  line-height: 1.35; margin-bottom: 12px;
+}
+.spec-text {
+  font-size: 11.5px; font-weight: 600; color: #6B7280; line-height: 1.5;
+}
+.spec-thumb {
+  flex: 0 0 96px; width: 96px; height: 96px;
+  border-radius: 50%; background: var(--branco);
+  display: grid; place-items: center; overflow: hidden;
+}
+.spec-thumb img { width: 84%; height: 84%; object-fit: contain; }
+
+/* ============ PRODUTO FINAL ============ */
+.final {
+  max-width: 1080px;
+  margin: 0 auto;
+  background: var(--laranja-suave);
+  border-radius: 16px;
+  padding: 34px 40px 40px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap: 48px;
+  align-items: start;
+}
+.final-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 25px; font-weight: 800; color: var(--azul-escuro);
+  margin-bottom: 10px;
+}
+.final-text {
+  font-size: 12.5px; font-weight: 600; color: #2A3450;
+  line-height: 1.55; max-width: 34em;
+}
+.check-list { list-style: none; margin-top: 26px; }
+.check-list li {
+  display: flex; align-items: center; gap: 22px;
+  font-size: 12.5px; font-weight: 600; color: #2A3450;
+  margin-bottom: 18px;
+}
+.check-list svg { flex: 0 0 14px; width: 14px; height: 14px; }
+
+.price-card {
+  background: #F2F1EC;
+  border-radius: 14px;
+  padding: 30px 26px 26px;
+  text-align: center;
+}
+.price-name {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 23px; font-weight: 800; color: var(--azul-escuro);
+}
+.price-label { font-size: 11.5px; font-weight: 600; color: #6B7280; margin-top: 2px; }
+.price-value {
+  margin-top: 26px;
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 34px; font-weight: 800; color: var(--rosa);
+}
+.price-note { font-size: 11.5px; font-weight: 600; color: #6B7280; margin-top: 2px; }
+.btn-pink {
+  display: block; margin-top: 26px;
+  background: var(--rosa); color: var(--branco);
+  font-size: 12px; font-weight: 800;
+  padding: 12px 18px; border-radius: 8px;
+  transition: background .2s ease;
+}
+.btn-pink:hover { background: #F45C98; }
+
+/* ============ SOBRE O DESIGN ============ */
+.design {
+  max-width: 1080px;
+  margin: 72px auto 56px;
+  background: var(--azul-card);
+  border-radius: 16px;
+  padding: 38px 44px 46px;
+  color: var(--branco);
+}
+.design-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 25px; font-weight: 800; margin-bottom: 26px;
+}
+.design-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+.design-sub { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+.design-list { list-style: none; }
+.design-list li {
+  position: relative; padding-left: 16px; margin-bottom: 12px;
+  font-size: 12.5px; font-weight: 600; color: rgba(255, 255, 255, .92);
+}
+.design-list li::before {
+  content: "•"; position: absolute; left: 0; top: -1px;
+}
+
+/* ============ RODAPÉ ============ */
+.footer {
+  background: var(--cinza-rodape);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 26px 40px;
+  font-size: 11.5px; font-weight: 600; color: #4B5262;
+}
+.heart { color: #E0475F; }
+
+/* ============ RESPONSIVO ============ */
+@media (max-width: 980px) {
+  .nav { display: none; }
+  .prod-title { font-size: 30px; }
+  .block { margin-left: 16px; margin-right: 16px; padding: 22px 18px 26px; }
+  .spec-grid { grid-template-columns: 1fr; }
+  .final { grid-template-columns: 1fr; gap: 28px; margin: 0 16px; padding: 26px 20px 30px; }
+  .design { margin: 46px 16px; padding: 28px 22px 32px; }
+  .design-cols { grid-template-columns: 1fr; gap: 30px; }
+  .footer { flex-direction: column; gap: 8px; text-align: center; }
+}

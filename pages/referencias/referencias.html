@@ -1,200 +1,32 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VitalCare — Referências Científicas</title>
+<title>VitalCare — Referências</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-<style>
-/* ============ VitalCare — variáveis ============ */
-:root {
-  --amarelo-hero: #FBEFB0;
-  --laranja-card: #FBCB84;
-  --laranja-badge: #F9B65C;
-  --laranja-link: #E08A2B;
-  --azul-card: #7FA5EA;
-  --azul-card-int: #9CBAF0;
-  --azul-link: #4C7FD6;
-  --azul-escuro: #1F2A44;
-  --ciano: #29B6E8;
-  --texto: #1E2433;
-  --texto-suave: #3A4256;
-  --branco: #FFFFFF;
-  --cinza-rodape: #F5F5F3;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: "Nunito", system-ui, sans-serif;
-  color: var(--texto);
-  background: var(--branco);
-  line-height: 1.5;
-}
-img { display: block; max-width: 100%; }
-a { text-decoration: none; color: inherit; }
-
-/* ============ HEADER ============ */
-.header {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 24px; padding: 14px 34px; background: var(--branco);
-}
-.logo { display: flex; align-items: center; gap: 8px; }
-.logo-mark { width: 30px; height: 30px; }
-.logo-text {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 22px; font-weight: 700; color: var(--azul-escuro); letter-spacing: .2px;
-}
-.logo-text-alt { color: #2E7D9A; }
-.nav { display: flex; align-items: center; gap: 30px; }
-.nav-link { font-size: 13.5px; font-weight: 600; color: var(--texto-suave); transition: color .2s ease; }
-.nav-link:hover, .nav-link.is-active { color: var(--ciano); }
-.theme-toggle {
-  width: 34px; height: 34px; display: grid; place-items: center;
-  background: transparent; border: none; border-radius: 50%; cursor: pointer;
-}
-.theme-toggle svg { width: 19px; height: 19px; }
-.theme-toggle:hover { background: #F1F3F7; }
-
-/* ============ FAIXA AMARELA ============ */
-.refs {
-  background: var(--amarelo-hero);
-  padding: 40px 34px 60px;
-  position: relative;
-}
-.page-tag {
-  position: absolute; left: 22px; bottom: 16px;
-  font-size: 13px; font-weight: 700; color: #D8CD93;
-}
-.refs-title {
-  font-family: "Baloo 2", "Nunito", sans-serif;
-  font-size: 36px; font-weight: 800; color: var(--azul-escuro);
-  text-align: center; letter-spacing: .2px;
-}
-.refs-sub {
-  text-align: center; font-size: 12.5px; color: #6B6F63;
-  margin-top: 6px;
-}
-
-.refs-inner { max-width: 830px; margin: 0 auto; }
-
-/* ---- card fundamentação ---- */
-.fundamentacao {
-  background: var(--laranja-card);
-  border-radius: 18px;
-  padding: 22px 26px 26px;
-  margin-top: 34px;
-}
-.fundamentacao h2 {
-  font-family: "Baloo 2", "Nunito", sans-serif;
-  font-size: 15.5px; font-weight: 800; color: var(--azul-escuro);
-}
-.fundamentacao p {
-  font-size: 12px; color: #3D4354; margin-top: 12px; line-height: 1.6;
-  max-width: 660px;
-}
-
-/* ---- cards de referência ---- */
-.ref-card {
-  background: var(--laranja-card);
-  border-radius: 18px;
-  padding: 20px 26px 22px 26px;
-  margin-top: 26px;
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  column-gap: 12px;
-}
-.ref-icon svg { width: 20px; height: 20px; margin-top: 4px; }
-.badge {
-  display: inline-block;
-  background: var(--laranja-badge);
-  color: var(--branco);
-  font-size: 9px; font-weight: 800;
-  padding: 4px 11px; border-radius: 999px;
-  letter-spacing: .2px;
-}
-.ref-title {
-  font-family: "Baloo 2", "Nunito", sans-serif;
-  font-size: 14.5px; font-weight: 800; color: var(--azul-escuro);
-  margin-top: 8px;
-}
-.ref-meta { font-size: 11.5px; color: #3D4354; margin-top: 8px; }
-.ref-meta strong { font-weight: 800; color: #22283A; }
-.ref-desc {
-  font-size: 11px; color: #4A5063; margin-top: 14px; line-height: 1.6;
-  max-width: 620px;
-}
-.ref-link {
-  display: inline-block; margin-top: 16px;
-  font-size: 11px; font-weight: 700; color: var(--laranja-link);
-}
-.ref-link:hover { text-decoration: underline; }
-
-/* ============ RECURSOS COMPLEMENTARES ============ */
-.recursos-wrap { background: var(--branco); padding: 64px 34px 90px; }
-.recursos {
-  max-width: 830px; margin: 0 auto;
-  background: var(--azul-card);
-  border-radius: 18px;
-  padding: 22px 26px 28px;
-}
-.recursos h2 {
-  font-family: "Baloo 2", "Nunito", sans-serif;
-  font-size: 16px; font-weight: 800; color: var(--branco);
-}
-.recursos-grid {
-  margin-top: 18px;
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
-}
-.recurso {
-  background: var(--azul-card-int);
-  border-radius: 12px;
-  padding: 14px 14px 12px;
-}
-.recurso h3 { font-size: 11.5px; font-weight: 800; color: #FBEFB0; line-height: 1.35; }
-.recurso p { font-size: 10px; color: #F3F6FF; margin-top: 10px; line-height: 1.5; }
-.recurso a { display: inline-block; margin-top: 14px; font-size: 9.5px; font-weight: 700; color: #FFFFFF; }
-.recurso a:hover { text-decoration: underline; }
-
-/* ============ RODAPÉ ============ */
-.footer {
-  background: var(--cinza-rodape);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 26px 40px;
-  font-size: 11.5px; font-weight: 600; color: #4B5262;
-}
-.heart { color: #E0475F; }
-
-/* ============ RESPONSIVO ============ */
-@media (max-width: 980px) {
-  .nav { display: none; }
-  .refs-title { font-size: 27px; }
-  .recursos-grid { grid-template-columns: 1fr; }
-  .footer { flex-direction: column; gap: 8px; text-align: center; }
-}
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="referencias.css" />
+<link rel="stylesheet" href="global.css" />
 </head>
 <body>
+<div class="vc-page">
+
 
   <!-- ================= HEADER ================= -->
   <header class="header">
     <a class="logo" href="index.html">
-      <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
-        <circle cx="24" cy="24" r="21" fill="none" stroke="#4FC3F7" stroke-width="3"/>
-        <path d="M12 26h6l3-6 4 12 4-9 3 3h4" fill="none" stroke="#2E7D9A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="logo-text">Vital<span class="logo-text-alt">Care</span></span>
+      <img class="logo-img" src="/__l5e/assets-v1/caed2393-6e95-41c1-8b3a-c4fe50e2a9af/vitalcare-logo.png" alt="VitalCare" />
     </a>
 
     <nav class="nav">
       <a class="nav-link" href="index.html">Home</a>
-      <a class="nav-link" href="/pages/intruçoes/instrucoes-completo.html">Instruções</a>
-      <a class="nav-link" href="/pages/produtos/produto-completo.html">Produto</a>
-      <a class="nav-link" href="/pages/equipe/equipe.html">Equipe</a>
-      <a class="nav-link is-active" href="/pages/referencias/referencias.html">Referências</a>
-      <a class="nav-link" href="#jogo">Jogo</a>
+      <a class="nav-link" href="instrucoes.html">Instruções</a>
+      <a class="nav-link" href="produto.html">Produto</a>
+      <a class="nav-link" href="equipe.html">Equipe</a>
+      <a class="nav-link is-active" href="referencias.html">Referências</a>
+      <a class="nav-link" href="jogo.html">Jogo</a>
     </nav>
 
     <button class="theme-toggle" type="button" aria-label="Alternar tema">
@@ -354,5 +186,8 @@ a { text-decoration: none; color: inherit; }
     <p>Feito com <span class="heart">♥</span> para crianças</p>
   </footer>
 
+
+</div>
+<script src="theme.js"></script>
 </body>
 </html>

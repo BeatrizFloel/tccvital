@@ -1,0 +1,286 @@
+/* ================= VitalCare — logo, tipografia padrão e modo escuro ================= */
+
+.vc-page .logo-img,
+.vc-page .logo .logo-img {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* --- Tipografia padronizada (mesmo tamanho da aba Jogo) --- */
+.vc-std,
+.vc-std p,
+.vc-std li,
+.vc-std span,
+.vc-std a,
+.vc-std button,
+.vc-std input,
+.vc-std textarea,
+.vc-std label {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+.vc-std h1, .vc-std h2, .vc-std h3, .vc-std h4 {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+
+/* Fontes de destaque preservadas (identidade original) */
+.vc-std .hero-title,
+.vc-std .logo-text,
+.vc-std .ins-hero-title,
+.vc-std .why-title,
+.vc-std .section-title {
+  font-family: "Playfair Display", Georgia, serif !important;
+}
+.vc-std .section-title,
+.vc-std .why-title {
+  font-family: "Baloo 2", "Nunito", sans-serif !important;
+}
+
+.vc-std h1 { font-size: 42px !important; line-height: 1.15 !important; }
+.vc-std h2 { font-size: 20px !important; line-height: 1.3 !important; }
+.vc-std h3 { font-size: 16px !important; line-height: 1.35 !important; }
+.vc-std h4 { font-size: 15px !important; }
+.vc-std p,
+.vc-std li,
+.vc-std label,
+.vc-std input,
+.vc-std textarea,
+.vc-std td { font-size: 14px !important; line-height: 1.6 !important; }
+.vc-std .nav-link,
+.vc-std .nav-links a { font-size: 15px !important; }
+.vc-std .btn,
+.vc-std .pill,
+.vc-std .btn-enviar,
+.vc-std .badge { font-size: 13px !important; }
+.vc-std .page-tag,
+.vc-std .ins-page-tag { font-size: 12px !important; }
+
+/* Exceções de tamanho (blocos de destaque) */
+.vc-std .hero-title { font-size: 54px !important; line-height: 1.14 !important; }
+.vc-std .price-name { font-size: 22px !important; }
+.vc-std .price-value { font-size: 34px !important; line-height: 1.2 !important; }
+.vc-std .price-label,
+.vc-std .price-note { font-size: 13px !important; }
+.vc-std .final-title { font-size: 26px !important; }
+
+@media (max-width: 700px) {
+  .vc-std h1 { font-size: 30px !important; }
+  .vc-std .hero-title { font-size: 32px !important; }
+  .vc-std .price-value { font-size: 28px !important; }
+}
+
+/* ================= RESPONSIVO GLOBAL ================= */
+@media (max-width: 900px) {
+  .vc-page .header,
+  .vc-page .navbar {
+    flex-wrap: wrap;
+    padding: 12px 16px !important;
+    gap: 10px !important;
+  }
+  .vc-page .nav,
+  .vc-page .nav-links {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 16px !important;
+    order: 3;
+    width: 100%;
+  }
+  .vc-page .cards,
+  .vc-page .two-cols,
+  .vc-page .spec-grid,
+  .vc-page .design-cols,
+  .vc-page .equipe-grid,
+  .vc-page .res-grid,
+  .vc-page .rem-list,
+  .vc-page .recursos-grid,
+  .vc-page .info-cards,
+  .vc-page .final,
+  .vc-page .steps-inner,
+  .vc-page .contato-wrap,
+  .vc-page .refs-inner {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+    gap: 20px !important;
+  }
+  .vc-page .hero { grid-template-columns: 1fr !important; }
+  .vc-page .hero-media { height: 260px; }
+  .vc-page .section,
+  .vc-page .section-publico,
+  .vc-page .section-why,
+  .vc-page .prod-hero,
+  .vc-page .ins-hero,
+  .vc-page .equipe,
+  .vc-page .refs,
+  .vc-page .recursos,
+  .vc-page .cta-section,
+  .vc-page .video-section,
+  .vc-page .hero-content { padding-left: 20px !important; padding-right: 20px !important; }
+  .vc-page .footer {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .vc-page img { max-width: 100%; height: auto; }
+}
+
+/* ================= MODO ESCURO ================= */
+html.dark body { background: #0f1725; }
+
+html.dark .vc-page {
+  --branco: #131c2b;
+  --amarelo-hero: #131c2b;
+  --amarelo-claro: #0f1725;
+  --cinza-rodape: #0f1725;
+  --cinza-form: #1b2740;
+  --cinza-pill: #22304a;
+  --azul-interno: #16233a;
+  --laranja-interno: #16233a;
+  --texto: #E8EDF5;
+  --texto-suave: #C2CBDA;
+  --azul-escuro: #E8EDF5;
+  --white: #131c2b;
+  --cream: #16233a;
+  --cream-soft: #131c2b;
+  --nav-bg: #ffffff;
+  --footer-bg: #0f1725;
+  --border-soft: #26324a;
+  --text: #E8EDF5;
+  --navy: #E8EDF5;
+  --muted: #AAB4C4;
+  background: #0f1725;
+  color: #E8EDF5;
+}
+
+/* Fundos das seções */
+html.dark .vc-page .hero,
+html.dark .vc-page .section,
+html.dark .vc-page .section-diferenciais,
+html.dark .vc-page .section-publico,
+html.dark .vc-page .ins-hero,
+html.dark .vc-page .prod-hero,
+html.dark .vc-page .equipe,
+html.dark .vc-page .refs,
+html.dark .vc-page .recursos,
+html.dark .vc-page .recursos-wrap,
+html.dark .vc-page .steps,
+html.dark .vc-page .resources,
+html.dark .vc-page .design,
+html.dark .vc-page .cta-section,
+html.dark .vc-page .video-section,
+html.dark .vc-page .contato-wrap,
+html.dark .vc-page .footer { background: #0f1725 !important; }
+
+html.dark .vc-page .section-why { background: #131c2b !important; }
+
+/* Blocos e cartões */
+html.dark .vc-page .card,
+html.dark .vc-page .card-blue,
+html.dark .vc-page .card-orange,
+html.dark .vc-page .obj-item,
+html.dark .vc-page .spec-card,
+html.dark .vc-page .block,
+html.dark .vc-page .block-blue,
+html.dark .vc-page .block-orange,
+html.dark .vc-page .final,
+html.dark .vc-page .price-card,
+html.dark .vc-page .membro,
+html.dark .vc-page .contato,
+html.dark .vc-page .ref-card,
+html.dark .vc-page .fundamentacao,
+html.dark .vc-page .recurso,
+html.dark .vc-page .video-card,
+html.dark .vc-page .step-card,
+html.dark .vc-page .rem-card,
+html.dark .vc-page .res-card,
+html.dark .vc-page .info-card,
+html.dark .vc-page .card-story,
+html.dark .vc-page .card-facts,
+html.dark .vc-page .cta-card,
+html.dark .vc-page .step,
+html.dark .vc-page .diff-card {
+  background: #16233a !important;
+  border-color: #26324a !important;
+}
+
+html.dark .vc-page .price-card { background: #1b2740 !important; }
+html.dark .vc-page .card-icon,
+html.dark .vc-page .list-icon,
+html.dark .vc-page .ref-icon,
+html.dark .vc-page .step-num,
+html.dark .vc-page .badge,
+html.dark .vc-page .pill { background: #22304a !important; }
+
+/* Texto */
+html.dark .vc-page h1,
+html.dark .vc-page h2,
+html.dark .vc-page h3,
+html.dark .vc-page h4,
+html.dark .vc-page h5,
+html.dark .vc-page p,
+html.dark .vc-page li,
+html.dark .vc-page label,
+html.dark .vc-page td,
+html.dark .vc-page span,
+html.dark .vc-page strong,
+html.dark .vc-page .card-title,
+html.dark .vc-page .card-text,
+html.dark .vc-page .list-title,
+html.dark .vc-page .list-text,
+html.dark .vc-page .obj-title,
+html.dark .vc-page .obj-text,
+html.dark .vc-page .why-title,
+html.dark .vc-page .why-text,
+html.dark .vc-page .final-title,
+html.dark .vc-page .final-text,
+html.dark .vc-page .price-name,
+html.dark .vc-page .price-label,
+html.dark .vc-page .price-note,
+html.dark .vc-page .check-list li,
+html.dark .vc-page .spec-name,
+html.dark .vc-page .spec-text,
+html.dark .vc-page .block-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .section-title,
+html.dark .vc-page .section-title.dark,
+html.dark .vc-page .prod-title,
+html.dark .vc-page .ins-hero-title,
+html.dark .vc-page .equipe-title,
+html.dark .vc-page .refs-title,
+html.dark .vc-page .contato-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .price-value { color: #F2529A !important; }
+html.dark .vc-page .btn-pink,
+html.dark .vc-page .btn-pink * { color: #ffffff !important; }
+html.dark .vc-page .btn-primary,
+html.dark .vc-page .btn-outline { background: #1b2740 !important; color: #E8EDF5 !important; border-color: #2b3856 !important; }
+
+html.dark .vc-page input,
+html.dark .vc-page textarea {
+  background: #1b2740 !important;
+  border-color: #2b3856 !important;
+  color: #E8EDF5 !important;
+}
+html.dark .vc-page input::placeholder,
+html.dark .vc-page textarea::placeholder { color: #8892A6 !important; }
+
+/* Cabeçalho permanece branco no modo escuro (igual ao modo claro) */
+html.dark .vc-page .header,
+html.dark .vc-page .navbar {
+  background: #ffffff !important;
+  border-color: #E6E9F0 !important;
+}
+html.dark .vc-page .header .nav-link,
+html.dark .vc-page .navbar .nav-links a,
+html.dark .vc-page .header .logo-text,
+html.dark .vc-page .navbar .logo-text,
+html.dark .vc-page .header span,
+html.dark .vc-page .navbar span { color: #3A4256 !important; }
+html.dark .vc-page .header .nav-link.is-active,
+html.dark .vc-page .navbar .nav-links a.active { color: #29B6E8 !important; }
+html.dark .vc-page .header .theme-toggle svg path,
+html.dark .vc-page .navbar .theme-toggle svg path { stroke: #1F2A44 !important; }
+html.dark .vc-page .header .theme-toggle,
+html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
+
+.vc-page .theme-toggle { cursor: pointer; }
