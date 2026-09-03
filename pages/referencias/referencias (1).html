@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VitalCare — Referências</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
+<style>
+
+/* ============ VitalCare — variáveis ============ */
+:root {
+  --amarelo-hero: #FBEFB0;
+  --laranja-card: #FBCB84;
+  --laranja-badge: #F9B65C;
+  --laranja-link: #E08A2B;
+  --azul-card: #7FA5EA;
+  --azul-card-int: #9CBAF0;
+  --azul-link: #4C7FD6;
+  --azul-escuro: #1F2A44;
+  --ciano: #29B6E8;
+  --texto: #1E2433;
+  --texto-suave: #3A4256;
+  --branco: #FFFFFF;
+  --cinza-rodape: #F5F5F3;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--texto);
+  background: var(--branco);
+  line-height: 1.5;
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ============ HEADER ============ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; padding: 14px 34px; background: var(--branco);
+}
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-mark { width: 30px; height: 30px; }
+.logo-text {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px; font-weight: 700; color: var(--azul-escuro); letter-spacing: .2px;
+}
+.logo-text-alt { color: #2E7D9A; }
+.nav { display: flex; align-items: center; gap: 30px; }
+.nav-link { font-size: 13.5px; font-weight: 600; color: var(--texto-suave); transition: color .2s ease; }
+.nav-link:hover, .nav-link.is-active { color: var(--ciano); }
+.theme-toggle {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  background: transparent; border: none; border-radius: 50%; cursor: pointer;
+}
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle:hover { background: #F1F3F7; }
+
+/* ============ FAIXA AMARELA ============ */
+.refs {
+  background: var(--amarelo-hero);
+  padding: 40px 34px 60px;
+  position: relative;
+}
+.page-tag {
+  position: absolute; left: 22px; bottom: 16px;
+  font-size: 13px; font-weight: 700; color: #D8CD93;
+}
+.refs-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 36px; font-weight: 800; color: var(--azul-escuro);
+  text-align: center; letter-spacing: .2px;
+}
+.refs-sub {
+  text-align: center; font-size: 12.5px; color: #6B6F63;
+  margin-top: 6px;
+}
+
+.refs-inner { max-width: 830px; margin: 0 auto; }
+
+/* ---- card fundamentação ---- */
+.fundamentacao {
+  background: var(--laranja-card);
+  border-radius: 18px;
+  padding: 22px 26px 26px;
+  margin-top: 34px;
+}
+.fundamentacao h2 {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 15.5px; font-weight: 800; color: var(--azul-escuro);
+}
+.fundamentacao p {
+  font-size: 12px; color: #3D4354; margin-top: 12px; line-height: 1.6;
+  max-width: 660px;
+}
+
+/* ---- cards de referência ---- */
+.ref-card {
+  background: var(--laranja-card);
+  border-radius: 18px;
+  padding: 20px 26px 22px 26px;
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  column-gap: 12px;
+}
+.ref-icon svg { width: 20px; height: 20px; margin-top: 4px; }
+.badge {
+  display: inline-block;
+  background: var(--laranja-badge);
+  color: var(--branco);
+  font-size: 9px; font-weight: 800;
+  padding: 4px 11px; border-radius: 999px;
+  letter-spacing: .2px;
+}
+.ref-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 14.5px; font-weight: 800; color: var(--azul-escuro);
+  margin-top: 8px;
+}
+.ref-meta { font-size: 11.5px; color: #3D4354; margin-top: 8px; }
+.ref-meta strong { font-weight: 800; color: #22283A; }
+.ref-desc {
+  font-size: 11px; color: #4A5063; margin-top: 14px; line-height: 1.6;
+  max-width: 620px;
+}
+.ref-link {
+  display: inline-block; margin-top: 16px;
+  font-size: 11px; font-weight: 700; color: var(--laranja-link);
+}
+.ref-link:hover { text-decoration: underline; }
+
+/* ============ RECURSOS COMPLEMENTARES ============ */
+.recursos-wrap { background: var(--branco); padding: 64px 34px 90px; }
+.recursos {
+  max-width: 830px; margin: 0 auto;
+  background: var(--azul-card);
+  border-radius: 18px;
+  padding: 22px 26px 28px;
+}
+.recursos h2 {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 16px; font-weight: 800; color: var(--branco);
+}
+.recursos-grid {
+  margin-top: 18px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+}
+.recurso {
+  background: var(--azul-card-int);
+  border-radius: 12px;
+  padding: 14px 14px 12px;
+}
+.recurso h3 { font-size: 11.5px; font-weight: 800; color: #FBEFB0; line-height: 1.35; }
+.recurso p { font-size: 10px; color: #F3F6FF; margin-top: 10px; line-height: 1.5; }
+.recurso a { display: inline-block; margin-top: 14px; font-size: 9.5px; font-weight: 700; color: #FFFFFF; }
+.recurso a:hover { text-decoration: underline; }
+
+/* ============ RODAPÉ ============ */
+.footer {
+  background: var(--cinza-rodape);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 26px 40px;
+  font-size: 11.5px; font-weight: 600; color: #4B5262;
+}
+.heart { color: #E0475F; }
+
+/* ============ RESPONSIVO ============ */
+@media (max-width: 980px) {
+  .nav { display: none; }
+  .refs-title { font-size: 27px; }
+  .recursos-grid { grid-template-columns: 1fr; }
+  .footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+
+/* ================= VitalCare — logo, tipografia padrão e modo escuro ================= */
+
+.vc-page .logo-img,
+.vc-page .logo .logo-img {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* --- Tipografia padronizada (mesmo tamanho da aba Jogo) --- */
+.vc-std,
+.vc-std p,
+.vc-std li,
+.vc-std span,
+.vc-std a,
+.vc-std button,
+.vc-std input,
+.vc-std textarea,
+.vc-std label {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+.vc-std h1, .vc-std h2, .vc-std h3, .vc-std h4 {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+
+/* Fontes de destaque preservadas (identidade original) */
+.vc-std .hero-title,
+.vc-std .logo-text,
+.vc-std .ins-hero-title,
+.vc-std .why-title,
+.vc-std .section-title {
+  font-family: "Playfair Display", Georgia, serif !important;
+}
+.vc-std .section-title,
+.vc-std .why-title {
+  font-family: "Baloo 2", "Nunito", sans-serif !important;
+}
+
+.vc-std h1 { font-size: 42px !important; line-height: 1.15 !important; }
+.vc-std h2 { font-size: 20px !important; line-height: 1.3 !important; }
+.vc-std h3 { font-size: 16px !important; line-height: 1.35 !important; }
+.vc-std h4 { font-size: 15px !important; }
+.vc-std p,
+.vc-std li,
+.vc-std label,
+.vc-std input,
+.vc-std textarea,
+.vc-std td { font-size: 14px !important; line-height: 1.6 !important; }
+.vc-std .nav-link,
+.vc-std .nav-links a { font-size: 15px !important; }
+.vc-std .btn,
+.vc-std .pill,
+.vc-std .btn-enviar,
+.vc-std .badge { font-size: 13px !important; }
+.vc-std .page-tag,
+.vc-std .ins-page-tag { font-size: 12px !important; }
+
+/* Exceções de tamanho (blocos de destaque) */
+.vc-std .hero-title { font-size: 54px !important; line-height: 1.14 !important; }
+.vc-std .price-name { font-size: 22px !important; }
+.vc-std .price-value { font-size: 34px !important; line-height: 1.2 !important; }
+.vc-std .price-label,
+.vc-std .price-note { font-size: 13px !important; }
+.vc-std .final-title { font-size: 26px !important; }
+
+@media (max-width: 700px) {
+  .vc-std h1 { font-size: 30px !important; }
+  .vc-std .hero-title { font-size: 32px !important; }
+  .vc-std .price-value { font-size: 28px !important; }
+}
+
+/* ================= RESPONSIVO GLOBAL ================= */
+@media (max-width: 900px) {
+  .vc-page .header,
+  .vc-page .navbar {
+    flex-wrap: wrap;
+    padding: 12px 16px !important;
+    gap: 10px !important;
+  }
+  .vc-page .nav,
+  .vc-page .nav-links {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 16px !important;
+    order: 3;
+    width: 100%;
+  }
+  .vc-page .cards,
+  .vc-page .two-cols,
+  .vc-page .spec-grid,
+  .vc-page .design-cols,
+  .vc-page .equipe-grid,
+  .vc-page .res-grid,
+  .vc-page .rem-list,
+  .vc-page .recursos-grid,
+  .vc-page .info-cards,
+  .vc-page .final,
+  .vc-page .steps-inner,
+  .vc-page .contato-wrap,
+  .vc-page .refs-inner {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+    gap: 20px !important;
+  }
+  .vc-page .hero { grid-template-columns: 1fr !important; }
+  .vc-page .hero-media { height: 260px; }
+  .vc-page .section,
+  .vc-page .section-publico,
+  .vc-page .section-why,
+  .vc-page .prod-hero,
+  .vc-page .ins-hero,
+  .vc-page .equipe,
+  .vc-page .refs,
+  .vc-page .recursos,
+  .vc-page .cta-section,
+  .vc-page .video-section,
+  .vc-page .hero-content { padding-left: 20px !important; padding-right: 20px !important; }
+  .vc-page .footer {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .vc-page img { max-width: 100%; height: auto; }
+}
+
+/* ================= MODO ESCURO ================= */
+html.dark body { background: #0f1725; }
+
+html.dark .vc-page {
+  --branco: #131c2b;
+  --amarelo-hero: #131c2b;
+  --amarelo-claro: #0f1725;
+  --cinza-rodape: #0f1725;
+  --cinza-form: #1b2740;
+  --cinza-pill: #22304a;
+  --azul-interno: #16233a;
+  --laranja-interno: #16233a;
+  --texto: #E8EDF5;
+  --texto-suave: #C2CBDA;
+  --azul-escuro: #E8EDF5;
+  --white: #131c2b;
+  --cream: #16233a;
+  --cream-soft: #131c2b;
+  --nav-bg: #ffffff;
+  --footer-bg: #0f1725;
+  --border-soft: #26324a;
+  --text: #E8EDF5;
+  --navy: #E8EDF5;
+  --muted: #AAB4C4;
+  background: #0f1725;
+  color: #E8EDF5;
+}
+
+/* Fundos das seções */
+html.dark .vc-page .hero,
+html.dark .vc-page .section,
+html.dark .vc-page .section-diferenciais,
+html.dark .vc-page .section-publico,
+html.dark .vc-page .ins-hero,
+html.dark .vc-page .prod-hero,
+html.dark .vc-page .equipe,
+html.dark .vc-page .refs,
+html.dark .vc-page .recursos,
+html.dark .vc-page .recursos-wrap,
+html.dark .vc-page .steps,
+html.dark .vc-page .resources,
+html.dark .vc-page .design,
+html.dark .vc-page .cta-section,
+html.dark .vc-page .video-section,
+html.dark .vc-page .contato-wrap,
+html.dark .vc-page .footer { background: #0f1725 !important; }
+
+html.dark .vc-page .section-why { background: #131c2b !important; }
+
+/* Blocos e cartões */
+html.dark .vc-page .card,
+html.dark .vc-page .card-blue,
+html.dark .vc-page .card-orange,
+html.dark .vc-page .obj-item,
+html.dark .vc-page .spec-card,
+html.dark .vc-page .block,
+html.dark .vc-page .block-blue,
+html.dark .vc-page .block-orange,
+html.dark .vc-page .final,
+html.dark .vc-page .price-card,
+html.dark .vc-page .membro,
+html.dark .vc-page .contato,
+html.dark .vc-page .ref-card,
+html.dark .vc-page .fundamentacao,
+html.dark .vc-page .recurso,
+html.dark .vc-page .video-card,
+html.dark .vc-page .step-card,
+html.dark .vc-page .rem-card,
+html.dark .vc-page .res-card,
+html.dark .vc-page .info-card,
+html.dark .vc-page .card-story,
+html.dark .vc-page .card-facts,
+html.dark .vc-page .cta-card,
+html.dark .vc-page .step,
+html.dark .vc-page .diff-card {
+  background: #16233a !important;
+  border-color: #26324a !important;
+}
+
+html.dark .vc-page .price-card { background: #1b2740 !important; }
+html.dark .vc-page .card-icon,
+html.dark .vc-page .list-icon,
+html.dark .vc-page .ref-icon,
+html.dark .vc-page .step-num,
+html.dark .vc-page .badge,
+html.dark .vc-page .pill { background: #22304a !important; }
+
+/* Texto */
+html.dark .vc-page h1,
+html.dark .vc-page h2,
+html.dark .vc-page h3,
+html.dark .vc-page h4,
+html.dark .vc-page h5,
+html.dark .vc-page p,
+html.dark .vc-page li,
+html.dark .vc-page label,
+html.dark .vc-page td,
+html.dark .vc-page span,
+html.dark .vc-page strong,
+html.dark .vc-page .card-title,
+html.dark .vc-page .card-text,
+html.dark .vc-page .list-title,
+html.dark .vc-page .list-text,
+html.dark .vc-page .obj-title,
+html.dark .vc-page .obj-text,
+html.dark .vc-page .why-title,
+html.dark .vc-page .why-text,
+html.dark .vc-page .final-title,
+html.dark .vc-page .final-text,
+html.dark .vc-page .price-name,
+html.dark .vc-page .price-label,
+html.dark .vc-page .price-note,
+html.dark .vc-page .check-list li,
+html.dark .vc-page .spec-name,
+html.dark .vc-page .spec-text,
+html.dark .vc-page .block-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .section-title,
+html.dark .vc-page .section-title.dark,
+html.dark .vc-page .prod-title,
+html.dark .vc-page .ins-hero-title,
+html.dark .vc-page .equipe-title,
+html.dark .vc-page .refs-title,
+html.dark .vc-page .contato-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .price-value { color: #F2529A !important; }
+html.dark .vc-page .btn-pink,
+html.dark .vc-page .btn-pink * { color: #ffffff !important; }
+html.dark .vc-page .btn-primary,
+html.dark .vc-page .btn-outline { background: #1b2740 !important; color: #E8EDF5 !important; border-color: #2b3856 !important; }
+
+html.dark .vc-page input,
+html.dark .vc-page textarea {
+  background: #1b2740 !important;
+  border-color: #2b3856 !important;
+  color: #E8EDF5 !important;
+}
+html.dark .vc-page input::placeholder,
+html.dark .vc-page textarea::placeholder { color: #8892A6 !important; }
+
+/* Cabeçalho permanece branco no modo escuro (igual ao modo claro) */
+html.dark .vc-page .header,
+html.dark .vc-page .navbar {
+  background: #ffffff !important;
+  border-color: #E6E9F0 !important;
+}
+html.dark .vc-page .header .nav-link,
+html.dark .vc-page .navbar .nav-links a,
+html.dark .vc-page .header .logo-text,
+html.dark .vc-page .navbar .logo-text,
+html.dark .vc-page .header span,
+html.dark .vc-page .navbar span { color: #3A4256 !important; }
+html.dark .vc-page .header .nav-link.is-active,
+html.dark .vc-page .navbar .nav-links a.active { color: #29B6E8 !important; }
+html.dark .vc-page .header .theme-toggle svg path,
+html.dark .vc-page .navbar .theme-toggle svg path { stroke: #1F2A44 !important; }
+html.dark .vc-page .header .theme-toggle,
+html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
+
+.vc-page .theme-toggle { cursor: pointer; }
+
+</style>
+</head>
+<body>
+<div class="vc-page">
+
+
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <a class="logo" href="index.html">
+      <img class="logo-img" src="images/vitalcare-logo.png" alt="VitalCare" />
+    </a>
+
+    <nav class="nav">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="instrucoes.html">Instruções</a>
+      <a class="nav-link" href="produto.html">Produto</a>
+      <a class="nav-link" href="equipe.html">Equipe</a>
+      <a class="nav-link is-active" href="referencias.html">Referências</a>
+      <a class="nav-link" href="jogo.html">Jogo</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" aria-label="Alternar tema">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ================= REFERÊNCIAS ================= -->
+  <section class="refs" id="referencias">
+    <span class="page-tag">Referências - 2</span>
+
+    <h1 class="refs-title">Referências Científicas</h1>
+    <p class="refs-sub">Embasamento teórico e científico do projeto BuzzCare</p>
+
+    <div class="refs-inner">
+
+      <div class="fundamentacao">
+        <h2>Fundamentação Histórica</h2>
+        <p>O VitalCare foi fundamentado em estudos sobre envelhecimento saudável, monitoramento remoto, tecnologias assistivas e soluções digitais voltadas ao cuidado domiciliar da pessoa idosa. As referências selecionadas abordam o uso de sensores, acompanhamento de sinais vitais, lembretes de medicamentos e a segurança das informações coletadas.</p>
+      </div>
+
+      <!-- 1 -->
+      <article class="ref-card">
+        <div class="ref-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E08A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <div>
+          <span class="badge">Artigo Científico</span>
+          <h3 class="ref-title">World Report on Ageing and Health</h3>
+          <p class="ref-meta"><strong>Autores:</strong> World Health Organization (WHO)</p>
+          <p class="ref-meta"><strong>Publicado em:</strong> World Health Organization (WHO) (2015)</p>
+          <p class="ref-desc">O relatório aborda o envelhecimento saudável e destaca o potencial das tecnologias digitais para o acompanhamento da saúde e das capacidades funcionais das pessoas idosas.</p>
+          <a class="ref-link" href="#">Acessar Publicação</a>
+        </div>
+      </article>
+
+      <!-- 2 -->
+      <article class="ref-card">
+        <div class="ref-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E08A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <div>
+          <span class="badge">Livro</span>
+          <h3 class="ref-title">Smart Homes and Home Health Monitoring Technologies for Older Adults: A Systematic Review</h3>
+          <p class="ref-meta"><strong>Autores:</strong> Rios Rincón, Y. et al.</p>
+          <p class="ref-meta"><strong>Publicado em:</strong> International Journal of Medical Informatics (2016)</p>
+          <p class="ref-desc">Revisão sistemática sobre tecnologias de casas inteligentes e monitoramento domiciliar utilizadas para acompanhar a saúde e o bem-estar de idosos.</p>
+          <a class="ref-link" href="#">Acessar Publicação</a>
+        </div>
+      </article>
+
+      <!-- 3 -->
+      <article class="ref-card">
+        <div class="ref-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E08A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <div>
+          <span class="badge">Artigo Científico</span>
+          <h3 class="ref-title">Can Smart Home Technologies Help Older Adults Manage Their Chronic Condition?</h3>
+          <p class="ref-meta"><strong>Autores:</strong> Piau, A. et al.</p>
+          <p class="ref-meta"><strong>Publicado em:</strong> International Journal of Environmental Research and Public Health (2023)</p>
+          <p class="ref-desc">Analisa o uso de sensores ambientais, tecnologias inteligentes e sistemas integrados no acompanhamento de idosos com condições crônicas.</p>
+          <a class="ref-link" href="#">Acessar Publicação</a>
+        </div>
+      </article>
+
+      <!-- 4 -->
+      <article class="ref-card">
+        <div class="ref-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E08A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <div>
+          <span class="badge">Artigo Científico</span>
+          <h3 class="ref-title">Health-Related Telemonitoring Parameters/Signals of Older Adults: An Umbrella Review</h3>
+          <p class="ref-meta"><strong>Autores:</strong> Rodrigues, F. et al.</p>
+          <p class="ref-meta"><strong>Publicado em:</strong> Journal of Child Psychology (2023)</p>
+          <p class="ref-desc">Investiga os principais parâmetros utilizados no telemonitoramento de idosos, incluindo frequência cardíaca, temperatura corporal e outros sinais relacionados à saúde.</p>
+          <a class="ref-link" href="#">Acessar Publicação</a>
+        </div>
+      </article>
+
+      <!-- 5 -->
+      <article class="ref-card">
+        <div class="ref-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E08A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <div>
+          <span class="badge">Tese</span>
+          <h3 class="ref-title">In-Home Positioning for Remote Home Health Monitoring in Older Adults: Systematic Review</h3>
+          <p class="ref-meta"><strong>Autores:</strong> Chan, A. et al.</p>
+          <p class="ref-meta"><strong>Publicado em:</strong> JMIR Aging (2024)</p>
+          <p class="ref-desc">Analisa tecnologias de monitoramento remoto utilizadas dentro das residências, incluindo sensores ambientais e sistemas capazes de acompanhar informações relacionadas à rotina e à saúde do idoso.</p>
+          <a class="ref-link" href="#">Acessar Publicação</a>
+        </div>
+      </article>
+
+      <!-- 6 -->
+      <article class="ref-card">
+        <div class="ref-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E08A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <div>
+          <span class="badge">Artigo Científico</span>
+          <h3 class="ref-title">Privacidade e Proteção de Dados em Aplicações de Saúde Mental Digital</h3>
+          <p class="ref-meta"><strong>Autores:</strong> Barbosa, R. F., Gomes, M. H., &amp; Pereira, N. S.</p>
+          <p class="ref-meta"><strong>Publicado em:</strong> Revista de Direito Digital e Tecnologia (2024)</p>
+          <p class="ref-desc">Análise das normas LGPD aplicadas a sistemas de saúde mental, com foco em dados sensíveis de pessoas.</p>
+          <a class="ref-link" href="#">Acessar Publicação</a>
+        </div>
+      </article>
+
+      <!-- 7 -->
+      <article class="ref-card">
+        <div class="ref-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E08A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        </div>
+        <div>
+          <span class="badge">Artigo Científico</span>
+          <h3 class="ref-title">Lei Geral de Proteção de Dados Pessoais — LGPD</h3>
+          <p class="ref-meta"><strong>Autores:</strong> Brasil</p>
+          <p class="ref-meta"><strong>Publicado em:</strong> Diário Oficial da União (2018)</p>
+          <p class="ref-desc">Estabelece normas para o tratamento e a proteção de dados pessoais, sendo especialmente relevante para sistemas que armazenam informações relacionadas à saúde dos usuários.</p>
+          <a class="ref-link" href="#">Acessar Publicação</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="recursos-wrap">
+    <section class="recursos">
+      <h2>Recursos Complementares</h2>
+      <div class="recursos-grid">
+        <div class="recurso">
+          <h3>OMS - Organização Mundial Da Saúde</h3>
+          <p>Diretrizes sobre o envelhecimento saudável</p>
+          <a href="#">Visitar Site</a>
+        </div>
+        <div class="recurso">
+          <h3>OPAS - Tecnologias Digitais</h3>
+          <p>Estudos sobre tecnologia e saúde da pessoa idosa nas Américas.</p>
+          <a href="#">Visitar Site</a>
+        </div>
+        <div class="recurso">
+          <h3>LGPD - Proteção de Dados</h3>
+          <p>Legislação brasileira sobre privacidade e dados pessoais.</p>
+          <a href="#">Visitar Site</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= RODAPÉ ================= -->
+  <footer class="footer">
+    <p>© 2026 BuzzCare•Todos os direitos reservados</p>
+    <p>Feito com <span class="heart">♥</span> para crianças</p>
+  </footer>
+
+
+</div>
+<script>
+// Modo escuro persistente (clique na lua)
+(function () {
+  var root = document.documentElement;
+  try { if (localStorage.getItem("vc-theme") === "dark") root.classList.add("dark"); } catch (e) {}
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest(".theme-toggle");
+    if (!t) return;
+    ev.preventDefault();
+    var dark = !root.classList.contains("dark");
+    root.classList.toggle("dark", dark);
+    try { localStorage.setItem("vc-theme", dark ? "dark" : "light"); } catch (e) {}
+  });
+})();
+
+</script>
+</body>
+</html>

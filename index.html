@@ -7,8 +7,637 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
-<link rel="stylesheet" href="index.css" />
-<link rel="stylesheet" href="global.css" />
+<style>
+/* ============ VitalCare — folha de estilos ============ */
+
+:root {
+  --amarelo-hero: #FBEFB0;
+  --amarelo-claro: #FAFBDC;
+  --azul-card: #A8BCEA;
+  --laranja-card: #FBCB84;
+  --lilas-bg: #A5BDF0;
+  --lilas-btn: #A99AD8;
+  --ciano: #29B6E8;
+  --azul-escuro: #1F2A44;
+  --texto: #1E2433;
+  --texto-suave: #3A4256;
+  --branco: #FFFFFF;
+  --cinza-rodape: #F5F5F3;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--texto);
+  background-color: var(--branco);
+  line-height: 2.5;
+}
+
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ---------------- HEADER ---------------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 34px;
+  background: var(--branco);
+}
+
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-mark { width: 30px; height: 30px; }
+.logo-text {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--azul-escuro);
+  letter-spacing: .2px;
+}
+.logo-text-alt { color: #2E7D9A; }
+
+.nav { display: flex; align-items: center; gap: 30px; }
+.nav-link {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+  transition: color .2s ease;
+}
+.nav-link:hover { color: var(--ciano); }
+.nav-link.is-active { color: var(--ciano); }
+
+.theme-toggle {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle:hover { background: #F1F3F7; }
+
+/* ---------------- HERO ---------------- */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--amarelo-hero);
+  min-height: 620px;
+}
+
+.hero-content {
+  position: relative;
+  padding: 74px 60px 46px 74px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.badge {
+  align-self: flex-start;
+  background: #CFE6F3;
+  color: var(--texto-suave);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 26px;
+}
+
+.hero-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 900;
+  font-size: 54px;
+  line-height: 1.14;
+  color: var(--azul-escuro);
+  max-width: 9.5em;
+}
+
+.hero-text {
+  margin-top: 22px;
+  max-width: 420px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--texto-suave);
+  line-height: 1.6;
+}
+
+.hero-actions { margin-top: 30px; display: flex; gap: 14px; }
+
+.btn {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 11px 20px;
+  border-radius: 8px;
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+
+.btn-primary { background: #CFE6F3; color: var(--azul-escuro); }
+.btn-primary:hover { background: #BFDDEF; }
+
+.btn-outline {
+  background: var(--branco);
+  color: var(--azul-escuro);
+  border: 1px solid #2B3348;
+}
+.btn-outline:hover { background: #F6F6F6; }
+
+.hero-media { overflow: hidden; }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.page-tag {
+  position: absolute;
+  left: 34px;
+  bottom: 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(31, 42, 68, .28);
+}
+.page-tag-dark { color: rgba(31, 42, 68, .35); }
+
+/* ---------------- SEÇÕES ---------------- */
+.section {
+  position: relative;
+  background: var(--amarelo-claro);
+  padding: 78px 60px 66px;
+}
+
+.section-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 34px;
+  text-align: center;
+  color: var(--ciano);
+}
+.section-title.dark { color: var(--azul-escuro); }
+.section-title.center { text-align: center; }
+
+.section-subtitle {
+  margin: 12px auto 0;
+  max-width: 430px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+/* ------- cards de diferenciais ------- */
+.cards {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+.card {
+  border-radius: 14px;
+  padding: 22px 22px 26px;
+}
+.card-blue { background: var(--azul-card); }
+.card-orange { background: var(--laranja-card); }
+
+.card-icon {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .55);
+  margin-bottom: 34px;
+}
+.card-icon svg { width: 18px; height: 18px; }
+.card-icon.icon-orange { background: rgba(255, 255, 255, .6); }
+
+.card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--azul-escuro);
+  margin-bottom: 10px;
+}
+.card-text {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #23304F;
+  line-height: 1.6;
+}
+
+/* ------- público alvo / objeto ------- */
+.section-publico { padding: 74px 74px 70px; }
+
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  align-items: start;
+}
+
+.two-cols .section-title { margin-bottom: 34px; }
+
+.list-item { display: flex; gap: 16px; margin-bottom: 34px; }
+.list-icon {
+  flex: 0 0 30px;
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border-radius: 8px;
+  background: #DDE6F7;
+}
+.list-icon svg { width: 17px; height: 17px; }
+.list-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--azul-escuro);
+  margin-bottom: 4px;
+}
+.list-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+  line-height: 1.55;
+  max-width: 34em;
+}
+
+.obj-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: var(--laranja-card);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+}
+.obj-icon {
+  flex: 0 0 22px;
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+}
+.obj-icon svg { width: 18px; height: 18px; }
+.obj-title {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #1B2540;
+  margin-bottom: 3px;
+}
+.obj-text {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #2A3450;
+  line-height: 1.5;
+}
+
+/* ---------------- POR QUE VITALCARE ---------------- */
+.section-why {
+  background: var(--lilas-bg);
+  text-align: center;
+  padding: 62px 40px 96px;
+}
+
+.why-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--branco);
+}
+
+.why-text {
+  margin: 18px auto 0;
+  max-width: 640px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--branco);
+  line-height: 1.55;
+}
+
+.btn-purple {
+  margin-top: 36px;
+  background: var(--lilas-btn);
+  color: var(--branco);
+  font-size: 14px;
+  font-weight: 800;
+  padding: 15px 32px;
+  border-radius: 10px;
+}
+.btn-purple:hover { background: #9B8AD2; }
+
+/* ---------------- FOOTER ---------------- */
+.footer {
+  background: var(--cinza-rodape);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 40px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4B5262;
+}
+.heart { color: #E0475F; }
+
+/* ---------------- RESPONSIVO ---------------- */
+@media (max-width: 980px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-content { padding: 54px 32px 40px; }
+  .hero-title { font-size: 40px; }
+  .hero-media { height: 340px; }
+  .cards { grid-template-columns: 1fr; }
+  .two-cols { grid-template-columns: 1fr; gap: 46px; }
+  .section, .section-publico { padding: 56px 28px; }
+  .nav { display: none; }
+  .why-text br { display: none; }
+  .footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+
+
+/* ================= VitalCare — logo, tipografia padrão e modo escuro ================= */
+
+.vc-page .logo-img,
+.vc-page .logo .logo-img {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* --- Tipografia padronizada (mesmo tamanho da aba Jogo) --- */
+.vc-std,
+.vc-std p,
+.vc-std li,
+.vc-std span,
+.vc-std a,
+.vc-std button,
+.vc-std input,
+.vc-std textarea,
+.vc-std label {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+.vc-std h1, .vc-std h2, .vc-std h3, .vc-std h4 {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+
+/* Fontes de destaque preservadas (identidade original) */
+.vc-std .hero-title,
+.vc-std .logo-text,
+.vc-std .ins-hero-title,
+.vc-std .why-title,
+.vc-std .section-title {
+  font-family: "Playfair Display", Georgia, serif !important;
+}
+.vc-std .section-title,
+.vc-std .why-title {
+  font-family: "Baloo 2", "Nunito", sans-serif !important;
+}
+
+.vc-std h1 { font-size: 42px !important; line-height: 1.15 !important; }
+.vc-std h2 { font-size: 20px !important; line-height: 1.3 !important; }
+.vc-std h3 { font-size: 16px !important; line-height: 1.35 !important; }
+.vc-std h4 { font-size: 15px !important; }
+.vc-std p,
+.vc-std li,
+.vc-std label,
+.vc-std input,
+.vc-std textarea,
+.vc-std td { font-size: 14px !important; line-height: 1.6 !important; }
+.vc-std .nav-link,
+.vc-std .nav-links a { font-size: 15px !important; }
+.vc-std .btn,
+.vc-std .pill,
+.vc-std .btn-enviar,
+.vc-std .badge { font-size: 13px !important; }
+.vc-std .page-tag,
+.vc-std .ins-page-tag { font-size: 12px !important; }
+
+/* Exceções de tamanho (blocos de destaque) */
+.vc-std .hero-title { font-size: 54px !important; line-height: 1.14 !important; }
+.vc-std .price-name { font-size: 22px !important; }
+.vc-std .price-value { font-size: 34px !important; line-height: 1.2 !important; }
+.vc-std .price-label,
+.vc-std .price-note { font-size: 13px !important; }
+.vc-std .final-title { font-size: 26px !important; }
+
+@media (max-width: 700px) {
+  .vc-std h1 { font-size: 30px !important; }
+  .vc-std .hero-title { font-size: 32px !important; }
+  .vc-std .price-value { font-size: 28px !important; }
+}
+
+/* ================= RESPONSIVO GLOBAL ================= */
+@media (max-width: 900px) {
+  .vc-page .header,
+  .vc-page .navbar {
+    flex-wrap: wrap;
+    padding: 12px 16px !important;
+    gap: 10px !important;
+  }
+  .vc-page .nav,
+  .vc-page .nav-links {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 16px !important;
+    order: 3;
+    width: 100%;
+  }
+  .vc-page .cards,
+  .vc-page .two-cols,
+  .vc-page .spec-grid,
+  .vc-page .design-cols,
+  .vc-page .equipe-grid,
+  .vc-page .res-grid,
+  .vc-page .rem-list,
+  .vc-page .recursos-grid,
+  .vc-page .info-cards,
+  .vc-page .final,
+  .vc-page .steps-inner,
+  .vc-page .contato-wrap,
+  .vc-page .refs-inner {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+    gap: 20px !important;
+  }
+  .vc-page .hero { grid-template-columns: 1fr !important; }
+  .vc-page .hero-media { height: 260px; }
+  .vc-page .section,
+  .vc-page .section-publico,
+  .vc-page .section-why,
+  .vc-page .prod-hero,
+  .vc-page .ins-hero,
+  .vc-page .equipe,
+  .vc-page .refs,
+  .vc-page .recursos,
+  .vc-page .cta-section,
+  .vc-page .video-section,
+  .vc-page .hero-content { padding-left: 20px !important; padding-right: 20px !important; }
+  .vc-page .footer {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .vc-page img { max-width: 100%; height: auto; }
+}
+
+/* ================= MODO ESCURO ================= */
+html.dark body { background: #0f1725; }
+
+html.dark .vc-page {
+  --branco: #131c2b;
+  --amarelo-hero: #131c2b;
+  --amarelo-claro: #0f1725;
+  --cinza-rodape: #0f1725;
+  --cinza-form: #1b2740;
+  --cinza-pill: #22304a;
+  --azul-interno: #16233a;
+  --laranja-interno: #16233a;
+  --texto: #E8EDF5;
+  --texto-suave: #C2CBDA;
+  --azul-escuro: #E8EDF5;
+  --white: #131c2b;
+  --cream: #16233a;
+  --cream-soft: #131c2b;
+  --nav-bg: #ffffff;
+  --footer-bg: #0f1725;
+  --border-soft: #26324a;
+  --text: #E8EDF5;
+  --navy: #E8EDF5;
+  --muted: #AAB4C4;
+  background: #0f1725;
+  color: #E8EDF5;
+}
+
+/* Fundos das seções */
+html.dark .vc-page .hero,
+html.dark .vc-page .section,
+html.dark .vc-page .section-diferenciais,
+html.dark .vc-page .section-publico,
+html.dark .vc-page .ins-hero,
+html.dark .vc-page .prod-hero,
+html.dark .vc-page .equipe,
+html.dark .vc-page .refs,
+html.dark .vc-page .recursos,
+html.dark .vc-page .recursos-wrap,
+html.dark .vc-page .steps,
+html.dark .vc-page .resources,
+html.dark .vc-page .design,
+html.dark .vc-page .cta-section,
+html.dark .vc-page .video-section,
+html.dark .vc-page .contato-wrap,
+html.dark .vc-page .footer { background: #0f1725 !important; }
+
+html.dark .vc-page .section-why { background: #131c2b !important; }
+
+/* Blocos e cartões */
+html.dark .vc-page .card,
+html.dark .vc-page .card-blue,
+html.dark .vc-page .card-orange,
+html.dark .vc-page .obj-item,
+html.dark .vc-page .spec-card,
+html.dark .vc-page .block,
+html.dark .vc-page .block-blue,
+html.dark .vc-page .block-orange,
+html.dark .vc-page .final,
+html.dark .vc-page .price-card,
+html.dark .vc-page .membro,
+html.dark .vc-page .contato,
+html.dark .vc-page .ref-card,
+html.dark .vc-page .fundamentacao,
+html.dark .vc-page .recurso,
+html.dark .vc-page .video-card,
+html.dark .vc-page .step-card,
+html.dark .vc-page .rem-card,
+html.dark .vc-page .res-card,
+html.dark .vc-page .info-card,
+html.dark .vc-page .card-story,
+html.dark .vc-page .card-facts,
+html.dark .vc-page .cta-card,
+html.dark .vc-page .step,
+html.dark .vc-page .diff-card {
+  background: #16233a !important;
+  border-color: #26324a !important;
+}
+
+html.dark .vc-page .price-card { background: #1b2740 !important; }
+html.dark .vc-page .card-icon,
+html.dark .vc-page .list-icon,
+html.dark .vc-page .ref-icon,
+html.dark .vc-page .step-num,
+html.dark .vc-page .badge,
+html.dark .vc-page .pill { background: #22304a !important; }
+
+/* Texto */
+html.dark .vc-page h1,
+html.dark .vc-page h2,
+html.dark .vc-page h3,
+html.dark .vc-page h4,
+html.dark .vc-page h5,
+html.dark .vc-page p,
+html.dark .vc-page li,
+html.dark .vc-page label,
+html.dark .vc-page td,
+html.dark .vc-page span,
+html.dark .vc-page strong,
+html.dark .vc-page .card-title,
+html.dark .vc-page .card-text,
+html.dark .vc-page .list-title,
+html.dark .vc-page .list-text,
+html.dark .vc-page .obj-title,
+html.dark .vc-page .obj-text,
+html.dark .vc-page .why-title,
+html.dark .vc-page .why-text,
+html.dark .vc-page .final-title,
+html.dark .vc-page .final-text,
+html.dark .vc-page .price-name,
+html.dark .vc-page .price-label,
+html.dark .vc-page .price-note,
+html.dark .vc-page .check-list li,
+html.dark .vc-page .spec-name,
+html.dark .vc-page .spec-text,
+html.dark .vc-page .block-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .section-title,
+html.dark .vc-page .section-title.dark,
+html.dark .vc-page .prod-title,
+html.dark .vc-page .ins-hero-title,
+html.dark .vc-page .equipe-title,
+html.dark .vc-page .refs-title,
+html.dark .vc-page .contato-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .price-value { color: #F2529A !important; }
+html.dark .vc-page .btn-pink,
+html.dark .vc-page .btn-pink * { color: #ffffff !important; }
+html.dark .vc-page .btn-primary,
+html.dark .vc-page .btn-outline { background: #1b2740 !important; color: #E8EDF5 !important; border-color: #2b3856 !important; }
+
+html.dark .vc-page input,
+html.dark .vc-page textarea {
+  background: #1b2740 !important;
+  border-color: #2b3856 !important;
+  color: #E8EDF5 !important;
+}
+html.dark .vc-page input::placeholder,
+html.dark .vc-page textarea::placeholder { color: #8892A6 !important; }
+
+/* Cabeçalho permanece branco no modo escuro (igual ao modo claro) */
+html.dark .vc-page .header,
+html.dark .vc-page .navbar {
+  background: #ffffff !important;
+  border-color: #E6E9F0 !important;
+}
+html.dark .vc-page .header .nav-link,
+html.dark .vc-page .navbar .nav-links a,
+html.dark .vc-page .header .logo-text,
+html.dark .vc-page .navbar .logo-text,
+html.dark .vc-page .header span,
+html.dark .vc-page .navbar span { color: #3A4256 !important; }
+html.dark .vc-page .header .nav-link.is-active,
+html.dark .vc-page .navbar .nav-links a.active { color: #29B6E8 !important; }
+html.dark .vc-page .header .theme-toggle svg path,
+html.dark .vc-page .navbar .theme-toggle svg path { stroke: #1F2A44 !important; }
+html.dark .vc-page .header .theme-toggle,
+html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
+
+.vc-page .theme-toggle { cursor: pointer; }
+
+</style>
 </head>
 <body>
 <div class="vc-page vc-std">
@@ -17,7 +646,7 @@
   <!-- ================= HEADER ================= -->
   <header class="header">
     <a class="logo" href="#home">
-      <img class="logo-img" src="/__l5e/assets-v1/caed2393-6e95-41c1-8b3a-c4fe50e2a9af/vitalcare-logo.png" alt="VitalCare" />
+      <img class="logo-img" src="images/vitalcare-logo.png" alt="VitalCare" />
     </a>
 
     <nav class="nav">
@@ -52,7 +681,7 @@
     </div>
 
     <div class="hero-media">
-      <img src="/__l5e/assets-v1/22e908a9-b7c3-4a3d-b53f-25b888e14145/old-age-care-1.png" alt="Cuidadora sorrindo ao lado de idosa em cadeira de rodas em um jardim" />
+      <img src="images/old-age-care-1.png" alt="Cuidadora sorrindo ao lado de idosa em cadeira de rodas em um jardim" />
     </div>
   </section>
 
@@ -204,6 +833,21 @@
 
 
 </div>
-<script src="theme.js"></script>
+<script>
+// Modo escuro persistente (clique na lua)
+(function () {
+  var root = document.documentElement;
+  try { if (localStorage.getItem("vc-theme") === "dark") root.classList.add("dark"); } catch (e) {}
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest(".theme-toggle");
+    if (!t) return;
+    ev.preventDefault();
+    var dark = !root.classList.contains("dark");
+    root.classList.toggle("dark", dark);
+    try { localStorage.setItem("vc-theme", dark ? "dark" : "light"); } catch (e) {}
+  });
+})();
+
+</script>
 </body>
 </html>
