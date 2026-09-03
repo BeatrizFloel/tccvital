@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VitalCare — Jogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
+<style>
+/* ===== VitalCare - Além da Memória =====
+   HTML + CSS puro (sem frameworks) */
+
+   @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+   :root {
+     --cream: #fdf6d8;
+     --cream-soft: #fbf8ec;
+     --white: #ffffff;
+     --navy: #1f3f5c;
+     --text: #333333;
+     --muted: #6b6b6b;
+     --orange: #f5b869;
+     --orange-border: #f4a259;
+     --pink: #f28b95;
+     --blue: #9db8ec;
+     --purple: #a06ecb;
+     --nav-bg: #fffdf3;
+     --footer-bg: #f7f5ee;
+     --border-soft: #f0ecd8;
+   }
+   
+   * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+   }
+   
+   body {
+     font-family: "Poppins", Arial, sans-serif;
+     color: var(--text);
+     background: var(--white);
+   }
+   
+   .container {
+     max-width: 1100px;
+     margin: 0 auto;
+     padding: 0 24px;
+   }
+   
+   /* ===== NAVBAR ===== */
+   .navbar {
+     background: var(--white);
+     border-bottom: 1px solid #ececec;
+     padding: 16px 0;
+   }
+   
+   .navbar .container {
+     max-width: 1340px;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     gap: 24px;
+     padding: 0 32px;
+   }
+   
+   .logo {
+     display: flex;
+     align-items: center;
+     gap: 10px;
+   }
+   
+   .logo-text {
+     font-size: 28px;
+     font-weight: 700;
+     color: #12233a;
+     letter-spacing: -0.5px;
+   }
+   
+   .logo-accent {
+     color: #21c3d6;
+   }
+   
+   .logo .logo-icon {
+     width: 36px;
+     height: 36px;
+     border-radius: 50%;
+     background: #21c3d6;
+     border: 3px solid #cfeef4;
+     color: var(--white);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+   }
+   
+   .logo .logo-icon svg {
+     width: 20px;
+     height: 20px;
+   }
+   
+   .nav-links {
+     display: flex;
+     align-items: center;
+     gap: 38px;
+     list-style: none;
+   }
+   
+   .nav-links a {
+     text-decoration: none;
+     color: #2f3b4a;
+     font-size: 15px;
+     font-weight: 500;
+   }
+   
+   .nav-links a.active {
+     color: #2f9fe0;
+   }
+   
+   .theme-toggle {
+     background: none;
+     border: none;
+     font-size: 20px;
+     color: #2f3b4a;
+     cursor: pointer;
+   }
+   
+   
+   /* ===== HERO ===== */
+   .hero {
+     background: var(--cream);
+     padding: 60px 0 70px;
+   }
+   
+   .hero .container {
+     max-width: 760px;
+   }
+   
+   .hero h1 {
+     text-align: center;
+     font-size: 42px;
+     font-weight: 700;
+     color: var(--navy);
+     letter-spacing: -0.5px;
+   }
+   
+   .hero .subtitle {
+     text-align: center;
+     margin-top: 8px;
+     font-size: 14px;
+     color: var(--muted);
+   }
+   
+   /* ===== CARDS GRID ===== */
+   .cards {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 18px;
+     margin-top: 28px;
+   }
+   
+   .card {
+     background: var(--white);
+     border-radius: 18px;
+     padding: 14px 18px;
+     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+   }
+   
+   .card.card-story {
+     border: 2px solid var(--orange-border);
+   }
+   
+   .card.card-facts {
+     border: 2px solid var(--orange-border);
+   }
+   
+   .card h2 {
+     font-size: 19px;
+     font-weight: 600;
+     color: var(--navy);
+     margin-bottom: 16px;
+     display: flex;
+     align-items: center;
+     gap: 10px;
+   }
+   
+   .card h2 .spark {
+     color: var(--orange-border);
+     font-size: 16px;
+   }
+   
+   .card-story p {
+     text-align: center;
+     font-size: 13px;
+     line-height: 1.7;
+     color: var(--muted);
+     max-width: 220px;
+     margin: 0 auto 14px;
+   }
+   
+   .facts-list {
+     list-style: none;
+     display: flex;
+     flex-direction: column;
+     gap: 12px;
+   }
+   
+   .facts-list li {
+     display: flex;
+     align-items: center;
+     gap: 12px;
+     font-size: 13px;
+     font-weight: 600;
+     color: var(--navy);
+   }
+   
+   .facts-list .bullet {
+     width: 28px;
+     height: 28px;
+     border-radius: 50%;
+     background: #fbd6e0;
+     flex: none;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     color: #e86e8a;
+   }
+   
+   .facts-list .bullet svg {
+     width: 14px;
+     height: 14px;
+   }
+   
+   .facts-list li:nth-child(2) .bullet {
+     background: #f9c9d8;
+   }
+   .facts-list li:nth-child(3) .bullet {
+     background: #f7bcd0;
+   }
+   .facts-list li:nth-child(4) .bullet {
+     background: #f5aec7;
+   }
+   .facts-list li:nth-child(5) .bullet {
+     background: #f3a0bf;
+   }
+   .facts-list li:nth-child(6) .bullet {
+     background: #f192b7;
+   }
+   
+   /* ===== VÍDEO ===== */
+   .video-section {
+     background: var(--cream);
+     padding: 40px 0 60px;
+   }
+   
+   .video-card {
+     background: var(--cream-soft);
+     border-radius: 20px;
+     padding: 28px;
+     max-width: 620px;
+     margin: 0 auto;
+   }
+   
+   .video-card h3 {
+     text-align: center;
+     font-size: 16px;
+     font-weight: 600;
+     color: #111111;
+     margin-bottom: 20px;
+   }
+   
+   .video-frame {
+     background: var(--orange);
+     border: 2px solid var(--pink);
+     border-radius: 16px;
+     height: 265px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+   }
+   
+   .play-button {
+     width: 34px;
+     height: 34px;
+     border-radius: 50%;
+     background: rgba(255, 255, 255, 0.45);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+   }
+   
+   .play-button::before {
+     content: "";
+     width: 0;
+     height: 0;
+     border-left: 11px solid rgba(255, 255, 255, 0.9);
+     border-top: 7px solid transparent;
+     border-bottom: 7px solid transparent;
+     margin-left: 3px;
+   }
+   
+   /* ===== CTA ===== */
+   .cta-section {
+     background: var(--white);
+     padding: 80px 0 0;
+   }
+   
+   .cta-card {
+     background: var(--blue);
+     border-radius: 22px;
+     padding: 44px 32px;
+     text-align: center;
+     color: var(--white);
+   }
+   
+   .cta-card h2 {
+     font-size: 26px;
+     font-weight: 700;
+   }
+   
+   .cta-card p {
+     margin-top: 14px;
+     font-size: 13px;
+     line-height: 1.6;
+     max-width: 520px;
+     margin-left: auto;
+     margin-right: auto;
+   }
+   
+   .btn-play {
+     display: inline-block;
+     margin-top: 26px;
+     background: var(--purple);
+     color: var(--white);
+     text-decoration: none;
+     font-size: 13px;
+     font-weight: 500;
+     padding: 12px 30px;
+     border-radius: 10px;
+   }
+   
+   .cta-note {
+     margin-top: 26px;
+     font-size: 11px;
+     opacity: 0.85;
+   }
+   
+   /* ===== INFO CARDS ===== */
+   .info-cards {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 26px;
+     margin: 40px 0 60px;
+   }
+   
+   .info-card {
+     border-radius: 18px;
+     padding: 22px 26px;
+   }
+   
+   .info-card.light {
+     background: var(--cream-soft);
+   }
+   
+   .info-card.blue {
+     background: var(--blue);
+     color: var(--white);
+   }
+   
+   .info-card h4 {
+     font-size: 14px;
+     font-weight: 600;
+     margin-bottom: 14px;
+   }
+   
+   .info-card.light h4 {
+     color: #111111;
+   }
+   
+   .info-card ul {
+     padding-left: 18px;
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+     font-size: 12px;
+     line-height: 1.5;
+   }
+   
+   .info-card.light ul {
+     color: var(--muted);
+   }
+   
+   /* ===== FOOTER ===== */
+   .footer {
+     background: var(--footer-bg);
+     border-top: 1px solid var(--border-soft);
+     padding: 22px 0;
+   }
+   
+   .footer .container {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     font-size: 12px;
+     color: #555555;
+   }
+   
+   .footer .heart {
+     color: var(--pink);
+   }
+   
+   /* ===== RESPONSIVO ===== */
+   @media (max-width: 880px) {
+     .cards,
+     .info-cards {
+       grid-template-columns: 1fr;
+     }
+   
+     .navbar .container {
+       flex-wrap: wrap;
+       justify-content: center;
+     }
+   
+     .nav-links {
+       gap: 18px;
+       flex-wrap: wrap;
+       justify-content: center;
+     }
+   
+     .hero h1 {
+       font-size: 32px;
+     }
+   
+     .footer .container {
+       flex-direction: column;
+       gap: 8px;
+     }
+   }
+   
+
+/* ================= VitalCare — logo, tipografia padrão e modo escuro ================= */
+
+.vc-page .logo-img,
+.vc-page .logo .logo-img {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* --- Tipografia padronizada (mesmo tamanho da aba Jogo) --- */
+.vc-std,
+.vc-std p,
+.vc-std li,
+.vc-std span,
+.vc-std a,
+.vc-std button,
+.vc-std input,
+.vc-std textarea,
+.vc-std label {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+.vc-std h1, .vc-std h2, .vc-std h3, .vc-std h4 {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+}
+
+/* Fontes de destaque preservadas (identidade original) */
+.vc-std .hero-title,
+.vc-std .logo-text,
+.vc-std .ins-hero-title,
+.vc-std .why-title,
+.vc-std .section-title {
+  font-family: "Playfair Display", Georgia, serif !important;
+}
+.vc-std .section-title,
+.vc-std .why-title {
+  font-family: "Baloo 2", "Nunito", sans-serif !important;
+}
+
+.vc-std h1 { font-size: 42px !important; line-height: 1.15 !important; }
+.vc-std h2 { font-size: 20px !important; line-height: 1.3 !important; }
+.vc-std h3 { font-size: 16px !important; line-height: 1.35 !important; }
+.vc-std h4 { font-size: 15px !important; }
+.vc-std p,
+.vc-std li,
+.vc-std label,
+.vc-std input,
+.vc-std textarea,
+.vc-std td { font-size: 14px !important; line-height: 1.6 !important; }
+.vc-std .nav-link,
+.vc-std .nav-links a { font-size: 15px !important; }
+.vc-std .btn,
+.vc-std .pill,
+.vc-std .btn-enviar,
+.vc-std .badge { font-size: 13px !important; }
+.vc-std .page-tag,
+.vc-std .ins-page-tag { font-size: 12px !important; }
+
+/* Exceções de tamanho (blocos de destaque) */
+.vc-std .hero-title { font-size: 54px !important; line-height: 1.14 !important; }
+.vc-std .price-name { font-size: 22px !important; }
+.vc-std .price-value { font-size: 34px !important; line-height: 1.2 !important; }
+.vc-std .price-label,
+.vc-std .price-note { font-size: 13px !important; }
+.vc-std .final-title { font-size: 26px !important; }
+
+@media (max-width: 700px) {
+  .vc-std h1 { font-size: 30px !important; }
+  .vc-std .hero-title { font-size: 32px !important; }
+  .vc-std .price-value { font-size: 28px !important; }
+}
+
+/* ================= RESPONSIVO GLOBAL ================= */
+@media (max-width: 900px) {
+  .vc-page .header,
+  .vc-page .navbar {
+    flex-wrap: wrap;
+    padding: 12px 16px !important;
+    gap: 10px !important;
+  }
+  .vc-page .nav,
+  .vc-page .nav-links {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 16px !important;
+    order: 3;
+    width: 100%;
+  }
+  .vc-page .cards,
+  .vc-page .two-cols,
+  .vc-page .spec-grid,
+  .vc-page .design-cols,
+  .vc-page .equipe-grid,
+  .vc-page .res-grid,
+  .vc-page .rem-list,
+  .vc-page .recursos-grid,
+  .vc-page .info-cards,
+  .vc-page .final,
+  .vc-page .steps-inner,
+  .vc-page .contato-wrap,
+  .vc-page .refs-inner {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+    gap: 20px !important;
+  }
+  .vc-page .hero { grid-template-columns: 1fr !important; }
+  .vc-page .hero-media { height: 260px; }
+  .vc-page .section,
+  .vc-page .section-publico,
+  .vc-page .section-why,
+  .vc-page .prod-hero,
+  .vc-page .ins-hero,
+  .vc-page .equipe,
+  .vc-page .refs,
+  .vc-page .recursos,
+  .vc-page .cta-section,
+  .vc-page .video-section,
+  .vc-page .hero-content { padding-left: 20px !important; padding-right: 20px !important; }
+  .vc-page .footer {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .vc-page img { max-width: 100%; height: auto; }
+}
+
+/* ================= MODO ESCURO ================= */
+html.dark body { background: #0f1725; }
+
+html.dark .vc-page {
+  --branco: #131c2b;
+  --amarelo-hero: #131c2b;
+  --amarelo-claro: #0f1725;
+  --cinza-rodape: #0f1725;
+  --cinza-form: #1b2740;
+  --cinza-pill: #22304a;
+  --azul-interno: #16233a;
+  --laranja-interno: #16233a;
+  --texto: #E8EDF5;
+  --texto-suave: #C2CBDA;
+  --azul-escuro: #E8EDF5;
+  --white: #131c2b;
+  --cream: #16233a;
+  --cream-soft: #131c2b;
+  --nav-bg: #ffffff;
+  --footer-bg: #0f1725;
+  --border-soft: #26324a;
+  --text: #E8EDF5;
+  --navy: #E8EDF5;
+  --muted: #AAB4C4;
+  background: #0f1725;
+  color: #E8EDF5;
+}
+
+/* Fundos das seções */
+html.dark .vc-page .hero,
+html.dark .vc-page .section,
+html.dark .vc-page .section-diferenciais,
+html.dark .vc-page .section-publico,
+html.dark .vc-page .ins-hero,
+html.dark .vc-page .prod-hero,
+html.dark .vc-page .equipe,
+html.dark .vc-page .refs,
+html.dark .vc-page .recursos,
+html.dark .vc-page .recursos-wrap,
+html.dark .vc-page .steps,
+html.dark .vc-page .resources,
+html.dark .vc-page .design,
+html.dark .vc-page .cta-section,
+html.dark .vc-page .video-section,
+html.dark .vc-page .contato-wrap,
+html.dark .vc-page .footer { background: #0f1725 !important; }
+
+html.dark .vc-page .section-why { background: #131c2b !important; }
+
+/* Blocos e cartões */
+html.dark .vc-page .card,
+html.dark .vc-page .card-blue,
+html.dark .vc-page .card-orange,
+html.dark .vc-page .obj-item,
+html.dark .vc-page .spec-card,
+html.dark .vc-page .block,
+html.dark .vc-page .block-blue,
+html.dark .vc-page .block-orange,
+html.dark .vc-page .final,
+html.dark .vc-page .price-card,
+html.dark .vc-page .membro,
+html.dark .vc-page .contato,
+html.dark .vc-page .ref-card,
+html.dark .vc-page .fundamentacao,
+html.dark .vc-page .recurso,
+html.dark .vc-page .video-card,
+html.dark .vc-page .step-card,
+html.dark .vc-page .rem-card,
+html.dark .vc-page .res-card,
+html.dark .vc-page .info-card,
+html.dark .vc-page .card-story,
+html.dark .vc-page .card-facts,
+html.dark .vc-page .cta-card,
+html.dark .vc-page .step,
+html.dark .vc-page .diff-card {
+  background: #16233a !important;
+  border-color: #26324a !important;
+}
+
+html.dark .vc-page .price-card { background: #1b2740 !important; }
+html.dark .vc-page .card-icon,
+html.dark .vc-page .list-icon,
+html.dark .vc-page .ref-icon,
+html.dark .vc-page .step-num,
+html.dark .vc-page .badge,
+html.dark .vc-page .pill { background: #22304a !important; }
+
+/* Texto */
+html.dark .vc-page h1,
+html.dark .vc-page h2,
+html.dark .vc-page h3,
+html.dark .vc-page h4,
+html.dark .vc-page h5,
+html.dark .vc-page p,
+html.dark .vc-page li,
+html.dark .vc-page label,
+html.dark .vc-page td,
+html.dark .vc-page span,
+html.dark .vc-page strong,
+html.dark .vc-page .card-title,
+html.dark .vc-page .card-text,
+html.dark .vc-page .list-title,
+html.dark .vc-page .list-text,
+html.dark .vc-page .obj-title,
+html.dark .vc-page .obj-text,
+html.dark .vc-page .why-title,
+html.dark .vc-page .why-text,
+html.dark .vc-page .final-title,
+html.dark .vc-page .final-text,
+html.dark .vc-page .price-name,
+html.dark .vc-page .price-label,
+html.dark .vc-page .price-note,
+html.dark .vc-page .check-list li,
+html.dark .vc-page .spec-name,
+html.dark .vc-page .spec-text,
+html.dark .vc-page .block-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .section-title,
+html.dark .vc-page .section-title.dark,
+html.dark .vc-page .prod-title,
+html.dark .vc-page .ins-hero-title,
+html.dark .vc-page .equipe-title,
+html.dark .vc-page .refs-title,
+html.dark .vc-page .contato-title { color: #E8EDF5 !important; }
+
+html.dark .vc-page .price-value { color: #F2529A !important; }
+html.dark .vc-page .btn-pink,
+html.dark .vc-page .btn-pink * { color: #ffffff !important; }
+html.dark .vc-page .btn-primary,
+html.dark .vc-page .btn-outline { background: #1b2740 !important; color: #E8EDF5 !important; border-color: #2b3856 !important; }
+
+html.dark .vc-page input,
+html.dark .vc-page textarea {
+  background: #1b2740 !important;
+  border-color: #2b3856 !important;
+  color: #E8EDF5 !important;
+}
+html.dark .vc-page input::placeholder,
+html.dark .vc-page textarea::placeholder { color: #8892A6 !important; }
+
+/* Cabeçalho permanece branco no modo escuro (igual ao modo claro) */
+html.dark .vc-page .header,
+html.dark .vc-page .navbar {
+  background: #ffffff !important;
+  border-color: #E6E9F0 !important;
+}
+html.dark .vc-page .header .nav-link,
+html.dark .vc-page .navbar .nav-links a,
+html.dark .vc-page .header .logo-text,
+html.dark .vc-page .navbar .logo-text,
+html.dark .vc-page .header span,
+html.dark .vc-page .navbar span { color: #3A4256 !important; }
+html.dark .vc-page .header .nav-link.is-active,
+html.dark .vc-page .navbar .nav-links a.active { color: #29B6E8 !important; }
+html.dark .vc-page .header .theme-toggle svg path,
+html.dark .vc-page .navbar .theme-toggle svg path { stroke: #1F2A44 !important; }
+html.dark .vc-page .header .theme-toggle,
+html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
+
+.vc-page .theme-toggle { cursor: pointer; }
+
+
+/* ================= VitalCare — ajustes mobile ================= */
+html,
+body {
+  overflow-x: hidden;
+}
+
+@media (max-width: 900px) {
+  .vc-page .step-row,
+  .vc-page .facts-list,
+  .vc-page .prices,
+  .vc-page .comp-grid,
+  .vc-page .team-grid,
+  .vc-page .refs-grid,
+  .vc-page .ref-cards {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+  .vc-page .arrow,
+  .vc-page .arrow-spacer,
+  .vc-page .arrow-up,
+  .vc-page .arrow-curve {
+    display: none !important;
+  }
+  .vc-page .container,
+  .vc-page .block,
+  .vc-page .design,
+  .vc-page .video-section,
+  .vc-page .cta-section,
+  .vc-page .final {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .vc-page .video-frame,
+  .vc-page iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .vc-page table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .vc-page .nav,
+  .vc-page .nav-links {
+    row-gap: 8px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .vc-std .hero-title,
+  .vc-std h1 {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+  }
+  .vc-std .section-title,
+  .vc-std .why-title,
+  .vc-std .prod-title,
+  .vc-std .final-title {
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+  }
+  .vc-page .hero-content {
+    padding-top: 34px !important;
+    padding-bottom: 30px !important;
+  }
+  .vc-page .hero-media {
+    height: 200px !important;
+  }
+  .vc-page .hero-actions {
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+  .vc-page .btn,
+  .vc-page .btn-purple,
+  .vc-page .btn-play {
+    width: 100%;
+    text-align: center;
+  }
+  .vc-page .logo-img {
+    height: 36px !important;
+  }
+  .vc-page .nav-link,
+  .vc-page .nav-links a {
+    font-size: 13px !important;
+  }
+  .vc-page .section,
+  .vc-page .section-publico,
+  .vc-page .section-why {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+  .vc-page .page-tag,
+  .vc-page .ins-page-tag {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .vc-page .membro-links {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  .vc-page .pill {
+    max-width: 100%;
+    word-break: break-word;
+    font-size: 11px !important;
+  }
+  .vc-page .contato {
+    padding: 22px 16px 26px !important;
+  }
+}
+
+
+/* ================= Menu hambúrguer (mobile) ================= */
+.vc-burger {
+  display: none;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.vc-burger span {
+  position: absolute;
+  left: 9px;
+  width: 24px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: #1F2A44;
+  transition: transform .25s ease, opacity .2s ease;
+}
+.vc-burger span:nth-child(1) { top: 13px; }
+.vc-burger span:nth-child(2) { top: 20px; }
+.vc-burger span:nth-child(3) { top: 27px; }
+@media (max-width: 900px) {
+  .vc-page .header,
+  .vc-page .navbar {
+    position: relative;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+  .vc-page .header .vc-burger,
+  .vc-page .navbar .vc-burger {
+    display: block;
+    order: 9;
+  }
+  .vc-page .header .theme-toggle,
+  .vc-page .navbar .theme-toggle {
+    order: 8;
+  }
+  .vc-page .header .vc-mobile-nav,
+  .vc-page .navbar .vc-mobile-nav {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    gap: 0 !important;
+    padding: 8px 0 12px !important;
+    background: var(--branco, #fff);
+    border-top: 1px solid rgba(31, 42, 68, .1);
+    box-shadow: 0 14px 30px rgba(31, 42, 68, .14);
+  }
+  .vc-page .header.vc-nav-open .vc-mobile-nav,
+  .vc-page .navbar.vc-nav-open .vc-mobile-nav {
+    display: flex !important;
+  }
+  .vc-page .vc-mobile-nav a {
+    display: block;
+    padding: 12px 22px !important;
+    font-size: 15px !important;
+    line-height: 1.3 !important;
+    text-align: left;
+    border-bottom: 1px solid rgba(31, 42, 68, .06);
+  }
+  .vc-page .header.vc-nav-open .vc-burger span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .vc-page .header.vc-nav-open .vc-burger span:nth-child(2) {
+    opacity: 0;
+  }
+  .vc-page .header.vc-nav-open .vc-burger span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(2) {
+    opacity: 0;
+  }
+  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+.dark .vc-burger span,
+html.dark .vc-burger span {
+  background: #EAF0FF;
+}
+
+</style>
+</head>
+<body>
+<div class="vc-page vc-std">
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="container">
+        <div class="logo">
+          <img class="logo-img" src="images/vitalcare-logo.png" alt="VitalCare" />
+        </div>
+
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="instrucoes.html">Instruções</a></li>
+            <li><a href="produto.html">Produto</a></li>
+            <li><a href="equipe.html">Equipe</a></li>
+            <li><a href="referencias.html">Referências</a></li>
+            <li><a href="jogo.html" class="active">Jogo</a></li>
+          </ul>
+        </nav>
+
+        <button class="theme-toggle" aria-label="Alternar tema">&#9789;</button>
+      </div>
+    </header>
+
+
+    <!-- HERO + CARDS -->
+    <section class="hero">
+      <div class="container">
+        <h1>Além da Memória</h1>
+        <p class="subtitle">Uma jornada de investigação, cuidado e segurança.</p>
+
+        <div class="cards">
+          <article class="card card-story">
+            <h2><span class="spark">&#10022;</span> A História</h2>
+            <p>
+              Você assume o papel de um cuidador responsável por acompanhar um idoso. Ao chegar à
+              residência, percebe que ele saiu da área considerada segura.
+            </p>
+            <p>
+              Com a ajuda do aparelho VitalCare, será necessário interpretar alertas, localizar
+              pistas e tomar decisões para encontrá-lo com segurança.
+            </p>
+          </article>
+
+          <article class="card card-facts">
+            <h2>Curiosidades</h2>
+            <ul class="facts-list">
+              <li>
+                <span class="bullet">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </span>
+                Jogo de aventura e investigação em 2D
+              </li>
+              <li>
+                <span class="bullet">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="8" rx="2"></rect><line x1="7" y1="8" x2="7.01" y2="8"></line><line x1="17" y1="8" x2="17.01" y2="8"></line><path d="M6 12v4"></path><path d="M18 12v4"></path><path d="M9 16h6"></path></svg>
+                </span>
+                Sistema de pistas e decisões
+              </li>
+              <li>
+                <span class="bullet">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                </span>
+                Diferentes caminhos possíveis
+              </li>
+              <li>
+                <span class="bullet">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                </span>
+                Monitoramento integrado à jogabilidade
+              </li>
+              <li>
+                <span class="bullet">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </span>
+                Sistema de recompensas motivador
+              </li>
+              <li>
+                <span class="bullet">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="2"></circle><circle cx="17" cy="7" r="2"></circle><circle cx="12" cy="18" r="3"></circle><path d="M18 13c-1.5 0-2.5 1-3 2"></path><path d="M6 13c1.5 0 2.5 1 3 2"></path></svg>
+                </span>
+                Gráficos coloridos e amigáveis
+              </li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- VÍDEO -->
+    <section class="video-section">
+      <div class="container">
+        <div class="video-card">
+          <h3>Vídeo Demonstrativo</h3>
+          <div class="video-frame">
+            <span class="play-button"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <h2>Pronto para começar a busca?</h2>
+          <p>
+            Acompanhe os alertas, investigue as pistas e tome decisões para localizar o idoso com
+            segurança. Cada informação pode aproximar você do destino final.
+          </p>
+          <a href="#" class="btn-play">Jogar agora</a>
+          <p class="cta-note">Desenvolvido com GDevelop • Compatível com navegadores modernos</p>
+        </div>
+
+        <div class="info-cards">
+          <article class="info-card light">
+            <h4>Objetivos Educacionais</h4>
+            <ul>
+              <li>Incentivar a tomada de decisões responsáveis;</li>
+              <li>Demonstrar a importância do monitoramento;</li>
+              <li>Relacionar tecnologia, segurança e cuidado;</li>
+              <li>Mostrar como diferentes informações podem ser cruzadas.</li>
+            </ul>
+          </article>
+
+          <article class="info-card blue">
+            <h4>Faixa Etária Recomendada</h4>
+            <ul>
+              <li>Adolescentes e adultos</li>
+              <li>Interface acessível e intuitiva</li>
+              <li>Interface intuitiva e acessível</li>
+              <li>Conteúdo voltado à conscientização sobre cuidado e segurança</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <span>© 2026 VitalCare • Todos os direitos reservados</span>
+        <span>Feito com <span class="heart">&#10084;</span> para você</span>
+      </div>
+    </footer>
+  
+</div>
+<script>
+// Modo escuro persistente (clique na lua)
+(function () {
+  var root = document.documentElement;
+  try { if (localStorage.getItem("vc-theme") === "dark") root.classList.add("dark"); } catch (e) {}
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest(".theme-toggle");
+    if (!t) return;
+    ev.preventDefault();
+    var dark = !root.classList.contains("dark");
+    root.classList.toggle("dark", dark);
+    try { localStorage.setItem("vc-theme", dark ? "dark" : "light"); } catch (e) {}
+  });
+})();
+
+</script>
+<script src="menu.js"></script>
+</body>
+</html>

@@ -637,6 +637,219 @@ html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
 
 .vc-page .theme-toggle { cursor: pointer; }
 
+
+/* ================= VitalCare — ajustes mobile ================= */
+html,
+body {
+  overflow-x: hidden;
+}
+
+@media (max-width: 900px) {
+  .vc-page .step-row,
+  .vc-page .facts-list,
+  .vc-page .prices,
+  .vc-page .comp-grid,
+  .vc-page .team-grid,
+  .vc-page .refs-grid,
+  .vc-page .ref-cards {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+  .vc-page .arrow,
+  .vc-page .arrow-spacer,
+  .vc-page .arrow-up,
+  .vc-page .arrow-curve {
+    display: none !important;
+  }
+  .vc-page .container,
+  .vc-page .block,
+  .vc-page .design,
+  .vc-page .video-section,
+  .vc-page .cta-section,
+  .vc-page .final {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .vc-page .video-frame,
+  .vc-page iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .vc-page table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .vc-page .nav,
+  .vc-page .nav-links {
+    row-gap: 8px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .vc-std .hero-title,
+  .vc-std h1 {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+  }
+  .vc-std .section-title,
+  .vc-std .why-title,
+  .vc-std .prod-title,
+  .vc-std .final-title {
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+  }
+  .vc-page .hero-content {
+    padding-top: 34px !important;
+    padding-bottom: 30px !important;
+  }
+  .vc-page .hero-media {
+    height: 200px !important;
+  }
+  .vc-page .hero-actions {
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+  .vc-page .btn,
+  .vc-page .btn-purple,
+  .vc-page .btn-play {
+    width: 100%;
+    text-align: center;
+  }
+  .vc-page .logo-img {
+    height: 36px !important;
+  }
+  .vc-page .nav-link,
+  .vc-page .nav-links a {
+    font-size: 13px !important;
+  }
+  .vc-page .section,
+  .vc-page .section-publico,
+  .vc-page .section-why {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+  .vc-page .page-tag,
+  .vc-page .ins-page-tag {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .vc-page .membro-links {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  .vc-page .pill {
+    max-width: 100%;
+    word-break: break-word;
+    font-size: 11px !important;
+  }
+  .vc-page .contato {
+    padding: 22px 16px 26px !important;
+  }
+}
+
+
+/* ================= Menu hambúrguer (mobile) ================= */
+.vc-burger {
+  display: none;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.vc-burger span {
+  position: absolute;
+  left: 9px;
+  width: 24px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: #1F2A44;
+  transition: transform .25s ease, opacity .2s ease;
+}
+.vc-burger span:nth-child(1) { top: 13px; }
+.vc-burger span:nth-child(2) { top: 20px; }
+.vc-burger span:nth-child(3) { top: 27px; }
+@media (max-width: 900px) {
+  .vc-page .header,
+  .vc-page .navbar {
+    position: relative;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+  .vc-page .header .vc-burger,
+  .vc-page .navbar .vc-burger {
+    display: block;
+    order: 9;
+  }
+  .vc-page .header .theme-toggle,
+  .vc-page .navbar .theme-toggle {
+    order: 8;
+  }
+  .vc-page .header .vc-mobile-nav,
+  .vc-page .navbar .vc-mobile-nav {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    gap: 0 !important;
+    padding: 8px 0 12px !important;
+    background: var(--branco, #fff);
+    border-top: 1px solid rgba(31, 42, 68, .1);
+    box-shadow: 0 14px 30px rgba(31, 42, 68, .14);
+  }
+  .vc-page .header.vc-nav-open .vc-mobile-nav,
+  .vc-page .navbar.vc-nav-open .vc-mobile-nav {
+    display: flex !important;
+  }
+  .vc-page .vc-mobile-nav a {
+    display: block;
+    padding: 12px 22px !important;
+    font-size: 15px !important;
+    line-height: 1.3 !important;
+    text-align: left;
+    border-bottom: 1px solid rgba(31, 42, 68, .06);
+  }
+  .vc-page .header.vc-nav-open .vc-burger span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .vc-page .header.vc-nav-open .vc-burger span:nth-child(2) {
+    opacity: 0;
+  }
+  .vc-page .header.vc-nav-open .vc-burger span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(2) {
+    opacity: 0;
+  }
+  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+.dark .vc-burger span,
+html.dark .vc-burger span {
+  background: #EAF0FF;
+}
+
 </style>
 </head>
 <body>
@@ -849,5 +1062,6 @@ html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
 })();
 
 </script>
+<script src="menu.js"></script>
 </body>
 </html>
