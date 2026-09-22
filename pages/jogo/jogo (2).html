@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="/header.css" />
 <style>
 /* ===== VitalCare - Além da Memória =====
    HTML + CSS puro (sem frameworks) */
@@ -937,31 +938,51 @@ html.dark .vc-burger span {
   background: #EAF0FF;
 }
 
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px 34px;
+    background: var(--white);
+  }
+  .header .logo { display: flex; align-items: center; gap: 8px; }
+  .header .logo-img { height: 46px; width: auto; object-fit: contain; }
+  .header .nav { display: flex; align-items: center; gap: 30px; }
+  .header .nav-link { color: #3A4256; font-size: 13.5px; font-weight: 600; text-decoration: none; }
+  .header .nav-link:hover, .header .nav-link.is-active { color: #29B6E8; }
+  .header .theme-toggle { width: 34px; height: 34px; display: grid; place-items: center; border: 0; background: transparent; cursor: pointer; }
+  .header .theme-toggle svg { width: 19px; height: 19px; }
+  @media (max-width: 980px) { .header .nav { display: none; } }
 </style>
 </head>
 <body>
 <div class="vc-page vc-std">
 
     <!-- NAVBAR -->
-    <header class="navbar">
-      <div class="container">
-        <div class="logo">
-          <img class="logo-img" src="images/vitalcare-logo.png" alt="VitalCare" />
-        </div>
+    <header class="header">
+      <a class="logo" href="/index.html">
+        <img class="logo-img" src="/pages/imagens/logo.png" alt="VitalCare" />
+      </a>
 
-        <nav>
-          <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="instrucoes.html">Instruções</a></li>
-            <li><a href="produto.html">Produto</a></li>
-            <li><a href="equipe.html">Equipe</a></li>
-            <li><a href="referencias.html">Referências</a></li>
-            <li><a href="jogo.html" class="active">Jogo</a></li>
-          </ul>
-        </nav>
+      <nav class="nav">
+        <a class="nav-link" href="/index.html">Home</a>
+        <a class="nav-link" href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
+        <a class="nav-link" href="/pages/produtos/produto.html">Produto</a>
+        <a class="nav-link" href="/pages/equipe/equipe (1).html">Equipe</a>
+        <a class="nav-link" href="/pages/referencias/referencias (1).html">Referências</a>
+        <a class="nav-link is-active" href="/pages/jogo/jogo (2).html">Jogo</a>
+        <a class="nav-link nav-login" href="/login.html">Login</a>
+      </nav>
 
-        <button class="theme-toggle" aria-label="Alternar tema">&#9789;</button>
-      </div>
+      <button class="theme-toggle" type="button" aria-label="Alternar tema">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+        <button class="vc-burger" type="button" aria-label="Abrir menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
     </header>
 
 
@@ -1104,5 +1125,6 @@ html.dark .vc-burger span {
 
 </script>
 <script src="menu.js"></script>
+<script src="/header.js"></script>
 </body>
 </html>
