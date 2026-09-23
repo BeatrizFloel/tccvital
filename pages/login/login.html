@@ -128,15 +128,18 @@ function togglePassword(id) {
 }
 
 async function sendAuthRequest(path, payload) {
+  const isLocalPreview = window.location.protocol === "file:" ||
+    ((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && window.location.port !== "3000");
+  const apiBase = isLocalPreview ? "http://localhost:3000" : "";
   let response;
   try {
-    response = await fetch("/api/" + path, {
+    response = await fetch(apiBase + "/api/" + path, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
   } catch (error) {
-    throw new Error("A API não está disponível. Abra o site pelo endereço da Vercel, não pelo arquivo HTML local.");
+    throw new Error("A API local não está disponível. Execute npm.cmd run dev e tente novamente.");
   }
   const responseText = await response.text();
   let data = {};

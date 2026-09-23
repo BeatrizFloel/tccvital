@@ -5,5 +5,12 @@
     "email": "local-639257639841033486@vitalcare.local",
     "senha": "$2b$10$GvlfnXgyQLQNFXs3G9jaCuVNS/6xfKHQXAb17hY4mAv1qU14QNMdu",
     "data_cadastro": "2026-09-23"
+  },
+  {
+    "id_usuario": 1790174096053,
+    "nome": "Teste Go Live",
+    "email": "golive-639257708956176850@vitalcare.local",
+    "senha": "$2b$10$us0wolQX.Q8ypP3upMdQ0e7e7yzEGyhTRrSfuAI2yVN6u1e.OF9.y",
+    "data_cadastro": "2026-09-23"
   }
 ]
