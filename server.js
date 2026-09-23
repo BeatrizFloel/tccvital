@@ -13,6 +13,20 @@ const users = [];
 // Chave secreta para assinar os tokens (guarde isso em variáveis de ambiente, num arquivo .env)
 const SECRET_KEY = 'sua_chave_secreta_super_segura';
 
+app.get("/", (req, res) => {
+    const sql = "SELECT * FROM sua_tabela";
+
+    conexao.query(sql, (erro, resultado) => {
+        if (erro) {
+            return res.status(500).json({
+                erro: "Erro ao consultar a tabela",
+                detalhes: erro
+            });
+        }
+
+        res.json(resultado);
+    });
+});
 // ==========================================
 // Rota de Cadastro (POST)
 // ==========================================
