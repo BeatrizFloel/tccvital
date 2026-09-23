@@ -10,11 +10,9 @@ app.use(cors())
 
 const users = [];
 
-// Chave secreta para assinar os tokens (guarde isso em variáveis de ambiente, num arquivo .env)
-const SECRET_KEY = 'sua_chave_secreta_super_segura';
 
 app.get("/", (req, res) => {
-    const sql = "SELECT * FROM sua_tabela";
+    const sql = "SELECT * FROM vital_care";
 
     conexao.query(sql, (erro, resultado) => {
         if (erro) {
