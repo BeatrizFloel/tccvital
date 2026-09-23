@@ -32,11 +32,13 @@
   <button class="tab" type="button" onclick="showRegister()">Criar conta</button>
 </div>
 
+<p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
+
 <form id="loginForm" class="auth-form">
   <label for="login-email">E-mail</label>
   <div class="input-box">
     <span class="input-icon">✉</span>
-    <input id="login-email" type="email" placeholder="email@exemplo.com" required>
+    <input id="login-email" type="email" placeholder="email@exemplo.com" autocomplete="email" required>
   </div>
 
   <div class="password-label">
@@ -46,7 +48,7 @@
 
   <div class="input-box">
     <span class="input-icon">▣</span>
-    <input id="login-password" type="password" placeholder="Digite sua senha" required>
+    <input id="login-password" type="password" placeholder="Digite sua senha" autocomplete="current-password" required>
     <button class="show-password" type="button" onclick="togglePassword('login-password')">◉</button>
   </div>
 
@@ -63,26 +65,26 @@
   <label for="register-name">Nome completo</label>
   <div class="input-box">
     <span class="input-icon">●</span>
-    <input id="register-name" type="text" placeholder="Digite seu nome" required>
+    <input id="register-name" type="text" placeholder="Digite seu nome" autocomplete="name" required>
   </div>
 
   <label for="register-email">E-mail</label>
   <div class="input-box">
     <span class="input-icon">✉</span>
-    <input id="register-email" type="email" placeholder="email@exemplo.com" required>
+    <input id="register-email" type="email" placeholder="email@exemplo.com" autocomplete="email" required>
   </div>
 
   <label for="register-password">Senha</label>
   <div class="input-box">
     <span class="input-icon">▣</span>
-    <input id="register-password" type="password" placeholder="Crie uma senha" required>
+    <input id="register-password" type="password" placeholder="Crie uma senha" minlength="6" autocomplete="new-password" required>
     <button class="show-password" type="button" onclick="togglePassword('register-password')">◉</button>
   </div>
 
   <label for="register-confirm">Confirmar senha</label>
   <div class="input-box">
     <span class="input-icon">▣</span>
-    <input id="register-confirm" type="password" placeholder="Digite a senha novamente" required>
+    <input id="register-confirm" type="password" placeholder="Digite a senha novamente" minlength="6" autocomplete="new-password" required>
   </div>
 
   <button class="main-button" type="submit">Criar minha conta</button>
@@ -97,12 +99,19 @@
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const tabs = document.querySelectorAll(".tab");
+const authMessage = document.getElementById("authMessage");
+
+function showMessage(text, type) {
+  authMessage.textContent = text;
+  authMessage.className = "auth-message " + (type || "");
+}
 
 function showLogin() {
   loginForm.classList.remove("hidden");
   registerForm.classList.add("hidden");
   tabs[0].classList.add("active");
   tabs[1].classList.remove("active");
+  showMessage("");
 }
 
 function showRegister() {
@@ -110,12 +119,82 @@ function showRegister() {
   loginForm.classList.add("hidden");
   tabs[1].classList.add("active");
   tabs[0].classList.remove("active");
+  showMessage("");
 }
 
 function togglePassword(id) {
   const input = document.getElementById(id);
   input.type = input.type === "password" ? "text" : "password";
 }
+
+async function sendAuthRequest(path, payload) {
+  let response;
+  try {
+    response = await fetch("/api/" + path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    throw new Error("A API não está disponível. Abra o site pelo endereço da Vercel, não pelo arquivo HTML local.");
+  }
+  const responseText = await response.text();
+  let data = {};
+  try { data = JSON.parse(responseText); } catch {}
+  if (!response.ok) {
+    const detail = data.message || responseText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
+    throw new Error(detail || `Erro HTTP ${response.status} (${response.statusText}).`);
+  }
+  if (!data || typeof data !== "object") throw new Error("A API retornou uma resposta inválida.");
+  return data;
+}
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = loginForm.querySelector(".main-button");
+  button.disabled = true;
+  showMessage("Entrando...", "loading");
+  try {
+    const data = await sendAuthRequest("login", {
+      email: document.getElementById("login-email").value,
+      password: document.getElementById("login-password").value
+    });
+    localStorage.setItem("vitalcare-token", data.token);
+    showMessage("Login realizado com sucesso!", "success");
+  } catch (error) {
+    showMessage(error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+registerForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const password = document.getElementById("register-password").value;
+  const confirmation = document.getElementById("register-confirm").value;
+  if (password !== confirmation) {
+    showMessage("As senhas não coincidem.", "error");
+    return;
+  }
+
+  const button = registerForm.querySelector(".main-button");
+  button.disabled = true;
+  showMessage("Criando cadastro...", "loading");
+  try {
+    await sendAuthRequest("cadastro", {
+      name: document.getElementById("register-name").value,
+      email: document.getElementById("register-email").value,
+      password
+    });
+    showLogin();
+    document.getElementById("login-email").value = document.getElementById("register-email").value;
+    showMessage("Cadastro realizado! Agora faça login.", "success");
+  } catch (error) {
+    showMessage(error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+});
 </script>
 </body>
 </html>

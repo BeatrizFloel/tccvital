@@ -148,6 +148,16 @@ a { text-decoration: none; }
 /* FORM */
 .auth-form { width: 100%; }
 .auth-form.hidden { display: none; }
+.auth-message {
+  min-height: 20px;
+  margin: 14px 0 4px;
+  color: #627987;
+  font-size: 13px;
+  text-align: center;
+}
+.auth-message.error { color: #c74655; }
+.auth-message.success { color: #078f80; }
+.auth-message.loading { color: #627987; }
 
 .auth-form label {
   display: block;
@@ -235,6 +245,7 @@ a { text-decoration: none; }
   background: var(--verde-hover);
   transform: translateY(-1px);
 }
+.main-button:disabled { opacity: .65; cursor: wait; transform: none; }
 
 /* DIVISOR */
 .divider {
