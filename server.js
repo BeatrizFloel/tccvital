@@ -17,8 +17,6 @@ const localDataPath = path.join(path.dirname(fileURLToPath(import.meta.url)), ".
 app.use(cors());
 app.use(express.json());
 
-app.options(/.*/, cors());
-
 function hasDatabaseConfig() {
   return Boolean(
     (process.env.MYSQL_URL || process.env.DATABASE_URL) ||
