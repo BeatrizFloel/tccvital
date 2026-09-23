@@ -1,101 +1,46 @@
-import express from "express"
-import cors from "cors"
-import mysql2 from "mysql2"
+import express from "express";
+import cors from "cors";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-const app = express()
-
-app.use(express.json())
-
-app.use(cors())
-
+const app = express();
 const users = [];
+const secretKey = process.env.JWT_SECRET || "vitalcare-development-secret";
 
+app.use(cors());
+app.use(express.json());
 
-app.get("/", (req, res) => {
-    const sql = "SELECT * FROM vital_care";
+app.get("/", (_req, res) => res.json({ status: "ok", service: "VitalCare API" }));
+app.get(["/api/health", "/health"], (_req, res) => res.json({ status: "ok" }));
 
-    conexao.query(sql, (erro, resultado) => {
-        if (erro) {
-            return res.status(500).json({
-                erro: "Erro ao consultar a tabela",
-                detalhes: erro
-            });
-        }
+app.post(["/cadastro", "/api/cadastro"], async (req, res) => {
+  const email = String(req.body?.email || "").trim().toLowerCase();
+  const password = String(req.body?.password || "");
 
-        res.json(resultado);
-    });
-});
-// ==========================================
-// Rota de Cadastro (POST)
-// ==========================================
-app.post('/cadastro', async (req, res) => {
-  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ message: "E-mail e senha são obrigatórios." });
+  if (password.length < 6) return res.status(400).json({ message: "A senha deve ter pelo menos 6 caracteres." });
+  if (users.some((user) => user.email === email)) return res.status(409).json({ message: "Usuário já cadastrado." });
 
-  // 1. Verifica se os dados foram enviados
-  if (!email || !password) {
-    return res.status(400).json({ message: 'E-mail e senha são obrigatórios.' });
-  }
-
-  // 2. Verifica se o usuário já existe
-  const userExists = users.find(u => u.email === email);
-  if (userExists) {
-    return res.status(400).json({ message: 'Usuário já cadastrado.' });
-  }
-
-  try {
-    // 3. Criptografa a senha antes de salvar (nunca salve senhas em texto puro)
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
-    // 4. Salva o novo usuário
-    const newUser = { 
-      id: Date.now(), 
-      email, 
-      password: hashedPassword 
-    };
-    users.push(newUser);
-
-    res.status(201).json({ message: 'Usuário criado com sucesso!' });
-  } catch (error) {
-    res.status(500).json({ message: 'Erro interno ao criar usuário.' });
-  }
+  users.push({ id: Date.now(), email, passwordHash: await bcrypt.hash(password, 10) });
+  return res.status(201).json({ message: "Usuário criado com sucesso!" });
 });
 
-// ==========================================
-// Rota de Login (POST)
-// ==========================================
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+app.post(["/login", "/api/login"], async (req, res) => {
+  const email = String(req.body?.email || "").trim().toLowerCase();
+  const password = String(req.body?.password || "");
+  const user = users.find((item) => item.email === email);
 
-  // 1. Busca o usuário pelo e-mail
-  const user = users.find(u => u.email === email);
-  if (!user) {
-    return res.status(404).json({ message: 'Usuário não encontrado.' });
+  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+    return res.status(401).json({ message: "E-mail ou senha inválidos." });
   }
 
-  try {
-    // 2. Compara a senha enviada na requisição com a senha criptografada salva
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Senha incorreta.' });
-    }
-
-    // 3. Gera o token JWT para manter o usuário logado
-    const token = jwt.sign(
-      { userId: user.id, email: user.email }, 
-      SECRET_KEY, 
-      { expiresIn: '1h' } // O token expira em 1 hora
-    );
-
-    res.status(200).json({ 
-      message: 'Login bem-sucedido!', 
-      token 
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Erro interno ao fazer login.' });
-  }
+  const token = jwt.sign({ userId: user.id, email: user.email }, secretKey, { expiresIn: "1h" });
+  return res.json({ message: "Login bem-sucedido!", token });
 });
 
-app.listen(3000, ()=>{
-    console.log("Servidor ligado")
-})
+export default app;
+
+if (process.env.VERCEL !== "1") {
+  const port = Number(process.env.PORT || 3000);
+  app.listen(port, () => console.log(`Servidor ligado na porta ${port}`));
+}
