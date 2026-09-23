@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VitalCare — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<main class="auth-page">
+
+<section class="auth-image">
+  <div class="image-overlay"></div>
+  <div class="image-content">
+    <span class="image-badge">Cuidado inteligente para idosos</span>
+    <h1>“Cuidar é estar<br>presente, mesmo<br>quando você não pode<br>estar por perto.”</h1>
+  </div>
+</section>
+
+<section class="auth-panel">
+<div class="auth-content">
+
+<span class="safe-title">ÁREA SEGURA VITALCARE</span>
+<h2>Que bom ter<br>você de volta.</h2>
+<p class="intro">Acesse sua conta para acompanhar cuidados, alertas e momentos importantes.</p>
+
+<div class="auth-tabs">
+  <button class="tab active" type="button" onclick="showLogin()">Entrar</button>
+  <button class="tab" type="button" onclick="showRegister()">Criar conta</button>
+</div>
+
+<form id="loginForm" class="auth-form">
+  <label for="login-email">E-mail</label>
+  <div class="input-box">
+    <span class="input-icon">✉</span>
+    <input id="login-email" type="email" placeholder="email@exemplo.com" required>
+  </div>
+
+  <div class="password-label">
+    <label for="login-password">Senha</label>
+    <a href="#">Esqueci minha senha</a>
+  </div>
+
+  <div class="input-box">
+    <span class="input-icon">▣</span>
+    <input id="login-password" type="password" placeholder="Digite sua senha" required>
+    <button class="show-password" type="button" onclick="togglePassword('login-password')">◉</button>
+  </div>
+
+  <button class="main-button" type="submit">Entrar na minha conta</button>
+
+  <div class="divider"><span></span><p>ou continue com</p><span></span></div>
+
+  <button class="google-button" type="button"><strong>G</strong> Continuar com Google</button>
+
+  <p class="bottom-text">Ainda não tem uma conta? <a href="#" onclick="showRegister();return false;">Cadastre-se</a></p>
+</form>
+
+<form id="registerForm" class="auth-form hidden">
+  <label for="register-name">Nome completo</label>
+  <div class="input-box">
+    <span class="input-icon">●</span>
+    <input id="register-name" type="text" placeholder="Digite seu nome" required>
+  </div>
+
+  <label for="register-email">E-mail</label>
+  <div class="input-box">
+    <span class="input-icon">✉</span>
+    <input id="register-email" type="email" placeholder="email@exemplo.com" required>
+  </div>
+
+  <label for="register-password">Senha</label>
+  <div class="input-box">
+    <span class="input-icon">▣</span>
+    <input id="register-password" type="password" placeholder="Crie uma senha" required>
+    <button class="show-password" type="button" onclick="togglePassword('register-password')">◉</button>
+  </div>
+
+  <label for="register-confirm">Confirmar senha</label>
+  <div class="input-box">
+    <span class="input-icon">▣</span>
+    <input id="register-confirm" type="password" placeholder="Digite a senha novamente" required>
+  </div>
+
+  <button class="main-button" type="submit">Criar minha conta</button>
+  <p class="bottom-text">Já possui uma conta? <a href="#" onclick="showLogin();return false;">Entrar</a></p>
+</form>
+
+</div>
+</section>
+</main>
+
+<script>
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const tabs = document.querySelectorAll(".tab");
+
+function showLogin() {
+  loginForm.classList.remove("hidden");
+  registerForm.classList.add("hidden");
+  tabs[0].classList.add("active");
+  tabs[1].classList.remove("active");
+}
+
+function showRegister() {
+  registerForm.classList.remove("hidden");
+  loginForm.classList.add("hidden");
+  tabs[1].classList.add("active");
+  tabs[0].classList.remove("active");
+}
+
+function togglePassword(id) {
+  const input = document.getElementById(id);
+  input.type = input.type === "password" ? "text" : "password";
+}
+</script>
+</body>
+</html>

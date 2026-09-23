@@ -63,7 +63,7 @@ a { text-decoration: none; color: inherit; }
 }
 .prod-subtitle {
   margin: 6px auto 0; max-width: 560px;
-  font-size: 13px; font-weight: 600; color: var(--texto-suave);
+  font-size: 16px; font-weight: 600; color: var(--texto-suave);
 }
 .page-tag {
   position: absolute; left: 24px; top: 6px;
@@ -106,11 +106,11 @@ a { text-decoration: none; color: inherit; }
 
 .spec-info { flex: 1; text-align: left; }
 .spec-name {
-  font-size: 13px; font-weight: 800; color: #101828;
+  font-size: 16px; font-weight: 800; color: #101828;
   line-height: 1.35; margin-bottom: 12px;
 }
 .spec-text {
-  font-size: 11.5px; font-weight: 600; color: #6B7280; line-height: 1.5;
+  font-size: 14px; font-weight: 600; color: #6B7280; line-height: 1.5;
 }
 .spec-thumb {
   flex: 0 0 96px; width: 96px; height: 96px;
@@ -137,13 +137,13 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 10px;
 }
 .final-text {
-  font-size: 12.5px; font-weight: 600; color: #2A3450;
+  font-size: 15px; font-weight: 600; color: #2A3450;
   line-height: 1.55; max-width: 34em;
 }
 .check-list { list-style: none; margin-top: 26px; }
 .check-list li {
   display: flex; align-items: center; gap: 22px;
-  font-size: 12.5px; font-weight: 600; color: #2A3450;
+  font-size: 16px; font-weight: 600; color: #2A3450;
   margin-bottom: 18px;
 }
 .check-list svg { flex: 0 0 14px; width: 14px; height: 14px; }
@@ -156,20 +156,20 @@ a { text-decoration: none; color: inherit; }
 }
 .price-name {
   font-family: "Baloo 2", "Nunito", sans-serif;
-  font-size: 23px; font-weight: 800; color: var(--azul-escuro);
+  font-size: 30px; font-weight: 800; color: var(--azul-escuro);
 }
 .price-label { font-size: 11.5px; font-weight: 600; color: #6B7280; margin-top: 2px; }
 .price-value {
   margin-top: 26px;
   font-family: "Baloo 2", "Nunito", sans-serif;
-  font-size: 34px; font-weight: 800; color: var(--rosa);
+  font-size: 40px; font-weight: 800; color: var(--rosa);
 }
 .price-note { font-size: 11.5px; font-weight: 600; color: #6B7280; margin-top: 2px; }
 .btn-pink {
   display: block; margin-top: 26px;
   background: var(--rosa); color: var(--branco);
-  font-size: 12px; font-weight: 800;
-  padding: 12px 18px; border-radius: 8px;
+  font-size: 16px; font-weight: 800;
+  padding: 16px 18px; border-radius: 8px;
   transition: background .2s ease;
 }
 .btn-pink:hover { background: #F45C98; }
@@ -180,7 +180,7 @@ a { text-decoration: none; color: inherit; }
   margin: 72px auto 56px;
   background: var(--azul-card);
   border-radius: 16px;
-  padding: 38px 44px 46px;
+  padding: 50px 44px 46px;
   color: var(--branco);
 }
 .design-title {
@@ -188,11 +188,11 @@ a { text-decoration: none; color: inherit; }
   font-size: 25px; font-weight: 800; margin-bottom: 26px;
 }
 .design-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
-.design-sub { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+.design-sub { font-size: 17px; font-weight: 800; margin-bottom: 14px; }
 .design-list { list-style: none; }
 .design-list li {
   position: relative; padding-left: 16px; margin-bottom: 12px;
-  font-size: 12.5px; font-weight: 600; color: rgba(255, 255, 255, .92);
+  font-size: 16px; font-weight: 600; color: rgba(255, 255, 255, .92);
 }
 .design-list li::before {
   content: "•"; position: absolute; left: 0; top: -1px;

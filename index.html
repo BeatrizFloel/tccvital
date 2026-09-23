@@ -58,7 +58,20 @@ a { text-decoration: none; color: inherit; }
   color: var(--azul-escuro);
   letter-spacing: .2px;
 }
+
 .logo-text-alt { color: #2E7D9A; }
+.vc-page > .header .nav,
+.auth-page > .header .nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    margin: 0;
+}
 
 .nav { display: flex; align-items: center; gap: 30px; }
 .nav-link {
@@ -869,7 +882,7 @@ html.dark .vc-burger span {
       <a class="nav-link" href="/pages/equipe/equipe (1).html">Equipe</a>
       <a class="nav-link" href="/pages/referencias/referencias (1).html">Referências</a>
       <a class="nav-link" href="/pages/jogo/jogo (2).html">Jogo</a>
-      <a class="nav-link nav-login" href="/login.html">Login</a>
+      <a class="nav-link nav-login" href="/pages/login/login.html">Login</a>
     </nav>
 
     <button class="theme-toggle" type="button" aria-label="Alternar tema">
@@ -889,8 +902,8 @@ html.dark .vc-burger span {
         idosos, promovendo mais segurança, tranquilidade e autonomia para toda a família.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#instrucoes">Como funciona</a>
-        <a class="btn btn-outline" href="#produto">Ver produto</a>
+        <a class="btn btn-primary" href="./pages/intrucoes/instrucoes (1).html">Como funciona</a>
+        <a class="btn btn-outline" href="./pages/produtos/produto.html">Ver produto</a>
       </div>
     </div>
 
