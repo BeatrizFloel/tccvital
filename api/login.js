@@ -1,4 +1,4 @@
-import app from "../server.js";
+import app from "../backend/server.js";
 
 export default function login(req, res) {
   if (req.method !== "POST") {
