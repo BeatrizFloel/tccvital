@@ -36,9 +36,9 @@
     }
 
     .layout {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 28px 20px 40px;
+      width: 100%;
+      margin: 0;
+      padding: 32px clamp(20px, 4vw, 56px) 48px;
     }
 
     .topbar {
@@ -154,7 +154,7 @@
     .hero p {
       margin: 0;
       color: var(--texto-suave);
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 600;
     }
 
@@ -556,28 +556,34 @@
       .medicine-visual { width: 120px; height: 120px; }
     }
   </style>
+<link rel="stylesheet" href="/global.css" />
+<link rel="stylesheet" href="/header.css" />
 </head>
 <body>
+<div class="vc-page">
+  <header class="header">
+    <a class="logo" href="/index.html">
+      <img class="logo-img" src="/pages/imagens/logo.png" alt="VitalCare" />
+    </a>
+
+    <nav class="nav">
+      <a class="nav-link" href="/index.html">Home</a>
+      <a class="nav-link" href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
+      <a class="nav-link" href="/pages/produtos/produto.html">Produto</a>
+      <a class="nav-link" href="/pages/equipe/equipe (1).html">Equipe</a>
+      <a class="nav-link" href="/pages/referencias/referencias (1).html">Referências</a>
+      <a class="nav-link" href="/pages/jogo/jogo (2).html">Jogo</a>
+    </nav>
+
+    <div class="vc-user">
+      <span id="userPill" class="vc-user-pill">Carregando...</span>
+      <button id="logoutBtn" class="vc-logout" type="button">Sair</button>
+    </div>
+    <button class="vc-burger" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
   <div class="layout">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">+</div>
-        <span>VitalCare</span>
-      </div>
-
-      <nav class="topbar-nav" aria-label="Menu principal">
-        <a href="/index.html">Home</a>
-        <a href="/pages/produtos/produto.html">Produto</a>
-        <a href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
-        <a href="/pages/referencias/referencias (1).html">Referências</a>
-        <a href="/pages/equipe/equipe (1).html">Equipe</a>
-      </nav>
-
-      <div class="user-area">
-        <div id="userPill" class="user-pill">Carregando...</div>
-        <button id="logoutBtn" class="logout-btn" type="button">Sair</button>
-      </div>
-    </header>
 
     <section class="hero">
       <div>
@@ -686,7 +692,8 @@
     </div>
   </div>
 
-  <script>
+  </div>
+<script>
     const DEFAULT_DASHBOARD = {
       medications: [
         { name: "Losartana", time: "08:00", dose: "50 mg", status: "ok", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80" },
@@ -929,5 +936,6 @@
 
     renderDashboard();
   </script>
+<script src="/header.js"></script>
 </body>
 </html>

@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
-<link rel="stylesheet" href="/header.css" />
 <style>
 /* ===== VitalCare - Além da Memória =====
    HTML + CSS puro (sem frameworks) */
@@ -485,7 +484,7 @@
 .vc-std label,
 .vc-std input,
 .vc-std textarea,
-.vc-std td { font-size: 14px !important; line-height: 1.6 !important; }
+.vc-std td { font-size: 16px !important; line-height: 1.6 !important; }
 .vc-std .nav-link,
 .vc-std .nav-links a { font-size: 15px !important; }
 .vc-std .btn,
@@ -725,6 +724,15 @@ html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
 
 .vc-page .theme-toggle { cursor: pointer; }
 
+/* ================= TEXT SIZE STANDARDIZATION ================= */
+/* Corpo principal: 16px para parágrafos e textos de conteúdo */
+.hero-text, .video-text, .step-text, .card-text, .list-text, .obj-text, .why-text, .hero .subtitle,
+.fundamentacao p, .ref-desc, .res-list li, .rem-list li, .facts-list li, .info-card ul,
+.info-card ul li, .page-subtitle, .card p, .obj-text { font-size: 16px !important; line-height: 1.6 !important; }
+
+/* Micro textos (badges, tags, notas) */
+.badge, .page-tag, .ins-page-tag, .pill, .cta-note, small { font-size: 13px !important; }
+
 
 /* ================= VitalCare — ajustes mobile ================= */
 html,
@@ -955,35 +963,37 @@ html.dark .vc-burger span {
   .header .theme-toggle svg { width: 19px; height: 19px; }
   @media (max-width: 980px) { .header .nav { display: none; } }
 </style>
+<link rel="stylesheet" href="/global.css" />
+<link rel="stylesheet" href="/header.css" />
 </head>
 <body>
 <div class="vc-page vc-std">
 
     <!-- NAVBAR -->
     <header class="header">
-      <a class="logo" href="/index.html">
-        <img class="logo-img" src="/pages/imagens/logo.png" alt="VitalCare" />
-      </a>
+    <a class="logo" href="/index.html">
+      <img class="logo-img" src="/pages/imagens/logo.png" alt="VitalCare" />
+    </a>
 
-      <nav class="nav">
-        <a class="nav-link" href="/index.html">Home</a>
-        <a class="nav-link" href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
-        <a class="nav-link" href="/pages/produtos/produto.html">Produto</a>
-        <a class="nav-link" href="/pages/equipe/equipe (1).html">Equipe</a>
-        <a class="nav-link" href="/pages/referencias/referencias (1).html">Referências</a>
-        <a class="nav-link is-active" href="/pages/jogo/jogo (2).html">Jogo</a>
-        <a class="nav-link nav-login" href="/pages/login/login.html">Login</a>
-      </nav>
+    <nav class="nav">
+      <a class="nav-link" href="/index.html">Home</a>
+      <a class="nav-link" href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
+      <a class="nav-link" href="/pages/produtos/produto.html">Produto</a>
+      <a class="nav-link" href="/pages/equipe/equipe (1).html">Equipe</a>
+      <a class="nav-link" href="/pages/referencias/referencias (1).html">Referências</a>
+      <a class="nav-link is-active" href="/pages/jogo/jogo (2).html">Jogo</a>
+      <a class="nav-link" href="/pages/login/login.html">Login</a>
+    </nav>
 
-      <button class="theme-toggle" type="button" aria-label="Alternar tema">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-        <button class="vc-burger" type="button" aria-label="Abrir menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-    </header>
+    <button class="theme-toggle" type="button" aria-label="Alternar tema">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="vc-burger" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
 
 
     <!-- HERO + CARDS -->

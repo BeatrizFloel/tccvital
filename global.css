@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap");
+
 /* ================= VitalCare — logo, tipografia padrão e modo escuro ================= */
 
 .vc-page .logo-img,
@@ -7,66 +9,41 @@
   object-fit: contain;
 }
 
-/* --- Tipografia padronizada (mesmo tamanho da aba Jogo) --- */
-.vc-std,
-.vc-std p,
-.vc-std li,
-.vc-std span,
-.vc-std a,
-.vc-std button,
-.vc-std input,
-.vc-std textarea,
-.vc-std label {
+/* ================= TIPOGRAFIA PADRÃO DO SITE =================
+   Mesma escala em todas as páginas. O ":not(#vc)" aumenta a especificidade
+   para vencer as regras antigas que ainda existem dentro de cada página. */
+html:not(#vc), html:not(#vc) body { font-size: 16px !important; }
+
+html:not(#vc) body :is(p, li, td, label, blockquote) {
   font-family: "Poppins", "Nunito", Arial, sans-serif !important;
-}
-.vc-std h1, .vc-std h2, .vc-std h3, .vc-std h4 {
-  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
 }
 
-/* Fontes de destaque preservadas (identidade original) */
-.vc-std .hero-title,
-.vc-std .logo-text,
-.vc-std .ins-hero-title,
-.vc-std .why-title,
-.vc-std .section-title {
+html:not(#vc) body :is(h1, h2, h3, h4) {
+  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: normal !important;
+}
+html:not(#vc) body h1 {
   font-family: "Playfair Display", Georgia, serif !important;
+  font-weight: 900 !important;
+  font-size: 40px !important;
+  line-height: 1.15 !important;
 }
-.vc-std .section-title,
-.vc-std .why-title {
-  font-family: "Baloo 2", "Nunito", sans-serif !important;
-}
+html:not(#vc) body h2 { font-size: 28px !important; line-height: 1.25 !important; }
+html:not(#vc) body h3 { font-size: 20px !important; line-height: 1.35 !important; }
+html:not(#vc) body h4 { font-size: 17px !important; line-height: 1.4 !important; }
 
-.vc-std h1 { font-size: 42px !important; line-height: 1.15 !important; }
-.vc-std h2 { font-size: 20px !important; line-height: 1.3 !important; }
-.vc-std h3 { font-size: 16px !important; line-height: 1.35 !important; }
-.vc-std h4 { font-size: 15px !important; }
-.vc-std p,
-.vc-std li,
-.vc-std label,
-.vc-std input,
-.vc-std textarea,
-.vc-std td { font-size: 14px !important; line-height: 1.6 !important; }
-.vc-std .nav-link,
-.vc-std .nav-links a { font-size: 15px !important; }
-.vc-std .btn,
-.vc-std .pill,
-.vc-std .btn-enviar,
-.vc-std .badge { font-size: 13px !important; }
-.vc-std .page-tag,
-.vc-std .ins-page-tag { font-size: 12px !important; }
+html:not(#vc) body :is(small, .small) { font-size: 13px !important; }
 
-/* Exceções de tamanho (blocos de destaque) */
-.vc-std .hero-title { font-size: 54px !important; line-height: 1.14 !important; }
-.vc-std .price-name { font-size: 22px !important; }
-.vc-std .price-value { font-size: 34px !important; line-height: 1.2 !important; }
-.vc-std .price-label,
-.vc-std .price-note { font-size: 13px !important; }
-.vc-std .final-title { font-size: 26px !important; }
+/* Exceção: o preço continua em destaque */
+html:not(#vc) body .price-value { font-size: 34px !important; font-weight: 800 !important; line-height: 1.2 !important; }
 
 @media (max-width: 700px) {
-  .vc-std h1 { font-size: 30px !important; }
-  .vc-std .hero-title { font-size: 32px !important; }
-  .vc-std .price-value { font-size: 28px !important; }
+  html:not(#vc) body h1 { font-size: 30px !important; }
+  html:not(#vc) body h2 { font-size: 24px !important; }
+  html:not(#vc) body h3 { font-size: 18px !important; }
 }
 
 /* ================= RESPONSIVO GLOBAL ================= */
@@ -284,3 +261,161 @@ html.dark .vc-page .header .theme-toggle,
 html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
 
 .vc-page .theme-toggle { cursor: pointer; }
+
+/* ================= VISUAL MODERNO — TELA INTEIRA =================
+   Camada final aplicada a todas as páginas. Não altera textos nem imagens,
+   só layout, espaçamentos, sombras e animações. */
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Página ocupa a tela inteira, rodapé sempre no fim */
+.vc-page {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 100vh;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+.vc-page > * { width: 100%; }
+.vc-page > .footer { margin-top: auto; }
+/* A última seção antes do rodapé estica até o fim da tela (sem faixa branca) */
+.vc-page > :has(+ .footer) { flex-grow: 1; }
+
+/* Rótulos de rascunho do Figma (ex.: "Equipe - 3") */
+.vc-page .page-tag,
+.vc-page .ins-page-tag { display: none !important; }
+
+/* ---------- Seções: mais respiro ---------- */
+.vc-page .hero:has(.hero-media) { min-height: calc(100vh - 74px); }
+.vc-page .card-story p { max-width: 440px !important; }
+.vc-page .hero-content { padding: clamp(48px, 7vw, 110px) clamp(24px, 6vw, 96px) !important; justify-content: center; }
+.vc-page .hero-media { min-height: 100%; }
+.vc-page .hero-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.vc-page :is(.ins-hero, .prod-hero, .equipe, .refs) {
+  padding-top: clamp(56px, 7vw, 96px) !important;
+  padding-bottom: clamp(56px, 7vw, 96px) !important;
+}
+.vc-page :is(.section, .section-why, .steps, .resources, .recursos, .video-section, .cta-section) {
+  padding-top: clamp(56px, 7vw, 96px) !important;
+  padding-bottom: clamp(56px, 7vw, 96px) !important;
+}
+.vc-page .cta-section { padding-bottom: 0 !important; }
+.vc-page .section-publico { padding-top: 0 !important; }
+.vc-page .resources { padding-top: 0 !important; }
+.vc-page .hero + .video-section { padding-top: 0 !important; }
+
+/* Conteúdo centralizado com largura confortável, fundo de ponta a ponta */
+.vc-page :is(.cards, .two-cols, .equipe-grid, .steps-inner, .refs-inner, .recursos-wrap, .info-cards) {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.vc-page :is(.cards, .two-cols) { max-width: 1240px; }
+.vc-page .equipe-grid { max-width: 1120px; }
+.vc-page .jogo-wrap,
+.vc-page .container { max-width: 1180px; }
+.vc-page .refs-inner { max-width: 960px; }
+
+/* Subtítulos dos topos de página */
+.vc-page :is(.section-subtitle, .ins-hero-text, .prod-subtitle, .equipe-sub, .refs-sub, .hero .subtitle) {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: .85;
+}
+.vc-page :is(h1, h2) + :is(.section-subtitle, .ins-hero-text, .prod-subtitle, .equipe-sub, .refs-sub, .subtitle) { margin-top: 12px !important; }
+.vc-page :is(.ins-hero-title, .prod-title, .equipe-title, .refs-title, .hero h1) { letter-spacing: -.5px !important; }
+
+/* ---------- Cartões ---------- */
+.vc-page :is(.card, .obj-item, .step-card, .res-card, .rem-card, .video-card, .block,
+             .spec-card, .price-card, .final, .design, .membro, .contato,
+             .fundamentacao, .ref-card, .recurso, .cta-card, .info-card) {
+  border-radius: 22px !important;
+}
+.vc-page :is(.card, .obj-item, .step-card, .spec-card, .membro, .ref-card, .recurso, .info-card, .price-card) {
+  box-shadow: 0 10px 30px rgba(31, 42, 68, .07);
+  transition: transform .28s cubic-bezier(.2, .7, .2, 1), box-shadow .28s ease;
+}
+.vc-page :is(.card, .obj-item, .step-card, .spec-card, .membro, .ref-card, .recurso, .info-card, .price-card):hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 48px rgba(31, 42, 68, .14);
+}
+.vc-page :is(.block, .final, .design, .contato, .fundamentacao, .cta-card, .res-card, .rem-card, .video-card) {
+  box-shadow: 0 16px 44px rgba(31, 42, 68, .08);
+}
+.vc-page .avatar img,
+.vc-page img.avatar { transition: transform .3s ease; }
+.vc-page .membro:hover .avatar img,
+.vc-page .membro:hover img.avatar { transform: scale(1.06); }
+
+/* ---------- Botões ---------- */
+.vc-page :is(.btn, .btn-pink, .btn-enviar, .btn-play, .btn-purple) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px !important;
+  padding: 13px 28px !important;
+  font-weight: 600 !important;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(31, 42, 68, .12);
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.vc-page :is(.btn, .btn-pink, .btn-enviar, .btn-play, .btn-purple):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(31, 42, 68, .18);
+  filter: brightness(1.04);
+}
+.vc-page .btn-enviar { width: 100%; }
+
+/* Campos de formulário */
+.vc-page :is(input, textarea) {
+  border-radius: 14px !important;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.vc-page :is(input, textarea):focus {
+  outline: none;
+  border-color: #29b6e8 !important;
+  box-shadow: 0 0 0 4px rgba(41, 182, 232, .15) !important;
+}
+
+/* ---------- Rodapé ---------- */
+.vc-page > .footer {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 28px clamp(20px, 5vw, 64px) !important;
+  border-top: 1px solid #ececec;
+}
+.vc-page > .footer .container {
+  max-width: none;
+  width: 100%;
+  padding: 0 !important;
+}
+.vc-page > .footer :is(p, span, div) { font-size: 14px !important; }
+
+/* ---------- Animação de entrada (ativada pelo header.js) ---------- */
+.vc-page .vc-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s ease, transform .7s cubic-bezier(.2, .7, .2, 1);
+}
+.vc-page .vc-reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .vc-page .vc-reveal { opacity: 1; transform: none; transition: none; }
+  .vc-page * { transition: none !important; }
+}
+
+@media (max-width: 900px) {
+  .vc-page .hero:has(.hero-media) { min-height: 0; }
+  .vc-page .hero-media { min-height: 280px; }
+  .vc-page > .footer { flex-direction: column; text-align: center; }
+}

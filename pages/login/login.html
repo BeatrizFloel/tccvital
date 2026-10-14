@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="/global.css" />
 </head>
 <body>
 <main class="auth-page">
@@ -119,13 +120,6 @@ function saveCurrentUser(user) {
 
 function redirectToDashboard() {
   window.location.href = "../dashboard/dashboard.html";
-}
-
-function checkAlreadyLoggedIn() {
-  const currentUser = localStorage.getItem("vitalcare-current-user");
-  if (currentUser) {
-    redirectToDashboard();
-  }
 }
 
 function showLogin() {
@@ -246,7 +240,8 @@ registerForm.addEventListener("submit", async (event) => {
   }
 });
 
-checkAlreadyLoggedIn();
+// A página de login sempre mostra Entrar/Criar conta; abre direto no cadastro com login.html#cadastro
+if (window.location.hash === "#cadastro") showRegister();
 </script>
 </body>
 </html>
