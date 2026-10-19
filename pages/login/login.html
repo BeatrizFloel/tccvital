@@ -218,19 +218,14 @@ registerForm.addEventListener("submit", async (event) => {
   button.disabled = true;
   showMessage("Criando cadastro...", "loading");
   try {
-    await sendAuthRequest("cadastro", {
+    const data = await sendAuthRequest("cadastro", {
       name: document.getElementById("register-name").value,
       email: document.getElementById("register-email").value,
       password
     });
 
-    const user = {
-      name: document.getElementById("register-name").value,
-      email: document.getElementById("register-email").value
-    };
-
-    localStorage.setItem("vitalcare-token", "local-session-token");
-    saveCurrentUser(user);
+    localStorage.setItem("vitalcare-token", data.token);
+    saveCurrentUser(data.user);
     showMessage("Cadastro realizado! Redirecionando para o painel...", "success");
     setTimeout(redirectToDashboard, 800);
   } catch (error) {

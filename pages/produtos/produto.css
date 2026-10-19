@@ -238,15 +238,28 @@ a { text-decoration: none; color: inherit; }
   padding: 36px 40px 40px;
   box-shadow: 0 24px 60px rgba(31, 42, 68, .25);
   animation: orc-in .25s ease;
+  /* Rolagem dentro da janela quando o formulário é maior que a tela */
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #F9B65C transparent;
 }
+.orc-modal::-webkit-scrollbar { width: 10px; }
+.orc-modal::-webkit-scrollbar-track { background: transparent; margin: 18px 0; }
+.orc-modal::-webkit-scrollbar-thumb { background: #F9B65C; border-radius: 999px; border: 2px solid #EFEFEC; }
+.orc-modal::-webkit-scrollbar-thumb:hover { background: #F4A259; }
 @keyframes orc-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .orc-close {
-  position: absolute; top: 14px; right: 16px;
+  /* fica preso no canto mesmo rolando o formulário */
+  position: sticky; top: 0; z-index: 2;
+  float: right; margin: -22px -24px 0 0;
   width: 36px; height: 36px; border: 0; border-radius: 50%;
-  background: transparent; color: #1F2A44;
+  background: #EFEFEC; color: #1F2A44;
   font-size: 26px; line-height: 1; cursor: pointer;
 }
-.orc-close:hover { background: rgba(31, 42, 68, .08); }
+.orc-close:hover { background: #E2E2DD; }
 .orc-title { text-align: center; color: var(--azul-escuro); }
 .orc-sub { text-align: center; color: #6B6F63; margin-top: 8px; }
 .orc-campo { margin-top: 20px; }
@@ -270,8 +283,95 @@ a { text-decoration: none; color: inherit; }
 body.orc-aberto { overflow: hidden; }
 
 html.dark .vc-page .orc-modal { background: #16233a; }
+html.dark .vc-page .orc-close { background: #16233a; }
+html.dark .vc-page .orc-modal::-webkit-scrollbar-thumb { border-color: #16233a; }
 html.dark .vc-page .orc-close { color: #E8EDF5; }
 
 @media (max-width: 600px) {
   .orc-modal { padding: 30px 20px 28px; }
 }
+
+/* Orçamento: CEP + funções de interesse */
+.orc-linha { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.orc-cep-info { display: block; min-height: 1.2em; margin-top: 6px; color: #2E8B57; font-weight: 600; }
+.orc-funcoes { border: 0; padding: 0; margin-inline: 0; }
+.orc-funcoes legend { padding: 0; margin-bottom: 10px; font-weight: 700; color: var(--texto); }
+.orc-check {
+  display: flex !important; align-items: center; gap: 10px;
+  margin: 0 0 8px !important; font-weight: 500 !important; cursor: pointer;
+}
+.orc-check input { width: 18px !important; height: 18px; padding: 0 !important; accent-color: #F86FA6; flex: none; }
+@media (max-width: 600px) { .orc-linha { grid-template-columns: 1fr; } }
+
+/* ============ PLANOS ============ */
+.price-link {
+  display: inline-block; margin-top: 14px;
+  font-size: 14px; font-weight: 700; color: var(--azul-escuro);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.planos { max-width: 1080px; margin: 72px auto 0; text-align: center; scroll-margin-top: 96px; }
+.planos-title {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 28px; font-weight: 800; color: var(--azul-escuro);
+}
+.planos-sub { margin-top: 8px; color: #6B7280; font-weight: 600; }
+.planos-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  margin-top: 36px; align-items: stretch;
+}
+.plano-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  background: #F2F1EC;
+  border: 2px solid transparent;
+  border-radius: 22px;
+  padding: 34px 26px 26px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(31, 42, 68, .07);
+  transition: transform .28s cubic-bezier(.2, .7, .2, 1), box-shadow .28s ease;
+}
+.plano-card:hover { transform: translateY(-6px); box-shadow: 0 22px 48px rgba(31, 42, 68, .14); }
+.plano-card.is-recomendado { background: var(--laranja-suave); border-color: var(--rosa); }
+.plano-selo {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  background: var(--rosa); color: #fff;
+  font-size: 12px; font-weight: 800; letter-spacing: .03em;
+  padding: 6px 14px; border-radius: 999px; white-space: nowrap;
+}
+.plano-nome {
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 26px; font-weight: 800; color: var(--azul-escuro);
+}
+.plano-preco {
+  margin-top: 14px;
+  font-family: "Baloo 2", "Nunito", sans-serif;
+  font-size: 36px; font-weight: 800; color: var(--rosa); line-height: 1.1;
+}
+.plano-nota { font-size: 13px; font-weight: 600; color: #6B7280; }
+.plano-lista { list-style: none; margin: 24px 0 0; padding: 0; text-align: left; flex: 1; }
+.plano-lista li {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 12px; font-weight: 600; color: #2A3450;
+}
+.plano-lista svg { flex: 0 0 14px; width: 14px; height: 14px; margin-top: 6px; }
+.plano-btn { margin-top: 18px; text-align: center; }
+
+.orc-campo select {
+  width: 100%; background: var(--branco);
+  border: 1px solid #E3E3DE; border-radius: 14px;
+  padding: 13px 16px; font-family: inherit; font-size: 16px; color: var(--texto);
+}
+
+html.dark .vc-page .plano-card { background: #16233a; border-color: #26324a; }
+html.dark .vc-page .plano-card.is-recomendado { border-color: var(--rosa); }
+html.dark .vc-page .plano-selo { color: #fff !important; }
+html.dark .vc-page .price-link { color: #E8EDF5; }
+html.dark .vc-page .orc-campo select { background: #1b2740; color: #E8EDF5; border-color: #2b3856; }
+
+@media (max-width: 980px) {
+  .planos { margin: 56px 16px 0; }
+  .planos-grid { grid-template-columns: 1fr; gap: 30px; }
+}
+/* O global.css força 16px nos parágrafos; os preços dos planos são exceção (como o .price-value) */
+html:not(#vc) body .plano-preco { font-size: 36px !important; font-weight: 800 !important; line-height: 1.1 !important; }
+html:not(#vc) body .plano-nota { font-size: 13px !important; }

@@ -663,7 +663,8 @@ html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
 /* ================= VitalCare — ajustes mobile ================= */
 html,
 body {
-  overflow-x: hidden;
+  /* clip (e não hidden) para não quebrar o cabeçalho fixo ao rolar */
+  overflow-x: clip;
 }
 
 @media (max-width: 900px) {
@@ -1063,7 +1064,7 @@ html.dark .vc-burger span {
       O sistema integra monitoramento de sinais vitais, lembretes, sensores<br />
       ambientais e alertas, proporcionando uma rotina mais organizada e segura.
     </p>
-    <a class="btn btn-purple" href="#produto">Conhecer o produto completo</a>
+    <a class="btn btn-purple" href="/pages/produtos/produto.html">Conhecer o produto completo</a>
   </section>
 
   <!-- ================= FOOTER ================= -->

@@ -153,12 +153,20 @@
     </div>
 
     <div class="price-card">
-      <h3 class="price-name">VitalCare completo</h3>
-      <p class="price-label">Valor total do projeto</p>
-      <p class="price-value">R$ 399,99</p>
+      <h3 class="price-name">VitalCare</h3>
+      <p class="price-label">Planos a partir de</p>
+      <p class="price-value" id="precoMinimo">R$ 799,90</p>
       <p class="price-note">Pagamento único + Software gratuito</p>
       <a class="btn-pink" href="#orcamento">Solicitar orçamento</a>
+      <a class="price-link" href="#planos">Comparar os planos</a>
     </div>
+  </section>
+
+  <!-- ================= PLANOS (preços em /shared/planos.js) ================= -->
+  <section class="planos" id="planos">
+    <h2 class="planos-title">Escolha o seu plano</h2>
+    <p class="planos-sub">Todos os planos incluem o equipamento, a instalação e o software gratuito.</p>
+    <div class="planos-grid" id="planosGrid"></div>
   </section>
 
   <!-- ================= SOBRE O DESIGN ================= -->
@@ -210,10 +218,32 @@
           <label for="orc-email">E-mail</label>
           <input id="orc-email" name="email" type="email" placeholder="seu@gmail.com" required />
         </div>
-        <div class="orc-campo">
-          <label for="orc-tel">Telefone (opcional)</label>
-          <input id="orc-tel" name="phone" type="tel" placeholder="(00) 00000-0000" />
+        <div class="orc-linha">
+          <div class="orc-campo">
+            <label for="orc-cep">CEP</label>
+            <input id="orc-cep" name="cep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code" required />
+            <small class="orc-cep-info" id="orc-cep-info" aria-live="polite"></small>
+          </div>
+          <div class="orc-campo">
+            <label for="orc-tel">Telefone (opcional)</label>
+            <input id="orc-tel" name="phone" type="tel" placeholder="(00) 00000-0000" />
+          </div>
         </div>
+        <div class="orc-campo">
+          <label for="orc-plano">Plano de interesse</label>
+          <select id="orc-plano" name="plano">
+            <option value="">Ainda não sei</option>
+          </select>
+        </div>
+        <fieldset class="orc-campo orc-funcoes">
+          <legend>Funções de interesse</legend>
+          <label class="orc-check"><input type="checkbox" name="funcoes" value="medicamentos" /> Lembretes de medicamentos</label>
+          <label class="orc-check"><input type="checkbox" name="funcoes" value="consultas" /> Alertas de consultas e compromissos</label>
+          <label class="orc-check"><input type="checkbox" name="funcoes" value="clima" /> Data, horário e clima na tela</label>
+          <label class="orc-check"><input type="checkbox" name="funcoes" value="gas" /> Sensor de vazamento de gás</label>
+          <label class="orc-check"><input type="checkbox" name="funcoes" value="temperatura" /> Sensor de temperatura ambiente</label>
+          <label class="orc-check"><input type="checkbox" name="funcoes" value="cardiaco" /> Frequência cardíaca e saturação</label>
+        </fieldset>
         <div class="orc-campo">
           <label for="orc-msg">Mensagem (opcional)</label>
           <textarea id="orc-msg" name="message" placeholder="Conte o que você precisa"></textarea>
@@ -259,18 +289,57 @@
       status.className = "orc-status " + (ok ? "is-ok" : "is-erro");
     }
 
-    document.querySelectorAll('a[href="#orcamento"]').forEach(function (link) {
-      link.addEventListener("click", abrir);
+    // Qualquer botão "#orcamento" abre o formulário (inclusive os dos cards dos planos)
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest('a[href="#orcamento"]');
+      if (!link) return;
+      abrir(event);
+      if (link.dataset.plano) escolherPlano(link.dataset.plano);
     });
+
+    // Ao escolher um plano, marca as funções que ele inclui
+    var planoSelect = document.getElementById("orc-plano");
+    function escolherPlano(id) {
+      planoSelect.value = id;
+      var plano = (window.VitalPlanos || []).find(function (item) { return item.id === id; });
+      if (!plano) return;
+      form.querySelectorAll('input[name="funcoes"]').forEach(function (caixa) {
+        caixa.checked = plano.funcoes.indexOf(caixa.value) !== -1;
+      });
+    }
+    planoSelect.addEventListener("change", function () { escolherPlano(planoSelect.value); });
     overlay.querySelector(".orc-close").addEventListener("click", fechar);
     overlay.addEventListener("click", function (event) { if (event.target === overlay) fechar(); });
     document.addEventListener("keydown", function (event) { if (event.key === "Escape" && !overlay.hidden) fechar(); });
 
+    // CEP: máscara 00000-000 e cidade mostrada abaixo do campo (ViaCEP)
+    var cepInput = document.getElementById("orc-cep");
+    var cepInfo = document.getElementById("orc-cep-info");
+    cepInput.addEventListener("input", async function () {
+      var digitos = cepInput.value.replace(/\D/g, "").slice(0, 8);
+      cepInput.value = digitos.length > 5 ? digitos.slice(0, 5) + "-" + digitos.slice(5) : digitos;
+      cepInfo.textContent = "";
+      if (digitos.length !== 8) return;
+      try {
+        var local = await fetch("https://viacep.com.br/ws/" + digitos + "/json/").then(function (r) { return r.json(); });
+        cepInfo.textContent = local.erro ? "CEP não encontrado." : local.localidade + "/" + local.uf;
+      } catch (e) {}
+    });
+
     form.addEventListener("submit", async function (event) {
       event.preventDefault();
-      var dados = Object.fromEntries(new FormData(form));
-      if (!dados.name.trim() || !dados.email.trim()) return mostrar("Preencha seu nome e e-mail.", false);
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email.trim())) return mostrar("Digite um e-mail válido.", false);
+      var dados = {
+        name: form.elements.name.value.trim(),
+        email: form.elements.email.value.trim(),
+        cep: cepInput.value.replace(/\D/g, ""),
+        phone: form.elements.phone.value.trim(),
+        message: form.elements.message.value.trim(),
+        plano: planoSelect.value,
+        funcoes: Array.from(form.querySelectorAll('input[name="funcoes"]:checked')).map(function (caixa) { return caixa.value; })
+      };
+      if (!dados.name || !dados.email) return mostrar("Preencha seu nome e e-mail.", false);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return mostrar("Digite um e-mail válido.", false);
+      if (dados.cep.length !== 8) return mostrar("Digite um CEP válido.", false);
 
       submit.disabled = true;
       mostrar("Enviando...", true);
@@ -298,6 +367,7 @@
         if (!json) throw ultimoErro || new Error("Não foi possível enviar.");
         mostrar(json.message || "Enviado! Confira seu e-mail.", true);
         form.reset();
+        cepInfo.textContent = "";
       } catch (error) {
         mostrar(error.message || "Não foi possível enviar. Tente novamente.", false);
       } finally {
@@ -307,6 +377,35 @@
 
     if (location.hash === "#orcamento") abrir();
   }());
+</script>
+<script type="module">
+  // Cards dos planos, preço "a partir de" e opções do formulário — tudo de /shared/planos.js
+  import { PLANOS, formatarPreco } from "/shared/planos.js";
+
+  window.VitalPlanos = PLANOS;
+
+  const check = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  document.getElementById("planosGrid").innerHTML = PLANOS.map((plano) => `
+    <article class="plano-card${plano.recomendado ? " is-recomendado" : ""}">
+      ${plano.recomendado ? '<span class="plano-selo">Mais recomendado</span>' : ""}
+      <h3 class="plano-nome">${plano.nome}</h3>
+      <p class="plano-preco">${formatarPreco(plano.preco)}</p>
+      <p class="plano-nota">pagamento único</p>
+      <ul class="plano-lista">
+        ${plano.recursos.map((recurso) => `<li>${check}<span>${recurso}</span></li>`).join("")}
+      </ul>
+      <a class="btn-pink plano-btn" href="#orcamento" data-plano="${plano.id}">Quero o ${plano.nome}</a>
+    </article>
+  `).join("");
+
+  const menor = Math.min(...PLANOS.map((plano) => plano.preco));
+  document.getElementById("precoMinimo").textContent = formatarPreco(menor);
+
+  const select = document.getElementById("orc-plano");
+  PLANOS.forEach((plano) => {
+    select.insertAdjacentHTML("beforeend", `<option value="${plano.id}">${plano.nome} – ${formatarPreco(plano.preco)}</option>`);
+  });
 </script>
 <script src="/header.js"></script>
 </body>

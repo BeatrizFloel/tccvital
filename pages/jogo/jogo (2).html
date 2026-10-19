@@ -743,7 +743,8 @@ html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
 /* ================= VitalCare — ajustes mobile ================= */
 html,
 body {
-  overflow-x: hidden;
+  /* clip (e não hidden) para não quebrar o cabeçalho fixo ao rolar */
+  overflow-x: clip;
 }
 
 @media (max-width: 900px) {

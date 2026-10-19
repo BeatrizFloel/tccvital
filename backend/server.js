@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mysql from "mysql2/promise";
 import nodemailer from "nodemailer";
+import { registerDashboardRoutes } from "./dashboard.js";
+import { PROPOSTA, FUNCOES, consultarCep, montarProposta, montarAvisoEquipe } from "./proposta.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -44,7 +46,7 @@ async function writeLocalUsers(users) {
   await fs.writeFile(localDataPath, JSON.stringify(users, null, 2), "utf8");
 }
 
-function createToken(user) { return jwt.sign({ userId: user.id_usuario, name: user.nome, email: user.email }, secretKey, { expiresIn: "1h" }); }
+function createToken(user) { return jwt.sign({ userId: user.id_usuario, name: user.nome, email: user.email }, secretKey, { expiresIn: "7d" }); }
 
 app.get("/", (_req, res) => res.json({ status: "ok", service: "VitalCare API", storage: hasDatabaseConfig() ? "mysql" : "local" }));
 app.get(["/api/health", "/health"], (_req, res) => res.json({ status: "ok", storage: hasDatabaseConfig() ? "mysql" : "local" }));
@@ -99,9 +101,10 @@ app.post(["/cadastro", "/api/cadastro"], async (req, res) => {
       if (process.env.VERCEL === "1") return res.status(503).json({ message: "Banco de dados não configurado no deploy. Defina MYSQL_URL na Vercel." });
       const users = await readLocalUsers();
       if (users.some((user) => user.email === email)) return res.status(409).json({ message: "Usuário já cadastrado." });
-      users.push({ id_usuario: Date.now(), nome: name, email, senha: await bcrypt.hash(password, 10), data_cadastro: new Date().toISOString().slice(0, 10) });
+      const newUser = { id_usuario: Date.now(), nome: name, email, senha: await bcrypt.hash(password, 10), data_cadastro: new Date().toISOString().slice(0, 10) };
+      users.push(newUser);
       await writeLocalUsers(users);
-      return res.status(201).json({ message: "Usuário criado com sucesso!" });
+      return res.status(201).json({ message: "Usuário criado com sucesso!", token: createToken(newUser), user: { id: newUser.id_usuario, name, email } });
     }
 
     const db = getPool();
@@ -109,11 +112,12 @@ app.post(["/cadastro", "/api/cadastro"], async (req, res) => {
     if (existing.length) return res.status(409).json({ message: "Usuário já cadastrado." });
 
     const passwordHash = await bcrypt.hash(password, 10);
-    await db.query(
+    const [result] = await db.query(
       `INSERT INTO ${tableName} (nome, email, senha, data_cadastro) VALUES (?, ?, ?, CURDATE())`,
       [name, email, passwordHash]
     );
-    return res.status(201).json({ message: "Usuário criado com sucesso!" });
+    const newUser = { id_usuario: result.insertId, nome: name, email };
+    return res.status(201).json({ message: "Usuário criado com sucesso!", token: createToken(newUser), user: { id: newUser.id_usuario, name, email } });
   } catch (error) {
     console.error("Erro no cadastro:", error.message);
     return res.status(500).json({ message: "Não foi possível salvar o cadastro." });
@@ -153,71 +157,56 @@ app.post(["/login", "/api/login"], async (req, res) => {
   }
 });
 
+registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secretKey, tableName, readLocalUsers, backendDirectory });
+
+/* ---------- Orçamento: proposta automática por e-mail (modelo em proposta.js) ---------- */
+const MAIL_USER = process.env.SMTP_USER || PROPOSTA.email;
+
 function hasMailConfig() {
-  return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+  return Boolean(process.env.SMTP_PASS);
 }
 
 function getMailer() {
-  const port = Number(process.env.SMTP_PORT || 587);
+  const port = Number(process.env.SMTP_PORT || 465);
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
     port,
     secure: port === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+    auth: { user: MAIL_USER, pass: String(process.env.SMTP_PASS).replace(/\s/g, "") }
   });
 }
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
-}
-
 app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
-  const name = String(req.body?.name || "").trim();
+  const nome = String(req.body?.name || "").trim().slice(0, 120);
   const email = String(req.body?.email || "").trim().toLowerCase();
-  const phone = String(req.body?.phone || "").trim();
-  const message = String(req.body?.message || "").trim();
+  const telefone = String(req.body?.phone || "").trim().slice(0, 40);
+  const cep = String(req.body?.cep || "").replace(/\D/g, "");
+  const mensagem = String(req.body?.message || "").trim().slice(0, 2000);
+  const funcoes = [].concat(req.body?.funcoes || []).filter((chave) => FUNCOES[chave]);
+  const plano = String(req.body?.plano || "");
 
-  if (!name || !email) return res.status(400).json({ message: "Nome e e-mail são obrigatórios." });
+  if (!nome || !email) return res.status(400).json({ message: "Nome e e-mail são obrigatórios." });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Digite um e-mail válido." });
-  if (!hasMailConfig()) return res.status(503).json({ message: "Envio de e-mail não configurado. Defina SMTP_HOST, SMTP_USER e SMTP_PASS." });
+  if (cep.length !== 8) return res.status(400).json({ message: "Digite um CEP válido (8 números)." });
+  if (!hasMailConfig()) return res.status(503).json({ message: "Envio de e-mail não configurado. Defina SMTP_USER e SMTP_PASS (chave SMTP do Brevo) no .env." });
 
-  const from = process.env.MAIL_FROM || `VitalCare <${process.env.SMTP_USER}>`;
-  const teamEmail = process.env.MAIL_TO || process.env.SMTP_USER;
-  const safeName = escapeHtml(name);
+  const local = await consultarCep(cep);
+  if (!local) return res.status(400).json({ message: "CEP não encontrado. Confira os números." });
 
-  const customerHtml = `
-    <div style="font-family:Arial,sans-serif;color:#1E2433;max-width:560px">
-      <h2 style="color:#1F2A44">Olá, ${safeName}!</h2>
-      <p>Recebemos sua solicitação de orçamento do <strong>VitalCare</strong>. Seguem as informações:</p>
-      <h3 style="color:#1F2A44">VitalCare completo — R$ 399,99</h3>
-      <p>Pagamento único + Software gratuito</p>
-      <ul>
-        <li>Alertas para medicamentos e compromissos</li>
-        <li>Monitoramento de frequência cardíaca e saturação</li>
-        <li>Alertas sonoros</li>
-        <li>Tela touch screen de 14 polegadas</li>
-      </ul>
-      <p>Nossa equipe entrará em contato em breve para tirar suas dúvidas e combinar os próximos passos.</p>
-      <p>Feito com ♥ para você,<br/>Equipe VitalCare</p>
-    </div>`;
-
-  const teamHtml = `
-    <div style="font-family:Arial,sans-serif">
-      <h2>Nova solicitação de orçamento</h2>
-      <p><strong>Nome:</strong> ${safeName}</p>
-      <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
-      <p><strong>Telefone:</strong> ${escapeHtml(phone || "—")}</p>
-      <p><strong>Mensagem:</strong><br/>${escapeHtml(message || "—").replace(/\n/g, "<br/>")}</p>
-    </div>`;
+  const from = process.env.MAIL_FROM || `VitalCare <${MAIL_USER}>`;
+  const teamEmail = process.env.MAIL_TO || MAIL_USER;
+  const proposta = montarProposta({ nome, local });
+  const aviso = montarAvisoEquipe({ nome, email, telefone, local, plano, funcoes, mensagem });
 
   try {
     const mailer = getMailer();
-    await mailer.sendMail({ from, to: email, subject: "Seu orçamento VitalCare", html: customerHtml });
-    await mailer.sendMail({ from, to: teamEmail, replyTo: email, subject: `Novo pedido de orçamento — ${name}`, html: teamHtml });
-    return res.json({ message: "Pronto! Enviamos as informações para o seu e-mail." });
+    await mailer.sendMail({ from, to: email, replyTo: teamEmail, subject: proposta.assunto, text: proposta.texto, html: proposta.html });
+    await mailer.sendMail({ from, to: teamEmail, replyTo: email, subject: aviso.assunto, text: aviso.texto, html: aviso.html });
+    return res.json({ message: "Pronto! Enviamos a proposta para o seu e-mail." });
   } catch (error) {
     console.error("Erro ao enviar orçamento:", error.message);
-    return res.status(500).json({ message: "Não foi possível enviar o e-mail agora. Tente novamente." });
+    const motivo = error.code === "EAUTH" ? " (login SMTP recusado — confira SMTP_USER e SMTP_PASS no .env)" : "";
+    return res.status(500).json({ message: `Não foi possível enviar o e-mail agora. Tente novamente.${motivo}` });
   }
 });
 

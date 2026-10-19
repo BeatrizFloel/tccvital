@@ -543,6 +543,134 @@
       border: 1px solid #dfe7f2;
     }
 
+    /* ---- Preencher o painel (botões, lista vazia e formulário) ---- */
+    .panel-actions { display: flex; align-items: center; gap: 8px; }
+    .panel-badge:empty, .tiny:empty { display: none; }
+
+    .panel-add {
+      border: none;
+      background: #CFE6F3;
+      color: var(--azul-escuro);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .panel-add:hover { background: #BFDDEF; }
+
+    .item-remove {
+      width: 28px;
+      height: 28px;
+      flex: none;
+      border: none;
+      border-radius: 50%;
+      background: rgba(239, 91, 91, 0.08);
+      color: #a93b3b;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .item-remove:hover { background: rgba(239, 91, 91, 0.16); }
+
+    .status-pill { cursor: pointer; border: none; font-family: inherit; }
+
+    .empty-note {
+      padding: 6px 2px 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .dash-form { text-align: left; margin-top: 4px; }
+    .dash-form-title { margin: 0 0 6px; text-align: center; font-size: 1.4rem; font-weight: 900; color: var(--azul-escuro); }
+    .dash-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; margin-top: 16px; }
+    .dash-field { display: flex; flex-direction: column; gap: 6px; }
+    .dash-field.full { grid-column: 1 / -1; }
+    .dash-field label { font-size: 0.85rem; font-weight: 800; color: var(--azul-escuro); }
+    .dash-field input, .dash-field select {
+      width: 100%;
+      border: 1px solid #dfe7f2;
+      border-radius: 10px;
+      background: #fbfcff;
+      padding: 11px 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--texto);
+    }
+    .dash-field input:focus, .dash-field select:focus { outline: 2px solid rgba(41, 182, 232, 0.35); border-color: var(--ciano); }
+    .dash-form-error { min-height: 1.2em; margin: 12px 0 0; text-align: center; font-size: 0.85rem; font-weight: 700; color: #b33838; }
+    .dash-form-hint { margin: 0; text-align: center; font-size: 0.85rem; color: var(--muted); }
+
+    #dashFormModal .medicine-alert { max-height: calc(100vh - 40px); overflow-y: auto; }
+    .medicine-visual img { width: 100%; height: 100%; object-fit: cover; border-radius: 24px; }
+
+    /* ---- Remédios: foto, sugestões e relacionados ---- */
+    .med-thumb { width: 38px; height: 38px; flex: none; border-radius: 10px; object-fit: cover; }
+    .med-suggest {
+      list-style: none;
+      margin: 4px 0 0;
+      padding: 6px;
+      border: 1px solid #dfe7f2;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .med-suggest button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 8px;
+      border-radius: 10px;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .med-suggest button:hover, .med-suggest button:focus { background: #EDF5FF; outline: none; }
+    .med-suggest img { width: 44px; height: 44px; flex: none; border-radius: 10px; }
+    .med-sug-name { display: block; font-weight: 800; color: var(--azul-escuro); }
+    .med-sug-meta { display: block; font-size: 0.8rem; color: var(--muted); }
+    .med-preview {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #EDF5FF;
+    }
+    .med-preview img { width: 72px; height: 72px; flex: none; border-radius: 16px; }
+    .med-related { grid-column: 1 / -1; }
+    .med-related-title { margin: 0 0 8px; font-size: 0.85rem; font-weight: 800; color: var(--azul-escuro); }
+    .med-related-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .med-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #dfe7f2;
+      background: #fbfcff;
+      border-radius: 999px;
+      padding: 4px 12px 4px 4px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--azul-escuro);
+      cursor: pointer;
+    }
+    .med-chip:hover { background: #EDF5FF; }
+    .med-chip img { width: 28px; height: 28px; border-radius: 50%; }
+    .med-suggest[hidden], .med-preview[hidden], .med-related[hidden] { display: none; }
+
+    @media (max-width: 520px) {
+      .dash-form-grid { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 1100px) {
       .cards { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
       .content-grid { grid-template-columns: 1fr; }
@@ -604,11 +732,11 @@
       </article>
       <article class="stat-card">
         <div class="stat-label">Clima</div>
-        <div class="stat-value"><span id="climaTemp">0°</span><span class="tiny">SP</span></div>
+        <div class="stat-value"><span id="climaTemp">--</span><span id="climaCity" class="tiny"></span></div>
       </article>
       <article class="stat-card">
         <div class="stat-label">Gás</div>
-        <div class="stat-value"><span id="gasLevel">0</span><span class="tiny">ppm</span></div>
+        <div class="stat-value"><span id="gasLevel">--</span><span class="tiny">ppm</span></div>
       </article>
     </section>
 
@@ -616,7 +744,7 @@
       <div class="panel">
         <div class="panel-header">
           <h2>Medicamentos e horário</h2>
-          <span class="panel-badge">Hoje</span>
+          <div class="panel-actions"><span class="panel-badge">Hoje</span><button class="panel-add" type="button" data-form="medication">+ Adicionar</button></div>
         </div>
         <ul id="medList" class="med-list"></ul>
       </div>
@@ -625,31 +753,31 @@
         <div class="panel weather-card">
           <div class="panel-header" style="margin-bottom: 0;">
             <h2>Clima</h2>
-            <span id="weatherCity" class="panel-badge">São Paulo</span>
+            <div class="panel-actions"><span id="weatherCity" class="panel-badge"></span><button id="refreshWeather" class="panel-add" type="button" title="Detectar de novo a localização da casa">Atualizar</button></div>
           </div>
           <div class="weather-top">
             <div>
-              <div id="weatherCondition" style="color: var(--muted); font-weight: 600;">Ensolarado</div>
-              <div class="weather-temp" id="weatherTemp">24°</div>
+              <div id="weatherCondition" style="color: var(--muted); font-weight: 600;"></div>
+              <div class="weather-temp" id="weatherTemp">--</div>
             </div>
-            <div class="weather-icon" id="weatherIcon">☀️</div>
+            <div class="weather-icon" id="weatherIcon"></div>
           </div>
           <div class="weather-grid">
-            <div class="weather-box"><span>Umidade</span><strong id="weatherHumidity">62%</strong></div>
-            <div class="weather-box"><span>Vento</span><strong id="weatherWind">12 km/h</strong></div>
-            <div class="weather-box"><span>Índice</span><strong id="weatherIndex">Bom</strong></div>
+            <div class="weather-box"><span>Umidade</span><strong id="weatherHumidity">--</strong></div>
+            <div class="weather-box"><span>Vento</span><strong id="weatherWind">--</strong></div>
+            <div class="weather-box"><span>Índice</span><strong id="weatherIndex">--</strong></div>
           </div>
         </div>
 
         <div class="panel gas-card">
           <div class="panel-header">
             <h2>Identificador de gás</h2>
-            <span id="gasStatus" class="panel-badge">Normal</span>
+            <div class="panel-actions"><span id="gasStatus" class="panel-badge"></span></div>
           </div>
           <div class="gas-meter"><div id="gasMeterFill" class="gas-meter-fill"></div></div>
           <div class="gas-reading">
             <span>Leitura</span>
-            <strong id="gasRead">18 ppm</strong>
+            <strong id="gasRead">--</strong>
           </div>
           <div class="footer-note">Monitoramento sugerido para ambientes internos e áreas de uso diário.</div>
         </div>
@@ -660,7 +788,7 @@
       <div class="panel">
         <div class="panel-header">
           <h2>Consultas</h2>
-          <span class="panel-badge">Próximas</span>
+          <div class="panel-actions"><span class="panel-badge">Próximas</span><button class="panel-add" type="button" data-form="appointment">+ Adicionar</button></div>
         </div>
         <ul id="consultList" class="consult-list"></ul>
       </div>
@@ -668,22 +796,38 @@
       <div class="panel">
         <div class="panel-header">
           <h2>Lembretes</h2>
-          <span class="panel-badge">Marcados</span>
+          <div class="panel-actions"><span class="panel-badge">Marcados</span><button class="panel-add" type="button" data-form="reminder">+ Adicionar</button></div>
         </div>
         <ul id="reminderList" class="reminder-list"></ul>
       </div>
     </section>
+
+    <div id="dashFormModal" class="medicine-reminder hidden">
+      <div class="medicine-alert" role="dialog" aria-modal="true" aria-labelledby="dashFormTitle">
+        <button id="closeDashForm" class="close-reminder" type="button" aria-label="Fechar">×</button>
+        <form id="dashForm" class="dash-form" novalidate>
+          <h3 id="dashFormTitle" class="dash-form-title"></h3>
+          <p id="dashFormHint" class="dash-form-hint"></p>
+          <div id="dashFormFields" class="dash-form-grid"></div>
+          <p id="dashFormError" class="dash-form-error" role="alert"></p>
+          <div class="medicine-actions">
+            <button class="action-btn btn-primary" type="submit">Salvar</button>
+            <button id="cancelDashForm" class="action-btn btn-secondary" type="button">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <div id="medicineReminder" class="medicine-reminder hidden" aria-live="assertive">
       <div class="medicine-alert" role="dialog" aria-modal="true" aria-labelledby="reminderTitle">
         <button id="closeReminder" class="close-reminder" type="button" aria-label="Fechar lembrete">×</button>
         <div class="alert-tag">Hora do remédio</div>
         <div class="medicine-visual">
-          <img id="reminderImage" alt="Remédio" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80" />
+          <img id="reminderImage" alt="" />
         </div>
-        <h3 id="reminderTitle" class="medicine-name">Losartana</h3>
-        <p id="reminderDose" class="medicine-dose">50 mg</p>
-        <div id="reminderTime" class="medicine-time">08:00</div>
+        <h3 id="reminderTitle" class="medicine-name"></h3>
+        <p id="reminderDose" class="medicine-dose"></p>
+        <div id="reminderTime" class="medicine-time"></div>
         <div class="medicine-actions">
           <button id="confirmMedicine" class="action-btn btn-primary" type="button">Já tomei</button>
           <button id="snoozeMedicine" class="action-btn btn-secondary" type="button">Lembrar mais tarde</button>
@@ -693,37 +837,19 @@
   </div>
 
   </div>
+<script src="remedios.js"></script>
 <script>
-    const DEFAULT_DASHBOARD = {
-      medications: [
-        { name: "Losartana", time: "08:00", dose: "50 mg", status: "ok", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80" },
-        { name: "Vitamina D", time: "12:30", dose: "1 cápsula", status: "pending", image: "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?auto=format&fit=crop&w=500&q=80" },
-        { name: "Omeprazol", time: "20:00", dose: "20 mg", status: "ok", image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=80" }
-      ],
-      climate: {
-        city: "São Paulo",
-        condition: "Ensolarado",
-        temp: 24,
-        humidity: 62,
-        wind: 12,
-        index: "Bom"
-      },
-      gas: {
-        level: 18,
-        status: "Normal"
-      },
-      appointments: [
-        { title: "Consulta cardiológica", doctor: "Dr. Carlos Almeida", date: "15/10", time: "09:30" },
-        { title: "Acompanhamento de rotina", doctor: "Dra. Renata Silva", date: "20/10", time: "14:00" }
-      ],
-      reminders: [
-        { title: "Tomar água", time: "10:00", detail: "2 copos antes do almoço" },
-        { title: "Revisar sinais vitais", time: "18:30", detail: "Antes de dormir" },
-        { title: "Ligar para filha", time: "20:15", detail: "Confirmar visita do fim de semana" }
-      ]
-    };
+    /* ================= Dashboard VitalCare =================
+       Tudo é salvo no banco (MySQL) pelo servidor: /api/dashboard
+       Clima: localização do monitor + Open-Meteo. Gás: somente pelo sensor. */
+    const API_CANDIDATES = [window.location.origin, "http://localhost:3000", "http://127.0.0.1:3000"]
+      .filter((value, index, list) => value && value !== "null" && list.indexOf(value) === index);
+    let apiBase = null;
 
-    const dashboardKeyPrefix = "vitalcare-dashboard-";
+    const state = { medications: [], appointments: [], reminders: [], location: null, gas: null };
+    let weather = null;
+    let reminderMedicationId = null;
+    const shownReminders = new Set();
 
     function getCurrentUser() {
       const stored = localStorage.getItem("vitalcare-current-user");
@@ -736,205 +862,587 @@
       }
     }
 
-    function getDashboardKey(user) {
-      return `${dashboardKeyPrefix}${(user.email || "user").toLowerCase()}`;
+    function getToken() {
+      const token = localStorage.getItem("vitalcare-token");
+      return token && token !== "local-session-token" ? token : null;
     }
 
-    function readDashboard(user) {
-      const dashboardKey = getDashboardKey(user);
-      const stored = localStorage.getItem(dashboardKey);
-      if (!stored) {
-        localStorage.setItem(dashboardKey, JSON.stringify(DEFAULT_DASHBOARD));
-        return structuredClone(DEFAULT_DASHBOARD);
-      }
-
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed && typeof parsed === "object" ? parsed : structuredClone(DEFAULT_DASHBOARD);
-      } catch (error) {
-        localStorage.setItem(dashboardKey, JSON.stringify(DEFAULT_DASHBOARD));
-        return structuredClone(DEFAULT_DASHBOARD);
-      }
+    function goToLogin() {
+      localStorage.removeItem("vitalcare-current-user");
+      localStorage.removeItem("vitalcare-token");
+      window.location.href = "../login/login.html";
     }
 
-    function setDashboard(user, dashboard) {
-      localStorage.setItem(getDashboardKey(user), JSON.stringify(dashboard));
+    // Chama o servidor (tenta o próprio site e, no Live Server, o npm run dev na porta 3000)
+    async function api(path, options = {}) {
+      const bases = apiBase ? [apiBase] : API_CANDIDATES;
+      let lastError = null;
+      for (const base of bases) {
+        let response;
+        try {
+          response = await fetch(base + path, {
+            ...options,
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}`, ...(options.headers || {}) }
+          });
+        } catch (error) {
+          lastError = new Error("Servidor indisponível. Rode npm run dev na pasta do projeto.");
+          continue;
+        }
+        const data = await response.json().catch(() => undefined);
+        if (data === undefined) { lastError = new Error("Servidor do VitalCare não encontrado."); continue; }
+        apiBase = base;
+        if (response.status === 401) { goToLogin(); throw new Error(data?.message || "Sessão expirada."); }
+        if (!response.ok) throw new Error(data?.message || "Não foi possível salvar.");
+        return data;
+      }
+      throw lastError || new Error("Servidor indisponível.");
+    }
+
+    function hasValue(value) {
+      return value !== null && value !== undefined && value !== "";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+    }
+
+    function today() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     }
 
     function formatDate(date) {
       return new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).format(date);
     }
 
-    function renderMedications(dashboard) {
-      const medList = document.getElementById("medList");
-      document.getElementById("medCount").textContent = dashboard.medications.length;
+    function formatDay(isoDate) {
+      const [, month, day] = String(isoDate || "").split("-");
+      return day && month ? `${day}/${month}` : "";
+    }
 
-      medList.innerHTML = dashboard.medications.map((med) => {
-        const statusClass = med.status === "ok" ? "status-ok" : med.status === "pending" ? "status-pending" : "status-alert";
-        const label = med.status === "ok" ? "Tomado" : med.status === "pending" ? "Pendente" : "Urgente";
+    function emptyNote(text) {
+      return `<li class="empty-note">${text}</li>`;
+    }
+
+    function removeButton(list, id) {
+      return `<button class="item-remove" type="button" data-remove="${list}" data-id="${id}" aria-label="Remover">×</button>`;
+    }
+
+    function isTaken(med) {
+      return med.takenOn === today();
+    }
+
+    /* ---------- Listas ---------- */
+    function renderMedications() {
+      const medList = document.getElementById("medList");
+      document.getElementById("medCount").textContent = state.medications.length;
+
+      if (!state.medications.length) {
+        medList.innerHTML = emptyNote("Nenhum medicamento adicionado. Clique em “+ Adicionar”.");
+        return;
+      }
+
+      medList.innerHTML = state.medications.map((med) => {
+        const taken = isTaken(med);
         return `
           <li class="med-item">
             <div class="drug-name">
-              <span class="dot"></span>
+              <img class="med-thumb" src="${VitalRemedios.imagem(med.name)}" alt="" />
               <div>
-                <div>${med.name}</div>
-                <div class="med-meta"><span>${med.dose}</span></div>
+                <div>${escapeHtml(med.name)}</div>
+                <div class="med-meta"><span>${escapeHtml(med.dose)}</span></div>
               </div>
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="time-pill">${med.time}</span>
-              <span class="status-pill ${statusClass}">${label}</span>
+              <span class="time-pill">${escapeHtml(med.time)}</span>
+              <button class="status-pill ${taken ? "status-ok" : "status-pending"}" type="button" data-toggle-med="${med.id}" title="Clique para marcar como tomado ou pendente">${taken ? "Tomado" : "Pendente"}</button>
+              ${removeButton("medicamentos", med.id)}
             </div>
           </li>
         `;
       }).join("");
     }
 
-    function renderClimate(dashboard) {
-      const climate = dashboard.climate;
-      document.getElementById("weatherCity").textContent = climate.city;
-      document.getElementById("weatherCondition").textContent = climate.condition;
-      document.getElementById("weatherTemp").textContent = `${climate.temp}°`;
-      document.getElementById("weatherHumidity").textContent = `${climate.humidity}%`;
-      document.getElementById("weatherWind").textContent = `${climate.wind} km/h`;
-      document.getElementById("weatherIndex").textContent = climate.index;
-      document.getElementById("climaTemp").textContent = `${climate.temp}°`;
-      document.getElementById("weatherIcon").textContent = climate.condition.includes("Sol") || climate.condition.includes("Ensolar") ? "☀️" : "⛅";
-    }
-
-    function renderGas(dashboard) {
-      const gas = dashboard.gas;
-      const fill = Math.min(gas.level, 100);
-      document.getElementById("gasMeterFill").style.width = `${fill}%`;
-      document.getElementById("gasRead").textContent = `${gas.level} ppm`;
-      document.getElementById("gasLevel").textContent = gas.level;
-      document.getElementById("gasStatus").textContent = gas.status;
-    }
-
-    function renderAppointments(dashboard) {
+    function renderAppointments() {
       const consultList = document.getElementById("consultList");
-      document.getElementById("consultCount").textContent = dashboard.appointments.length;
+      const upcoming = state.appointments.filter((item) => item.date >= today());
+      document.getElementById("consultCount").textContent = upcoming.length;
 
-      consultList.innerHTML = dashboard.appointments.map((item) => `
+      if (!state.appointments.length) {
+        consultList.innerHTML = emptyNote("Nenhuma consulta agendada. Clique em “+ Adicionar”.");
+        return;
+      }
+
+      consultList.innerHTML = state.appointments.map((item) => `
         <li class="consult-item">
           <div>
-            <div style="font-weight: 700; margin-bottom: 4px;">${item.title}</div>
-            <div class="consult-meta"><span>${item.doctor}</span><span>${item.date} • ${item.time}</span></div>
+            <div style="font-weight: 700; margin-bottom: 4px;">${escapeHtml(item.title)}</div>
+            <div class="consult-meta">${item.doctor ? `<span>${escapeHtml(item.doctor)}</span>` : ""}<span>${formatDay(item.date)} • ${escapeHtml(item.time)}</span></div>
           </div>
-          <span class="time-pill">${item.time}</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="time-pill">${escapeHtml(item.time)}</span>
+            ${removeButton("consultas", item.id)}
+          </div>
         </li>
       `).join("");
     }
 
-    function renderReminders(dashboard) {
+    function renderReminders() {
       const reminderList = document.getElementById("reminderList");
-      reminderList.innerHTML = dashboard.reminders.map((item) => `
+
+      if (!state.reminders.length) {
+        reminderList.innerHTML = emptyNote("Nenhum lembrete marcado. Clique em “+ Adicionar”.");
+        return;
+      }
+
+      reminderList.innerHTML = state.reminders.map((item) => `
         <li class="reminder-item">
           <div>
-            <div style="font-weight: 700; margin-bottom: 4px;">${item.title}</div>
-            <div class="reminder-meta"><span>${item.detail}</span></div>
+            <div style="font-weight: 700; margin-bottom: 4px;">${escapeHtml(item.title)}</div>
+            ${item.detail ? `<div class="reminder-meta"><span>${escapeHtml(item.detail)}</span></div>` : ""}
           </div>
-          <span class="time-pill">${item.time}</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="time-pill">${escapeHtml(item.time)}</span>
+            ${removeButton("lembretes", item.id)}
+          </div>
         </li>
       `).join("");
     }
 
-    function showMedicineReminder(medicine) {
-      const reminder = document.getElementById("medicineReminder");
-      const title = document.getElementById("reminderTitle");
-      const dose = document.getElementById("reminderDose");
-      const time = document.getElementById("reminderTime");
-      const image = document.getElementById("reminderImage");
+    /* ---------- Clima (automático pela localização da casa) ---------- */
+    const WEATHER_CODES = [
+      { codes: [0], text: "Céu limpo", day: "☀️", night: "🌙" },
+      { codes: [1], text: "Predomínio de sol", day: "🌤️", night: "🌙" },
+      { codes: [2], text: "Parcialmente nublado", day: "⛅", night: "☁️" },
+      { codes: [3], text: "Nublado", day: "☁️", night: "☁️" },
+      { codes: [45, 48], text: "Neblina", day: "🌫️", night: "🌫️" },
+      { codes: [51, 53, 55, 56, 57], text: "Garoa", day: "🌦️", night: "🌧️" },
+      { codes: [61, 63, 65, 66, 67], text: "Chuva", day: "🌧️", night: "🌧️" },
+      { codes: [71, 73, 75, 77, 85, 86], text: "Neve", day: "❄️", night: "❄️" },
+      { codes: [80, 81, 82], text: "Pancadas de chuva", day: "🌦️", night: "🌧️" },
+      { codes: [95, 96, 99], text: "Tempestade", day: "⛈️", night: "⛈️" }
+    ];
 
-      title.textContent = medicine.name;
-      dose.textContent = medicine.dose;
-      time.textContent = medicine.time;
-      image.src = medicine.image || "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=500&q=80";
-      reminder.classList.remove("hidden");
+    function airIndex(aqi) {
+      if (!hasValue(aqi)) return "--";
+      if (aqi <= 40) return "Bom";
+      if (aqi <= 60) return "Moderado";
+      return "Ruim";
+    }
+
+    function renderClimate() {
+      const city = state.location?.city || "";
+      document.getElementById("weatherCity").textContent = city;
+      document.getElementById("climaCity").textContent = city;
+
+      if (!weather) {
+        document.getElementById("weatherCondition").textContent = state.location ? "Buscando o clima..." : "Detectando a localização da casa...";
+        return;
+      }
+
+      const info = WEATHER_CODES.find((item) => item.codes.includes(weather.code)) || { text: "", day: "", night: "" };
+      document.getElementById("weatherCondition").textContent = info.text;
+      document.getElementById("weatherIcon").textContent = weather.isDay ? info.day : info.night;
+      document.getElementById("weatherTemp").textContent = `${Math.round(weather.temp)}°`;
+      document.getElementById("climaTemp").textContent = `${Math.round(weather.temp)}°`;
+      document.getElementById("weatherHumidity").textContent = `${Math.round(weather.humidity)}%`;
+      document.getElementById("weatherWind").textContent = `${Math.round(weather.wind)} km/h`;
+      document.getElementById("weatherIndex").textContent = airIndex(weather.aqi);
+    }
+
+    async function loadWeather() {
+      if (!state.location) return renderClimate();
+      const { latitude, longitude } = state.location;
+      try {
+        const forecast = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,is_day&timezone=auto`).then((r) => r.json());
+        const air = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=european_aqi`)
+          .then((r) => r.json()).catch(() => null);
+        const current = forecast.current;
+        weather = {
+          code: current.weather_code,
+          isDay: current.is_day === 1,
+          temp: current.temperature_2m,
+          humidity: current.relative_humidity_2m,
+          wind: current.wind_speed_10m,
+          aqi: air?.current?.european_aqi ?? null
+        };
+      } catch (error) {
+        document.getElementById("weatherCondition").textContent = "Sem conexão para buscar o clima.";
+        return;
+      }
+      renderClimate();
+    }
+
+    // GPS/rede do monitor. Se o navegador não liberar, usa a localização aproximada pela internet.
+    function browserPosition() {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve({ latitude: position.coords.latitude, longitude: position.coords.longitude }),
+          () => resolve(null),
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 30 * 60 * 1000 }
+        );
+      });
+    }
+
+    async function cityName(latitude, longitude) {
+      try {
+        const data = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pt`).then((r) => r.json());
+        return data.city || data.locality || data.principalSubdivision || "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    async function internetPosition() {
+      try {
+        const data = await fetch("https://ipapi.co/json/").then((r) => r.json());
+        return hasValue(data.latitude) ? { latitude: data.latitude, longitude: data.longitude, city: data.city || "" } : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function distanceKm(a, b) {
+      const rad = (deg) => deg * Math.PI / 180;
+      const dLat = rad(b.latitude - a.latitude);
+      const dLon = rad(b.longitude - a.longitude);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.latitude)) * Math.cos(rad(b.latitude)) * Math.sin(dLon / 2) ** 2;
+      return 12742 * Math.asin(Math.sqrt(h));
+    }
+
+    async function updateLocation(force) {
+      let found = await browserPosition();
+      if (found) {
+        if (!force && state.location && distanceKm(state.location, found) < 1) return false;
+        found.city = await cityName(found.latitude, found.longitude);
+      } else {
+        if (state.location && !force) return false;
+        found = await internetPosition();
+        if (!found) return false;
+      }
+
+      state.location = found;
+      try {
+        await api("/api/dashboard/local", { method: "PUT", body: JSON.stringify(found) });
+      } catch (error) {
+        console.warn("Não foi possível salvar a localização:", error.message);
+      }
+      return true;
+    }
+
+    /* ---------- Gás (somente pelo sensor) ---------- */
+    function gasStatus(level) {
+      if (level <= 50) return "Normal";
+      if (level <= 200) return "Atenção";
+      return "Perigo";
+    }
+
+    function renderGas() {
+      const gas = state.gas;
+      const read = document.getElementById("gasRead");
+      if (!gas || !hasValue(gas.level)) {
+        document.getElementById("gasMeterFill").style.width = "0%";
+        read.textContent = "--";
+        read.title = "";
+        document.getElementById("gasLevel").textContent = "--";
+        document.getElementById("gasStatus").textContent = "Aguardando sensor";
+        return;
+      }
+
+      const minutesAgo = (Date.now() - new Date(gas.updatedAt).getTime()) / 60000;
+      document.getElementById("gasMeterFill").style.width = `${Math.min(gas.level, 100)}%`;
+      read.textContent = `${gas.level} ppm`;
+      read.title = `Última leitura: ${new Date(gas.updatedAt).toLocaleString("pt-BR")}`;
+      document.getElementById("gasLevel").textContent = gas.level;
+      document.getElementById("gasStatus").textContent = minutesAgo > 10 ? "Sensor sem sinal" : gasStatus(gas.level);
+    }
+
+    async function loadGas() {
+      try {
+        state.gas = await api("/api/dashboard/gas");
+        renderGas();
+      } catch (error) {
+        // sem conexão: mantém a última leitura na tela
+      }
+    }
+
+    /* ---------- Lembrete na hora do remédio ---------- */
+    function showMedicineReminder(medicine) {
+      reminderMedicationId = medicine.id;
+      document.getElementById("reminderTitle").textContent = medicine.name;
+      document.getElementById("reminderDose").textContent = medicine.dose;
+      document.getElementById("reminderTime").textContent = medicine.time;
+      document.getElementById("reminderImage").src = VitalRemedios.imagem(medicine.name);
+      document.getElementById("medicineReminder").classList.remove("hidden");
     }
 
     function closeMedicineReminder() {
       document.getElementById("medicineReminder").classList.add("hidden");
     }
 
-    function checkMedicineSchedule(dashboard) {
+    function checkMedicineSchedule() {
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-
-      const due = dashboard.medications.find((medicine) => medicine.time === currentTime && medicine.status !== "ok");
-      if (due) {
+      const due = state.medications.find((medicine) => medicine.time === currentTime && !isTaken(medicine));
+      const key = due && `${due.id}-${today()}-${currentTime}`;
+      if (due && !shownReminders.has(key)) {
+        shownReminders.add(key);
         showMedicineReminder(due);
       }
     }
 
-    function renderDashboard() {
-      const user = getCurrentUser();
-      if (!user) {
-        window.location.href = "../login/login.html";
+    async function setTaken(id, taken) {
+      await api(`/api/dashboard/medicamentos/${id}`, { method: "PATCH", body: JSON.stringify({ takenOn: taken ? today() : null }) });
+      await loadDashboard();
+    }
+
+    /* ---------- Carregar tudo do banco ---------- */
+    function renderAll() {
+      renderMedications();
+      renderAppointments();
+      renderReminders();
+      renderClimate();
+      renderGas();
+    }
+
+    async function loadDashboard() {
+      const data = await api("/api/dashboard");
+      Object.assign(state, data);
+      renderAll();
+      checkMedicineSchedule();
+    }
+
+    /* ---------- Formulários ---------- */
+    const FORMS = {
+      medication: {
+        list: "medicamentos",
+        title: "Novo medicamento",
+        fields: [
+          { name: "name", label: "Nome do remédio", type: "text", placeholder: "Comece a digitar, ex.: Losartana", required: true, full: true },
+          { name: "dose", label: "Dose", type: "text", placeholder: "Ex.: 50 mg" },
+          { name: "time", label: "Horário", type: "time", required: true }
+        ]
+      },
+      appointment: {
+        list: "consultas",
+        title: "Nova consulta",
+        fields: [
+          { name: "title", label: "Consulta", type: "text", placeholder: "Ex.: Cardiologista", required: true, full: true },
+          { name: "doctor", label: "Médico(a) ou local", type: "text", placeholder: "Ex.: Dra. Ana", full: true },
+          { name: "date", label: "Data", type: "date", required: true },
+          { name: "time", label: "Horário", type: "time", required: true }
+        ]
+      },
+      reminder: {
+        list: "lembretes",
+        title: "Novo lembrete",
+        fields: [
+          { name: "title", label: "Lembrete", type: "text", placeholder: "Ex.: Beber água", required: true, full: true },
+          { name: "detail", label: "Detalhe", type: "text", placeholder: "Ex.: 2 copos antes do almoço", full: true },
+          { name: "time", label: "Horário", type: "time", required: true }
+        ]
+      }
+    };
+
+    let openFormKey = null;
+
+    function fieldHtml(field) {
+      const id = `dash-${field.name}`;
+      return `<div class="dash-field${field.full ? " full" : ""}"><label for="${id}">${field.label}</label>` +
+        `<input id="${id}" name="${field.name}" type="${field.type}" placeholder="${escapeHtml(field.placeholder || "")}"${field.required ? " required" : ""} autocomplete="off" /></div>`;
+    }
+
+    function openForm(key) {
+      const config = FORMS[key];
+      openFormKey = key;
+      document.getElementById("dashFormTitle").textContent = config.title;
+      document.getElementById("dashFormHint").textContent = "";
+      document.getElementById("dashFormError").textContent = "";
+      document.getElementById("dashFormFields").innerHTML = config.fields.map(fieldHtml).join("");
+      if (key === "medication") setupMedicineSearch();
+      document.getElementById("dashFormModal").classList.remove("hidden");
+      document.querySelector("#dashFormFields input")?.focus();
+    }
+
+    function closeForm() {
+      openFormKey = null;
+      document.getElementById("dashFormModal").classList.add("hidden");
+    }
+
+    // Busca de remédio: sugestões com a foto e remédios relacionados
+    function setupMedicineSearch() {
+      const nameInput = document.getElementById("dash-name");
+      const doseInput = document.getElementById("dash-dose");
+      const nameField = nameInput.closest(".dash-field");
+      nameField.insertAdjacentHTML("beforeend", '<ul class="med-suggest" id="medSuggest" hidden></ul>');
+      document.getElementById("dashFormFields").insertAdjacentHTML("beforeend",
+        '<div class="med-preview" id="medPreview" hidden></div><div class="med-related" id="medRelated" hidden></div>');
+
+      const suggest = document.getElementById("medSuggest");
+
+      function card(remedio) {
+        return `<img src="${VitalRemedios.imagem(remedio)}" alt="" /><span><span class="med-sug-name">${escapeHtml(remedio.nome)}</span>` +
+          `<span class="med-sug-meta">${escapeHtml(remedio.dose)} • ${escapeHtml(remedio.classe)}</span></span>`;
+      }
+
+      function choose(remedio) {
+        nameInput.value = remedio.nome;
+        if (!doseInput.value) doseInput.value = remedio.dose;
+        suggest.hidden = true;
+        showSelected(remedio);
+        document.getElementById("dash-time").focus();
+      }
+
+      function showSelected(remedio) {
+        const preview = document.getElementById("medPreview");
+        const related = document.getElementById("medRelated");
+        if (!remedio) {
+          preview.hidden = true;
+          related.hidden = true;
+          return;
+        }
+        preview.innerHTML = `<img src="${VitalRemedios.imagem(remedio)}" alt="Comprimido de ${escapeHtml(remedio.nome)}" />` +
+          `<div><div class="med-sug-name">${escapeHtml(remedio.nome)}</div><div class="med-sug-meta">${escapeHtml(remedio.dose)} • ${escapeHtml(remedio.classe)}</div></div>`;
+        preview.hidden = false;
+
+        const others = VitalRemedios.relacionados(remedio);
+        related.innerHTML = others.length
+          ? `<p class="med-related-title">Remédios relacionados (${escapeHtml(remedio.classe)})</p><div class="med-related-list">` +
+            others.map((item) => `<button class="med-chip" type="button" data-remedio="${escapeHtml(item.nome)}"><img src="${VitalRemedios.imagem(item)}" alt="" />${escapeHtml(item.nome)}</button>`).join("") + "</div>"
+          : "";
+        related.hidden = !others.length;
+      }
+
+      nameInput.addEventListener("input", () => {
+        const results = VitalRemedios.buscar(nameInput.value);
+        suggest.innerHTML = results.map((remedio, index) =>
+          `<li><button type="button" data-index="${index}">${card(remedio)}</button></li>`).join("");
+        suggest.hidden = !results.length;
+        suggest.onclick = (event) => {
+          const button = event.target.closest("button[data-index]");
+          if (button) choose(results[Number(button.dataset.index)]);
+        };
+        showSelected(VitalRemedios.encontrar(nameInput.value));
+      });
+
+      nameInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !suggest.hidden) {
+          event.preventDefault();
+          suggest.querySelector("button")?.click();
+        }
+      });
+
+      document.getElementById("medRelated").addEventListener("click", (event) => {
+        const chip = event.target.closest("[data-remedio]");
+        if (!chip) return;
+        doseInput.value = "";
+        choose(VitalRemedios.encontrar(chip.dataset.remedio));
+      });
+    }
+
+    document.querySelectorAll("[data-form]").forEach((button) => {
+      button.addEventListener("click", () => openForm(button.dataset.form));
+    });
+    document.getElementById("closeDashForm").addEventListener("click", closeForm);
+    document.getElementById("cancelDashForm").addEventListener("click", closeForm);
+    document.getElementById("dashFormModal").addEventListener("click", (event) => {
+      if (event.target.id === "dashFormModal") closeForm();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && openFormKey) closeForm();
+    });
+
+    document.getElementById("dashForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!openFormKey) return;
+
+      const config = FORMS[openFormKey];
+      const error = document.getElementById("dashFormError");
+      const data = Object.fromEntries([...new FormData(event.target)].map(([key, value]) => [key, String(value).trim()]));
+      const missing = config.fields.find((field) => field.required && !data[field.name]);
+      if (missing) {
+        error.textContent = `Preencha o campo “${missing.label}”.`;
         return;
       }
 
-      const dashboard = readDashboard(user);
+      const submit = event.target.querySelector('[type="submit"]');
+      submit.disabled = true;
+      error.textContent = "";
+      try {
+        await api(`/api/dashboard/${config.list}`, { method: "POST", body: JSON.stringify(data) });
+        closeForm();
+        await loadDashboard();
+      } catch (err) {
+        error.textContent = err.message;
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    // Remover itens e marcar remédio como tomado/pendente
+    document.querySelector(".layout").addEventListener("click", async (event) => {
+      const remove = event.target.closest("[data-remove]");
+      const toggle = event.target.closest("[data-toggle-med]");
+      try {
+        if (remove) {
+          await api(`/api/dashboard/${remove.dataset.remove}/${remove.dataset.id}`, { method: "DELETE" });
+          await loadDashboard();
+        } else if (toggle) {
+          const med = state.medications.find((item) => String(item.id) === toggle.dataset.toggleMed);
+          if (med) await setTaken(med.id, !isTaken(med));
+        }
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById("confirmMedicine").addEventListener("click", async () => {
+      closeMedicineReminder();
+      if (reminderMedicationId) await setTaken(reminderMedicationId, true).catch(() => {});
+    });
+
+    document.getElementById("snoozeMedicine").addEventListener("click", () => {
+      closeMedicineReminder();
+    });
+
+    document.getElementById("closeReminder").addEventListener("click", closeMedicineReminder);
+
+    document.getElementById("refreshWeather").addEventListener("click", async () => {
+      weather = null;
+      renderClimate();
+      await updateLocation(true);
+      await loadWeather();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", goToLogin);
+
+    /* ---------- Início ---------- */
+    async function start() {
+      const user = getCurrentUser();
+      if (!user || !getToken()) return goToLogin();
+
       const name = user.name || "Usuário";
       document.getElementById("userPill").textContent = `Olá, ${name}`;
       document.getElementById("welcomeText").textContent = `Acompanhando seus cuidados e lembretes do dia, ${name}.`;
       document.getElementById("dateBadge").textContent = formatDate(new Date());
 
-      renderMedications(dashboard);
-      renderClimate(dashboard);
-      renderGas(dashboard);
-      renderAppointments(dashboard);
-      renderReminders(dashboard);
-      setDashboard(user, dashboard);
-      checkMedicineSchedule(dashboard);
+      try {
+        await loadDashboard();
+      } catch (error) {
+        document.getElementById("welcomeText").textContent = error.message;
+        return;
+      }
+
+      await loadWeather();
+      if (await updateLocation(false)) await loadWeather();
+
+      setInterval(checkMedicineSchedule, 30000);
+      setInterval(loadGas, 15000);
+      setInterval(loadWeather, 15 * 60 * 1000);
     }
 
-    document.getElementById("confirmMedicine").addEventListener("click", () => {
-      const user = getCurrentUser();
-      if (!user) return;
-
-      const dashboard = readDashboard(user);
-      const current = document.getElementById("reminderTitle").textContent;
-      dashboard.medications = dashboard.medications.map((medicine) =>
-        medicine.name === current ? { ...medicine, status: "ok" } : medicine
-      );
-      setDashboard(user, dashboard);
-      closeMedicineReminder();
-      renderDashboard();
-    });
-
-    document.getElementById("snoozeMedicine").addEventListener("click", () => {
-      closeMedicineReminder();
-      const user = getCurrentUser();
-      if (!user) return;
-
-      const dashboard = readDashboard(user);
-      const current = document.getElementById("reminderTitle").textContent;
-      dashboard.medications = dashboard.medications.map((medicine) =>
-        medicine.name === current ? { ...medicine, status: "pending" } : medicine
-      );
-      setDashboard(user, dashboard);
-      renderDashboard();
-    });
-
-    document.getElementById("closeReminder").addEventListener("click", () => {
-      closeMedicineReminder();
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("vitalcare-current-user");
-      localStorage.removeItem("vitalcare-token");
-      window.location.href = "../login/login.html";
-    });
-
-    setInterval(() => {
-      const user = getCurrentUser();
-      if (!user) return;
-      const dashboard = readDashboard(user);
-      checkMedicineSchedule(dashboard);
-    }, 60000);
-
-    renderDashboard();
+    start();
   </script>
 <script src="/header.js"></script>
 </body>
