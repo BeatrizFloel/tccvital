@@ -14,7 +14,7 @@
    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
    :root {
-     --cream: #fdf6d8;
+     --cream: #FBEFB0;
      --cream-soft: #fbf8ec;
      --white: #ffffff;
      --navy: #1f3f5c;
@@ -130,6 +130,12 @@
      background: var(--cream);
      padding: 60px 0 70px;
    }
+
+   /* Mesmo espaçamento do topo das outras abas (Instruções, Equipe, Referências) */
+   .vc-page .hero {
+     padding-top: clamp(56px, 7vw, 96px) !important;
+     padding-bottom: clamp(56px, 7vw, 96px) !important;
+   }
    
    .hero .container {
      max-width: 760px;
@@ -139,7 +145,7 @@
      text-align: center;
      font-size: 42px;
      font-weight: 700;
-     color: var(--navy);
+     color: #1F2A44;
      letter-spacing: -0.5px;
    }
    
@@ -147,7 +153,7 @@
      text-align: center;
      margin-top: 8px;
      font-size: 14px;
-     color: var(--muted);
+     color: #6B6F63;
    }
    
    /* ===== CARDS GRID ===== */

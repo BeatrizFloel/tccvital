@@ -4,6 +4,7 @@ import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mysql from "mysql2/promise";
+import nodemailer from "nodemailer";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,7 +14,9 @@ const secretKey = process.env.JWT_SECRET || "vitalcare-development-secret";
 let pool;
 const tableName = process.env.DB_TABLE || "vital_care";
 if (!/^[A-Za-z0-9_]+$/.test(tableName)) throw new Error("DB_TABLE inválida");
-const localDataPath = path.join(path.dirname(fileURLToPath(import.meta.url)), ".data", "vital_care.json");
+const backendDirectory = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(backendDirectory, "..");
+const localDataPath = path.join(backendDirectory, ".data", "vital_care.json");
 
 app.use(cors());
 app.use(express.json());
@@ -150,7 +153,75 @@ app.post(["/login", "/api/login"], async (req, res) => {
   }
 });
 
-app.use(express.static(path.dirname(fileURLToPath(import.meta.url))));
+function hasMailConfig() {
+  return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
+function getMailer() {
+  const port = Number(process.env.SMTP_PORT || 587);
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: port === 465,
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+}
+
+app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
+  const name = String(req.body?.name || "").trim();
+  const email = String(req.body?.email || "").trim().toLowerCase();
+  const phone = String(req.body?.phone || "").trim();
+  const message = String(req.body?.message || "").trim();
+
+  if (!name || !email) return res.status(400).json({ message: "Nome e e-mail são obrigatórios." });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Digite um e-mail válido." });
+  if (!hasMailConfig()) return res.status(503).json({ message: "Envio de e-mail não configurado. Defina SMTP_HOST, SMTP_USER e SMTP_PASS." });
+
+  const from = process.env.MAIL_FROM || `VitalCare <${process.env.SMTP_USER}>`;
+  const teamEmail = process.env.MAIL_TO || process.env.SMTP_USER;
+  const safeName = escapeHtml(name);
+
+  const customerHtml = `
+    <div style="font-family:Arial,sans-serif;color:#1E2433;max-width:560px">
+      <h2 style="color:#1F2A44">Olá, ${safeName}!</h2>
+      <p>Recebemos sua solicitação de orçamento do <strong>VitalCare</strong>. Seguem as informações:</p>
+      <h3 style="color:#1F2A44">VitalCare completo — R$ 399,99</h3>
+      <p>Pagamento único + Software gratuito</p>
+      <ul>
+        <li>Alertas para medicamentos e compromissos</li>
+        <li>Monitoramento de frequência cardíaca e saturação</li>
+        <li>Alertas sonoros</li>
+        <li>Tela touch screen de 14 polegadas</li>
+      </ul>
+      <p>Nossa equipe entrará em contato em breve para tirar suas dúvidas e combinar os próximos passos.</p>
+      <p>Feito com ♥ para você,<br/>Equipe VitalCare</p>
+    </div>`;
+
+  const teamHtml = `
+    <div style="font-family:Arial,sans-serif">
+      <h2>Nova solicitação de orçamento</h2>
+      <p><strong>Nome:</strong> ${safeName}</p>
+      <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
+      <p><strong>Telefone:</strong> ${escapeHtml(phone || "—")}</p>
+      <p><strong>Mensagem:</strong><br/>${escapeHtml(message || "—").replace(/\n/g, "<br/>")}</p>
+    </div>`;
+
+  try {
+    const mailer = getMailer();
+    await mailer.sendMail({ from, to: email, subject: "Seu orçamento VitalCare", html: customerHtml });
+    await mailer.sendMail({ from, to: teamEmail, replyTo: email, subject: `Novo pedido de orçamento — ${name}`, html: teamHtml });
+    return res.json({ message: "Pronto! Enviamos as informações para o seu e-mail." });
+  } catch (error) {
+    console.error("Erro ao enviar orçamento:", error.message);
+    return res.status(500).json({ message: "Não foi possível enviar o e-mail agora. Tente novamente." });
+  }
+});
+
+app.use(express.static(projectRoot));
 
 export default app;
 

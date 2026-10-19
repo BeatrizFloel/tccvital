@@ -35,7 +35,7 @@ a { text-decoration: none; }
 .auth-image {
   position: relative;
   min-height: 100vh;
-  background-image: url("https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=85");
+  background-image: url("../imagens/login-cuidadora.png");
   background-size: cover;
   background-position: center;
   overflow: hidden;

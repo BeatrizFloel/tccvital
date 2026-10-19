@@ -218,3 +218,60 @@ a { text-decoration: none; color: inherit; }
   .design-cols { grid-template-columns: 1fr; gap: 30px; }
   .footer { flex-direction: column; gap: 8px; text-align: center; }
 }
+
+/* ============ MODAL — SOLICITAR ORÇAMENTO ============ */
+.orc-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  padding: 20px;
+  background: rgba(31, 42, 68, .45);
+  backdrop-filter: blur(3px);
+  overflow-y: auto;
+}
+.orc-overlay[hidden] { display: none !important; }
+.vc-page > .orc-overlay { width: auto; }
+.orc-modal {
+  position: relative;
+  width: 100%; max-width: 640px;
+  background: #EFEFEC;
+  border-radius: 22px;
+  padding: 36px 40px 40px;
+  box-shadow: 0 24px 60px rgba(31, 42, 68, .25);
+  animation: orc-in .25s ease;
+}
+@keyframes orc-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.orc-close {
+  position: absolute; top: 14px; right: 16px;
+  width: 36px; height: 36px; border: 0; border-radius: 50%;
+  background: transparent; color: #1F2A44;
+  font-size: 26px; line-height: 1; cursor: pointer;
+}
+.orc-close:hover { background: rgba(31, 42, 68, .08); }
+.orc-title { text-align: center; color: var(--azul-escuro); }
+.orc-sub { text-align: center; color: #6B6F63; margin-top: 8px; }
+.orc-campo { margin-top: 20px; }
+.orc-campo label { display: block; font-weight: 700; color: var(--texto); margin-bottom: 8px; }
+.orc-campo input, .orc-campo textarea {
+  width: 100%; background: var(--branco);
+  border: 1px solid #E3E3DE;
+  padding: 13px 16px; font-family: inherit; font-size: 16px; color: var(--texto);
+}
+.orc-campo textarea { min-height: 100px; resize: vertical; }
+.orc-campo input::placeholder, .orc-campo textarea::placeholder { color: #B9BCB4; }
+.orc-modal .btn-enviar {
+  width: 100%; margin-top: 26px;
+  background: var(--laranja-card); color: #8A6428;
+  border: none; font-family: inherit; font-size: 15px; cursor: pointer;
+}
+.orc-modal .btn-enviar:disabled { opacity: .6; cursor: wait; }
+.orc-status { margin-top: 14px; text-align: center; font-weight: 600; min-height: 1.6em; }
+.orc-status.is-ok { color: #2E8B57 !important; }
+.orc-status.is-erro { color: #D14343 !important; }
+body.orc-aberto { overflow: hidden; }
+
+html.dark .vc-page .orc-modal { background: #16233a; }
+html.dark .vc-page .orc-close { color: #E8EDF5; }
+
+@media (max-width: 600px) {
+  .orc-modal { padding: 30px 20px 28px; }
+}

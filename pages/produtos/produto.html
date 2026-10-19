@@ -194,6 +194,36 @@
     <p>Feito com <span class="heart">♥</span> para você</p>
   </footer>
 
+  <!-- ================= MODAL ORÇAMENTO ================= -->
+  <div class="orc-overlay" id="orcamento" hidden>
+    <div class="orc-modal" role="dialog" aria-modal="true" aria-labelledby="orc-title">
+      <button class="orc-close" type="button" aria-label="Fechar">&times;</button>
+      <h2 class="orc-title" id="orc-title">Solicitar Orçamento</h2>
+      <p class="orc-sub">Preencha seus dados e enviaremos as informações do VitalCare para o seu e-mail!</p>
+
+      <form class="orc-form" novalidate>
+        <div class="orc-campo">
+          <label for="orc-nome">Nome Completo</label>
+          <input id="orc-nome" name="name" type="text" placeholder="Seu nome" required />
+        </div>
+        <div class="orc-campo">
+          <label for="orc-email">E-mail</label>
+          <input id="orc-email" name="email" type="email" placeholder="seu@gmail.com" required />
+        </div>
+        <div class="orc-campo">
+          <label for="orc-tel">Telefone (opcional)</label>
+          <input id="orc-tel" name="phone" type="tel" placeholder="(00) 00000-0000" />
+        </div>
+        <div class="orc-campo">
+          <label for="orc-msg">Mensagem (opcional)</label>
+          <textarea id="orc-msg" name="message" placeholder="Conte o que você precisa"></textarea>
+        </div>
+        <button class="btn-enviar" type="submit">Receber orçamento por e-mail</button>
+        <p class="orc-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
 
 </div>
 <script>
@@ -206,6 +236,76 @@
       root.classList.toggle("dark");
       try { localStorage.setItem("vc-theme", root.classList.contains("dark") ? "dark" : "light"); } catch (e) {}
     });
+  }());
+
+  (function () {
+    var overlay = document.getElementById("orcamento");
+    var form = overlay.querySelector(".orc-form");
+    var status = overlay.querySelector(".orc-status");
+    var submit = form.querySelector(".btn-enviar");
+
+    function abrir(event) {
+      if (event) event.preventDefault();
+      overlay.hidden = false;
+      document.body.classList.add("orc-aberto");
+      document.getElementById("orc-nome").focus();
+    }
+    function fechar() {
+      overlay.hidden = true;
+      document.body.classList.remove("orc-aberto");
+    }
+    function mostrar(texto, ok) {
+      status.textContent = texto;
+      status.className = "orc-status " + (ok ? "is-ok" : "is-erro");
+    }
+
+    document.querySelectorAll('a[href="#orcamento"]').forEach(function (link) {
+      link.addEventListener("click", abrir);
+    });
+    overlay.querySelector(".orc-close").addEventListener("click", fechar);
+    overlay.addEventListener("click", function (event) { if (event.target === overlay) fechar(); });
+    document.addEventListener("keydown", function (event) { if (event.key === "Escape" && !overlay.hidden) fechar(); });
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      var dados = Object.fromEntries(new FormData(form));
+      if (!dados.name.trim() || !dados.email.trim()) return mostrar("Preencha seu nome e e-mail.", false);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email.trim())) return mostrar("Digite um e-mail válido.", false);
+
+      submit.disabled = true;
+      mostrar("Enviando...", true);
+      // Tenta o próprio site e, se a página foi aberta pelo Live Server, o servidor local (npm run dev)
+      var servidores = [location.origin, "http://localhost:3000", "http://127.0.0.1:3000"]
+        .filter(function (url, i, lista) { return url && url !== "null" && lista.indexOf(url) === i; });
+      try {
+        var ultimoErro = null;
+        var json = null;
+        for (var i = 0; i < servidores.length && !json; i++) {
+          try {
+            var resposta = await fetch(servidores[i] + "/api/orcamento", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(dados)
+            });
+            var corpo = await resposta.json().catch(function () { return null; });
+            if (!corpo) throw new Error("Servidor não encontrado. Rode npm run dev na pasta do projeto.");
+            if (!resposta.ok) { ultimoErro = new Error(corpo.message || "Não foi possível enviar."); break; }
+            json = corpo;
+          } catch (erro) {
+            ultimoErro = erro;
+          }
+        }
+        if (!json) throw ultimoErro || new Error("Não foi possível enviar.");
+        mostrar(json.message || "Enviado! Confira seu e-mail.", true);
+        form.reset();
+      } catch (error) {
+        mostrar(error.message || "Não foi possível enviar. Tente novamente.", false);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    if (location.hash === "#orcamento") abrir();
   }());
 </script>
 <script src="/header.js"></script>
