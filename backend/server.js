@@ -7,9 +7,11 @@ import mysql from "mysql2/promise";
 import { sendEmail, hasMailConfig } from "./email.js";
 import { registerDashboardRoutes } from "./dashboard.js";
 import { registerAssistantRoutes } from "./assistente.js";
+import { startRealtime } from "./tempo-real.js";
 import { PROPOSTA, FUNCOES, consultarCep, montarProposta, montarAvisoEquipe } from "./proposta.js";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -51,7 +53,8 @@ async function writeLocalUsers(users) {
 function createToken(user) { return jwt.sign({ userId: user.id_usuario, name: user.nome, email: user.email }, secretKey, { expiresIn: "7d" }); }
 
 app.get("/", (_req, res) => res.json({ status: "ok", service: "VitalCare API", storage: hasDatabaseConfig() ? "mysql" : "local" }));
-app.get(["/api/health", "/health"], (_req, res) => res.json({ status: "ok", storage: hasDatabaseConfig() ? "mysql" : "local" }));
+// realtime: false na Vercel, que não mantém o WebSocket aberto (o painel volta a buscar a cada 5 s)
+app.get(["/api/health", "/health"], (_req, res) => res.json({ status: "ok", storage: hasDatabaseConfig() ? "mysql" : "local", realtime: process.env.VERCEL !== "1" }));
 app.get(["/api/login", "/login"], (_req, res) => res.status(200).json({ message: "Use POST para fazer login." }));
 app.get(["/api/cadastro", "/cadastro"], (_req, res) => res.status(200).json({ message: "Use POST para criar o cadastro." }));
 
@@ -270,7 +273,17 @@ export default app;
 
 if (process.env.VERCEL !== "1") {
   const port = Number(process.env.PORT || 3000);
-  app.listen(port, () => console.log(`Servidor ligado na porta ${port}`));
+  const server = app.listen(port, () => {
+    console.log(`Servidor ligado na porta ${port}`);
+    // IPs deste computador na rede Wi-Fi: é o endereço usado no celular e no código do ESP
+    const ips = Object.values(os.networkInterfaces()).flat()
+      .filter((item) => item && item.family === "IPv4" && !item.internal).map((item) => item.address);
+    for (const ip of ips) {
+      console.log(`  App no celular (mesmo Wi-Fi): http://${ip}:${port}/pages/login/login.html`);
+      console.log(`  No código do ESP:            SERVER_HOST = "${ip}"  SERVER_PORT = ${port}`);
+    }
+  });
+  startRealtime(server, dashboard, secretKey);
 }
 
 if (process.env.VERCEL === "1" && !hasDatabaseConfig()) {

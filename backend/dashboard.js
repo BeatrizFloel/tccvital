@@ -401,23 +401,36 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
     await writeLocal(data);
   }
 
+  // Avisados a cada leitura salva (o tempo-real.js usa para mandar na hora para o app)
+  const sensorListeners = new Set();
+
+  // Usado pelo POST abaixo e pelo WebSocket do ESP (tempo-real.js): valida, salva e avisa o app
+  async function receiveSensors(body, tipo = "") {
+    const email = String(body?.email || "").trim().toLowerCase();
+    const { values, ignored } = readSensorValues(body, tipo);
+    if (!email || !Object.keys(values).length) return { status: 400, reply: { message: SENSOR_HELP[tipo], ignored } };
+
+    const userId = await findSensorOwner(email);
+    if (!userId) return { status: 404, reply: { message: "Nenhuma conta com esse e-mail." } };
+
+    await saveReadings(userId, values);
+    sensorListeners.forEach((listener) => listener(userId));
+    const reply = { message: "Leitura recebida.", saved: values, ignored };
+    if (values.gas !== undefined) reply.level = values.gas;
+    return { status: 201, reply, userId };
+  }
+
   app.post(["/sensores", "/api/sensores", "/sensores/:tipo", "/api/sensores/:tipo"], handle(async (req, res) => {
     const tipo = req.params.tipo || "";
     if (!(tipo in SENSOR_HELP)) return res.status(404).json({ message: "Sensor inexistente. Use gas, cardiaco ou temperatura." });
     if (process.env.SENSOR_KEY && req.get("x-sensor-key") !== process.env.SENSOR_KEY) return res.status(401).json({ message: "Chave do sensor inválida." });
 
-    const email = String(req.body?.email || "").trim().toLowerCase();
-    const { values, ignored } = readSensorValues(req.body, tipo);
-    if (!email || !Object.keys(values).length) return res.status(400).json({ message: SENSOR_HELP[tipo], ignored });
-
-    const userId = await findSensorOwner(email);
-    if (!userId) return res.status(404).json({ message: "Nenhuma conta com esse e-mail." });
-
-    await saveReadings(userId, values);
-    const reply = { message: "Leitura recebida.", saved: values, ignored };
-    if (values.gas !== undefined) reply.level = values.gas;
-    return res.status(201).json(reply);
+    const { status, reply } = await receiveSensors(req.body, tipo);
+    return res.status(status).json(reply);
   }));
 
-  return { auth, handle, loadDashboardData, setMedicationTaken, isValidDate: (value) => DATE_RE.test(String(value || "")) };
+  return {
+    auth, handle, loadDashboardData, setMedicationTaken, isValidDate: (value) => DATE_RE.test(String(value || "")),
+    loadSensors, receiveSensors, findSensorOwner, onSensors: (listener) => sensorListeners.add(listener)
+  };
 }
