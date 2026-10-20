@@ -66,8 +66,36 @@ const SCHEMA = [
     ppm DECIMAL(8,2) NOT NULL,
     lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_gas_usuario (id_usuario, lido_em)
+  )`,
+  `CREATE TABLE IF NOT EXISTS vc_leituras_cardiacas (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    bpm DECIMAL(5,1) NULL,
+    spo2 DECIMAL(4,1) NULL,
+    lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_cardiaca_usuario (id_usuario, lido_em)
+  )`,
+  `CREATE TABLE IF NOT EXISTS vc_leituras_temperatura (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    celsius DECIMAL(5,2) NOT NULL,
+    umidade DECIMAL(5,2) NULL,
+    lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_temperatura_usuario (id_usuario, lido_em)
   )`
 ];
+
+/* ---------- Sensores ----------
+   Cada valor aceita alguns apelidos para facilitar o código do Raspberry/ESP32.
+   Leituras fora da faixa (ex.: -999 do oxímetro sem o dedo) são ignoradas. */
+const SENSOR_FIELDS = {
+  gas: { names: ["level", "gas", "ppm"], min: 0, max: 100000 },
+  bpm: { names: ["bpm", "heartRate", "batimentos"], min: 20, max: 250 },
+  spo2: { names: ["spo2", "oxygen", "saturacao", "oxigenio"], min: 50, max: 100 },
+  celsius: { names: ["celsius", "temperature", "temperatura", "temp"], min: -40, max: 85 },
+  umidade: { names: ["humidity", "umidade"], min: 0, max: 100 }
+};
+const HISTORY_SIZE = 30;
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -95,11 +123,12 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   }
 
   async function readLocal() {
+    const empty = { nextId: 1, medicamentos: [], consultas: [], lembretes: [], locais: {}, leituras_gas: [], leituras_cardiacas: [], leituras_temperatura: [] };
     try {
-      return JSON.parse(await fs.readFile(localPath, "utf8"));
+      return { ...empty, ...JSON.parse(await fs.readFile(localPath, "utf8")) };
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
-      return { nextId: 1, medicamentos: [], consultas: [], lembretes: [], locais: {}, leituras_gas: [] };
+      return empty;
     }
   }
 
@@ -138,19 +167,43 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   const toReminder = (row) => ({ id: row.id, title: row.titulo, detail: row.detalhe || "", time: row.horario });
   const toLocation = (row) => row ? { latitude: Number(row.latitude), longitude: Number(row.longitude), city: row.cidade || "" } : null;
   const toGas = (row) => row ? { level: Number(row.ppm), updatedAt: new Date(row.lido_em).toISOString() } : null;
+  const numberOrNull = (value) => value === null || value === undefined ? null : Number(value);
+  const toHeartPoint = (row) => ({ bpm: numberOrNull(row.bpm), spo2: numberOrNull(row.spo2), at: new Date(row.lido_em).toISOString() });
+  const toTemperaturePoint = (row) => ({ celsius: Number(row.celsius), humidity: numberOrNull(row.umidade), at: new Date(row.lido_em).toISOString() });
 
-  async function loadGas(userId) {
+  // Última leitura + histórico curto (mais antiga primeiro) para o gráfico do painel
+  function withHistory(points) {
+    if (!points.length) return null;
+    const { at, ...latest } = points.at(-1);
+    return { ...latest, updatedAt: at, history: points };
+  }
+
+  async function latestRows(table, columns, userId) {
     if (usingMysql()) {
-      const [rows] = await (await db()).query("SELECT ppm, lido_em FROM vc_leituras_gas WHERE id_usuario = ? ORDER BY lido_em DESC, id DESC LIMIT 1", [userId]);
-      return toGas(rows[0]);
+      const [rows] = await (await db()).query(
+        `SELECT ${columns}, lido_em FROM ${table} WHERE id_usuario = ? ORDER BY lido_em DESC, id DESC LIMIT ${HISTORY_SIZE}`, [userId]);
+      return rows.reverse();
     }
     const data = await readLocal();
-    return toGas(data.leituras_gas.filter((row) => row.id_usuario === userId).at(-1));
+    return data[table.replace(/^vc_/, "")].filter((row) => row.id_usuario === userId).slice(-HISTORY_SIZE);
+  }
+
+  async function loadGas(userId) {
+    return toGas((await latestRows("vc_leituras_gas", "ppm", userId)).at(-1));
+  }
+
+  async function loadSensors(userId) {
+    const [gas, heart, temperature] = await Promise.all([
+      loadGas(userId),
+      latestRows("vc_leituras_cardiacas", "bpm, spo2", userId),
+      latestRows("vc_leituras_temperatura", "celsius, umidade", userId)
+    ]);
+    return { gas, heart: withHistory(heart.map(toHeartPoint)), temperature: withHistory(temperature.map(toTemperaturePoint)) };
   }
 
   /* ---------- rotas do painel ---------- */
-  app.get(["/dashboard", "/api/dashboard"], auth, handle(async (req, res) => {
-    const userId = req.userId;
+  // Tudo o que o painel mostra (também usado pela assistente de voz)
+  async function loadDashboardData(userId) {
     if (usingMysql()) {
       const pool = await db();
       const [[meds], [appointments], [reminders], [locations]] = await Promise.all([
@@ -159,25 +212,44 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
         pool.query("SELECT id, titulo, detalhe, horario FROM vc_lembretes WHERE id_usuario = ? ORDER BY horario", [userId]),
         pool.query("SELECT latitude, longitude, cidade FROM vc_locais WHERE id_usuario = ?", [userId])
       ]);
-      return res.json({
+      return {
         medications: meds.map(toMedication),
         appointments: appointments.map(toAppointment),
         reminders: reminders.map(toReminder),
         location: toLocation(locations[0]),
-        gas: await loadGas(userId)
-      });
+        ...(await loadSensors(userId))
+      };
     }
 
     const data = await readLocal();
     const mine = (list) => data[list].filter((row) => row.id_usuario === userId)
       .sort((a, b) => `${a.data || ""} ${a.horario}`.localeCompare(`${b.data || ""} ${b.horario}`));
-    return res.json({
+    return {
       medications: mine("medicamentos").map(toMedication),
       appointments: mine("consultas").map(toAppointment),
       reminders: mine("lembretes").map(toReminder),
       location: toLocation(data.locais[userId]),
-      gas: await loadGas(userId)
-    });
+      ...(await loadSensors(userId))
+    };
+  }
+
+  // Marca o remédio como tomado no dia `takenOn` (AAAA-MM-DD) ou volta para pendente (null)
+  async function setMedicationTaken(userId, id, takenOn) {
+    if (usingMysql()) {
+      const [result] = await (await db()).query("UPDATE vc_medicamentos SET tomado_em = ? WHERE id = ? AND id_usuario = ?", [takenOn, id, userId]);
+      return result.affectedRows > 0;
+    }
+    const data = await readLocal();
+    const row = data.medicamentos.find((item) => item.id === id && item.id_usuario === userId);
+    if (row) {
+      row.tomado_em = takenOn;
+      await writeLocal(data);
+    }
+    return Boolean(row);
+  }
+
+  app.get(["/dashboard", "/api/dashboard"], auth, handle(async (req, res) => {
+    res.json(await loadDashboardData(req.userId));
   }));
 
   app.post(["/dashboard/:list", "/api/dashboard/:list"], auth, handle(async (req, res) => {
@@ -230,14 +302,7 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
     const takenOn = req.body?.takenOn ? String(req.body.takenOn) : null;
     if (takenOn && !DATE_RE.test(takenOn)) return res.status(400).json({ message: "Data inválida." });
 
-    if (usingMysql()) {
-      await (await db()).query("UPDATE vc_medicamentos SET tomado_em = ? WHERE id = ? AND id_usuario = ?", [takenOn, id, req.userId]);
-    } else {
-      const data = await readLocal();
-      const row = data.medicamentos.find((item) => item.id === id && item.id_usuario === req.userId);
-      if (row) row.tomado_em = takenOn;
-      await writeLocal(data);
-    }
+    await setMedicationTaken(req.userId, id, takenOn);
     return res.json({ message: "Atualizado." });
   }));
 
@@ -268,28 +333,91 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
     res.json(await loadGas(req.userId));
   }));
 
-  /* ---------- Sensor de gás ----------
-     O sensor (ESP32/Arduino) envia: POST /api/sensores/gas  { "email": "dono@conta.com", "level": 23 }
-     Se SENSOR_KEY estiver definida, o sensor manda o cabeçalho  x-sensor-key: <SENSOR_KEY> */
-  app.post(["/sensores/gas", "/api/sensores/gas"], handle(async (req, res) => {
-    const email = String(req.body?.email || "").trim().toLowerCase();
-    const level = Number(req.body?.level);
-    if (process.env.SENSOR_KEY && req.get("x-sensor-key") !== process.env.SENSOR_KEY) return res.status(401).json({ message: "Chave do sensor inválida." });
-    if (!email || !Number.isFinite(level) || level < 0) return res.status(400).json({ message: "Envie email e level (número em ppm)." });
+  // Gás, batimentos/oxímetro e temperatura de uma vez (o painel consulta a cada poucos segundos)
+  app.get(["/dashboard/sensores", "/api/dashboard/sensores"], auth, handle(async (req, res) => {
+    res.json(await loadSensors(req.userId));
+  }));
+
+  /* ---------- Recebimento dos sensores ----------
+     O dispositivo (Raspberry Pi/ESP32) identifica a conta pelo e-mail e envia só o que tiver:
+       POST /api/sensores              { "email": "...", "gas": 23, "bpm": 78, "spo2": 97, "celsius": 24.5, "humidity": 60 }
+       POST /api/sensores/gas          { "email": "...", "level": 23 }
+       POST /api/sensores/cardiaco     { "email": "...", "bpm": 78, "spo2": 97 }
+       POST /api/sensores/temperatura  { "email": "...", "celsius": 24.5, "humidity": 60 }
+     Se SENSOR_KEY estiver definida, o dispositivo manda o cabeçalho  x-sensor-key: <SENSOR_KEY> */
+  const SENSOR_HELP = {
+    "": "Envie email e ao menos um valor: gas, bpm, spo2, celsius ou humidity.",
+    gas: "Envie email e level (número em ppm).",
+    cardiaco: "Envie email e bpm (20 a 250) e/ou spo2 (50 a 100).",
+    temperatura: "Envie email e celsius (-40 a 85). humidity (0 a 100) é opcional."
+  };
+  const SENSOR_ACCEPTS = { gas: ["gas"], cardiaco: ["bpm", "spo2"], temperatura: ["celsius", "umidade"] };
+
+  function readSensorValues(body, tipo) {
+    const values = {};
+    const ignored = [];
+    for (const [key, field] of Object.entries(SENSOR_FIELDS)) {
+      if (tipo && !SENSOR_ACCEPTS[tipo].includes(key)) continue;
+      const name = field.names.find((item) => body?.[item] !== undefined && body[item] !== null && body[item] !== "");
+      if (!name) continue;
+      const value = Number(body[name]);
+      if (Number.isFinite(value) && value >= field.min && value <= field.max) values[key] = Math.round(value * 100) / 100;
+      else ignored.push(name);
+    }
+    // umidade sozinha não forma uma leitura de temperatura
+    if (values.umidade !== undefined && values.celsius === undefined) delete values.umidade;
+    return { values, ignored };
+  }
+
+  async function findSensorOwner(email) {
+    if (usingMysql()) {
+      const [users] = await (await db()).query(`SELECT id_usuario FROM ${tableName} WHERE email = ? LIMIT 1`, [email]);
+      return users[0]?.id_usuario ?? null;
+    }
+    return (await readLocalUsers()).find((item) => item.email === email)?.id_usuario ?? null;
+  }
+
+  async function saveReadings(userId, values) {
+    const rows = [];
+    if (values.gas !== undefined) rows.push(["vc_leituras_gas", { ppm: values.gas }]);
+    if (values.bpm !== undefined || values.spo2 !== undefined) rows.push(["vc_leituras_cardiacas", { bpm: values.bpm ?? null, spo2: values.spo2 ?? null }]);
+    if (values.celsius !== undefined) rows.push(["vc_leituras_temperatura", { celsius: values.celsius, umidade: values.umidade ?? null }]);
 
     if (usingMysql()) {
       const pool = await db();
-      const [users] = await pool.query(`SELECT id_usuario FROM ${tableName} WHERE email = ? LIMIT 1`, [email]);
-      if (!users.length) return res.status(404).json({ message: "Nenhuma conta com esse e-mail." });
-      await pool.query("INSERT INTO vc_leituras_gas (id_usuario, ppm) VALUES (?, ?)", [users[0].id_usuario, level]);
-    } else {
-      const user = (await readLocalUsers()).find((item) => item.email === email);
-      if (!user) return res.status(404).json({ message: "Nenhuma conta com esse e-mail." });
-      const data = await readLocal();
-      data.leituras_gas.push({ id: data.nextId++, id_usuario: user.id_usuario, ppm: level, lido_em: new Date().toISOString() });
-      data.leituras_gas = data.leituras_gas.slice(-5000);
-      await writeLocal(data);
+      for (const [table, row] of rows) {
+        const columns = Object.keys(row);
+        await pool.query(`INSERT INTO ${table} (id_usuario, ${columns.join(", ")}) VALUES (?, ${columns.map(() => "?").join(", ")})`,
+          [userId, ...columns.map((column) => row[column])]);
+      }
+      return;
     }
-    return res.status(201).json({ message: "Leitura recebida.", level });
+    const data = await readLocal();
+    for (const [table, row] of rows) {
+      const list = table.replace(/^vc_/, "");
+      data[list].push({ id: data.nextId++, id_usuario: userId, ...row, lido_em: new Date().toISOString() });
+      data[list] = data[list].slice(-5000);
+    }
+    await writeLocal(data);
+  }
+
+  app.post(["/sensores", "/api/sensores", "/sensores/:tipo", "/api/sensores/:tipo"], handle(async (req, res) => {
+    const tipo = req.params.tipo || "";
+    if (!(tipo in SENSOR_HELP)) return res.status(404).json({ message: "Sensor inexistente. Use gas, cardiaco ou temperatura." });
+    if (process.env.SENSOR_KEY && req.get("x-sensor-key") !== process.env.SENSOR_KEY) return res.status(401).json({ message: "Chave do sensor inválida." });
+
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const { values, ignored } = readSensorValues(req.body, tipo);
+    if (!email || !Object.keys(values).length) return res.status(400).json({ message: SENSOR_HELP[tipo], ignored });
+
+    const userId = await findSensorOwner(email);
+    if (!userId) return res.status(404).json({ message: "Nenhuma conta com esse e-mail." });
+
+    await saveReadings(userId, values);
+    const reply = { message: "Leitura recebida.", saved: values, ignored };
+    if (values.gas !== undefined) reply.level = values.gas;
+    return res.status(201).json(reply);
   }));
+
+  return { auth, handle, loadDashboardData, setMedicationTaken, isValidDate: (value) => DATE_RE.test(String(value || "")) };
 }

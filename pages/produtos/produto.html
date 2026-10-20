@@ -4,289 +4,274 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VitalCare — Produto</title>
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
-<link rel="stylesheet" href="produto.css" />
-<link rel="stylesheet" href="/global.css" />
-<link rel="stylesheet" href="/header.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="/vc.css" />
 </head>
 <body>
-<div class="vc-page vc-std">
 
-
-  <!-- ================= HEADER ================= -->
-  <header class="header">
-    <a class="logo" href="/index.html">
-      <img class="logo-img" src="/pages/imagens/logo.png" alt="VitalCare" />
-    </a>
-
-    <nav class="nav">
-      <a class="nav-link" href="/index.html">Home</a>
-      <a class="nav-link" href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
-      <a class="nav-link is-active" href="/pages/produtos/produto.html">Produto</a>
-      <a class="nav-link" href="/pages/equipe/equipe (1).html">Equipe</a>
-      <a class="nav-link" href="/pages/referencias/referencias (1).html">Referências</a>
-      <a class="nav-link" href="/pages/jogo/jogo (2).html">Jogo</a>
-      <a class="nav-link" href="/pages/login/login.html">Login</a>
-    </nav>
-
-    <button class="theme-toggle" type="button" aria-label="Alternar tema">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+<header class="site-header">
+  <a class="logo" href="/index.html"><img src="/pages/imagens/logo-vitalcare.png" alt="VitalCare" width="168" height="50" /></a>
+  <nav class="site-nav" aria-label="Principal">
+    <a href="/index.html">Home</a>
+    <a href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
+    <a href="/pages/produtos/produto.html" class="is-active" aria-current="page">Produto</a>
+    <a href="/pages/equipe/equipe (1).html">Equipe</a>
+    <a href="/pages/referencias/referencias (1).html">Referências</a>
+    <a href="/pages/jogo/jogo (2).html">Jogo</a>
+    <a href="/pages/login/login.html">Login</a>
+  </nav>
+  <div class="header-actions">
+    <button class="icon-btn theme-toggle" type="button" aria-label="Alternar tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     </button>
-    <button class="vc-burger" type="button" aria-label="Abrir menu" aria-expanded="false">
-      <span></span><span></span><span></span>
+    <button class="icon-btn menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
-  </header>
+  </div>
+</header>
 
-  <!-- ================= TOPO AMARELO + HARDWARE ================= -->
-  <section class="prod-hero">
-    <h1 class="prod-title">Especificações do Produto</h1>
-    <p class="prod-subtitle">O VitalCare é uma ferramenta de apoio ao acompanhamento e à organização dos cuidados.</p>
+<main>
+  <!-- ================= TOPO ================= -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Especificações do Produto</h1>
+      <p class="lead">O VitalCare é uma ferramenta de apoio ao acompanhamento e à organização dos cuidados.</p>
+    </div>
+    <svg class="hero-pulse" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40h420l18-22 16 36 18-50 16 36h712"/></svg>
+  </section>
 
-    <div class="block block-blue">
-      <h2 class="block-title">Hardware principal</h2>
-      <div class="spec-grid">
-        <article class="spec-card">
-          <div class="spec-info">
-            <h3 class="spec-name">Kit Raspberry Pi 3</h3>
-            <p class="spec-text">Todos os componentes e tecnologias utilizados no VitalCare</p>
+  <!-- ================= HARDWARE ================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Hardware principal</h2>
+      </div>
+      <div class="grid grid-4" data-reveal>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/Ellipse 77.png" alt="Kit Raspberry Pi 3" /></div>
+          <div class="spec-body">
+            <h3>Kit Raspberry Pi 3</h3>
+            <p>Todos os componentes e tecnologias utilizados no VitalCare</p>
           </div>
-          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 77.png" alt="Kit Raspberry Pi 3" /></div>
         </article>
-
-        <article class="spec-card">
-          <div class="spec-info">
-            <h3 class="spec-name">Sensor de temperatura</h3>
-            <p class="spec-text">Monitora a temperatura do ambiente em tempo real.</p>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/Ellipse 79.png" alt="Sensor de temperatura" /></div>
+          <div class="spec-body">
+            <h3>Sensor de temperatura</h3>
+            <p>Monitora a temperatura do ambiente em tempo real.</p>
           </div>
-          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 79.png" alt="Sensor de temperatura" /></div>
         </article>
-
-        <article class="spec-card">
-          <div class="spec-info">
-            <h3 class="spec-name">Tela 14.0 Lcd Led<br />Touch Screen</h3>
-            <p class="spec-text">Interface interativa para visualização e controle do sistema.</p>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/Ellipse 78.png" alt="Tela LCD LED touch screen" /></div>
+          <div class="spec-body">
+            <h3>Tela 14.0 Lcd Led Touch Screen</h3>
+            <p>Interface interativa para visualização e controle do sistema.</p>
           </div>
-          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 78.png" alt="Tela LCD LED touch screen" /></div>
         </article>
-
-        <article class="spec-card">
-          <div class="spec-info">
-            <h3 class="spec-name">Sensor Frequência<br />batimentos cardíacos</h3>
-            <p class="spec-text">Monitora os batimentos cardíacos do usuário.</p>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/Ellipse 80.png" alt="Sensor de frequência cardíaca" /></div>
+          <div class="spec-body">
+            <h3>Sensor Frequência batimentos cardíacos</h3>
+            <p>Monitora os batimentos cardíacos do usuário.</p>
           </div>
-          <div class="spec-thumb"><img src="/pages/imagens/Ellipse 80.png" alt="Sensor de frequência cardíaca" /></div>
         </article>
       </div>
     </div>
   </section>
 
-
-  <section class="block block-orange">
-    <h2 class="block-title">Software e Funcionalidades</h2>
-    <div class="spec-grid">
-      <article class="spec-card">
-        <div class="spec-info">
-          <h3 class="spec-name">Banco de dados online</h3>
-          <p class="spec-text">armazena e organiza as informações do sistema de forma segura e acessível.</p>
-        </div>
-        <div class="spec-thumb"><img src="/pages/imagens/Ellipse 81.png" alt="Banco de dados online" /></div>
-      </article>
-
-      <article class="spec-card">
-        <div class="spec-info">
-          <h3 class="spec-name">Lembretes de medicamentos</h3>
-          <p class="spec-text">Agenda de remédios e compromissos com avisos sonoros e visuais nos horários programados.</p>
-        </div>
-        <div class="spec-thumb"><img src="/pages/imagens/uso-racional-medicamentos.jpg" alt="Sensor de temperatura" /></div>
-      </article>
-
-      <article class="spec-card">
-        <div class="spec-info">
-          <h3 class="spec-name">Painel de monitoramento</h3>
-          <p class="spec-text">Exibe em tempo real os sinais vitais e a temperatura do ambiente em uma tela simples e de leitura fácil.</p>
-        </div>
-        <div class="spec-thumb"><img src="/pages/imagens/PAINEL-DE-MONITORAMENTO-SAUDE.jpeg" alt="Tela touch screen" /></div>
-      </article>
-
-      <article class="spec-card">
-        <div class="spec-info">
-          <h3 class="spec-name">Alertas para a família</h3>
-          <p class="spec-text">Envia notificações aos familiares e cuidadores quando algum valor sai do padrão esperado.</p>
-        </div>
-        <div class="spec-thumb"><img src="/pages/imagens/alerta.png" alt="Painel do usuário" /></div>
-      </article>
+  <!-- ================= SOFTWARE ================= -->
+  <section class="section alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Software e Funcionalidades</h2>
+      </div>
+      <div class="grid grid-4" data-reveal>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/Ellipse 81.png" alt="Banco de dados online" /></div>
+          <div class="spec-body">
+            <h3>Banco de dados online</h3>
+            <p>armazena e organiza as informações do sistema de forma segura e acessível.</p>
+          </div>
+        </article>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/uso-racional-medicamentos.jpg" alt="Lembretes de medicamentos" /></div>
+          <div class="spec-body">
+            <h3>Lembretes de medicamentos</h3>
+            <p>Agenda de remédios e compromissos com avisos sonoros e visuais nos horários programados.</p>
+          </div>
+        </article>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/PAINEL-DE-MONITORAMENTO-SAUDE.jpeg" alt="Painel de monitoramento" /></div>
+          <div class="spec-body">
+            <h3>Painel de monitoramento</h3>
+            <p>Exibe em tempo real os sinais vitais e a temperatura do ambiente em uma tela simples e de leitura fácil.</p>
+          </div>
+        </article>
+        <article class="card hover spec-card">
+          <div class="spec-media"><img src="/pages/imagens/alerta.png" alt="Alertas para a família" /></div>
+          <div class="spec-body">
+            <h3>Alertas para a família</h3>
+            <p>Envia notificações aos familiares e cuidadores quando algum valor sai do padrão esperado.</p>
+          </div>
+        </article>
+      </div>
     </div>
   </section>
 
   <!-- ================= PRODUTO FINAL ================= -->
-  <section class="final">
-    <div>
-      <h2 class="final-title">Produto final</h2>
-      <p class="final-text">O VitalCare integra recursos de monitoramento de saúde, segurança ambiental e organização da rotina em um único dispositivo.</p>
+  <section class="section">
+    <div class="container final-grid" data-reveal>
+      <article class="card">
+        <h2>Produto final</h2>
+        <p>O VitalCare integra recursos de monitoramento de saúde, segurança ambiental e organização da rotina em um único dispositivo.</p>
+        <ul class="check-list">
+          <li>Sistema integrado de monitoramento</li>
+          <li>Painel digital personalizado</li>
+          <li>Alertas para medicamentos e compromissos</li>
+          <li>Monitoramento de frequência cardíaca e saturação</li>
+          <li>Alertas sonoros</li>
+        </ul>
+      </article>
 
-      <ul class="check-list">
-        <li>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Sistema integrado de monitoramento
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Painel digital personalizado
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Alertas para medicamentos e compromissos
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Monitoramento de frequência cardíaca e saturação
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Alertas sonoros
-        </li>
-      </ul>
-    </div>
-
-    <div class="price-card">
-      <h3 class="price-name">VitalCare</h3>
-      <p class="price-label">Planos a partir de</p>
-      <p class="price-value" id="precoMinimo">R$ 799,90</p>
-      <p class="price-note">Pagamento único + Software gratuito</p>
-      <a class="btn-pink" href="#orcamento">Solicitar orçamento</a>
-      <a class="price-link" href="#planos">Comparar os planos</a>
+      <article class="card price-card">
+        <h3>VitalCare</h3>
+        <p class="price-label">Planos a partir de</p>
+        <p class="price-value" id="precoMinimo">R$ 799,90</p>
+        <p class="price-note">Pagamento único + Software gratuito</p>
+        <a class="btn btn-primary" href="#orcamento">Solicitar orçamento</a>
+        <a class="price-link" href="#planos">Comparar os planos</a>
+      </article>
     </div>
   </section>
 
   <!-- ================= PLANOS (preços em /shared/planos.js) ================= -->
-  <section class="planos" id="planos">
-    <h2 class="planos-title">Escolha o seu plano</h2>
-    <p class="planos-sub">Todos os planos incluem o equipamento, a instalação e o software gratuito.</p>
-    <div class="planos-grid" id="planosGrid"></div>
+  <section class="section alt" id="planos" style="scroll-margin-top: var(--header-h);">
+    <div class="container">
+      <div class="section-head">
+        <h2>Escolha o seu plano</h2>
+        <p>Todos os planos incluem o equipamento, a instalação e o software gratuito.</p>
+      </div>
+      <div class="grid grid-3" id="planosGrid" style="padding-top: 12px;"></div>
+    </div>
   </section>
 
   <!-- ================= SOBRE O DESIGN ================= -->
-  <section class="design">
-    <h2 class="design-title">Sobre o Design</h2>
-    <div class="design-cols">
-      <div>
-        <h3 class="design-sub">Carcaça Personalizada</h3>
-        <ul class="design-list">
-          <li>Formato compacto e funcional</li>
-          <li>Tela touch screen de 14 polegadas</li>
-          <li>Material resistente e adequado ao uso diário</li>
-          <li>Design pensado para facilitar o acesso do idoso</li>
-          <li>Componentes organizados em uma única estrutura</li>
-        </ul>
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Sobre o Design</h2>
       </div>
-      <div>
-        <h3 class="design-sub">Versatilidade de Instalação</h3>
-        <ul class="design-list">
-          <li>Pode ser utilizado sobre mesas ou móveis</li>
-          <li>Adequado para ambientes residenciais</li>
-          <li>Fácil acesso à tela e aos comandos</li>
-          <li>Estrutura adaptável a diferentes espaços</li>
-          <li>Desenvolvido para integrar-se à rotina do usuário</li>
-        </ul>
+      <div class="grid grid-2" data-reveal>
+        <article class="card">
+          <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+          <h3 style="margin-bottom: 16px;">Carcaça Personalizada</h3>
+          <ul class="check-list">
+            <li>Formato compacto e funcional</li>
+            <li>Tela touch screen de 14 polegadas</li>
+            <li>Material resistente e adequado ao uso diário</li>
+            <li>Design pensado para facilitar o acesso do idoso</li>
+            <li>Componentes organizados em uma única estrutura</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8Z"/><path d="M9 20v-5h6v5"/></svg></span>
+          <h3 style="margin-bottom: 16px;">Versatilidade de Instalação</h3>
+          <ul class="check-list">
+            <li>Pode ser utilizado sobre mesas ou móveis</li>
+            <li>Adequado para ambientes residenciais</li>
+            <li>Fácil acesso à tela e aos comandos</li>
+            <li>Estrutura adaptável a diferentes espaços</li>
+            <li>Desenvolvido para integrar-se à rotina do usuário</li>
+          </ul>
+        </article>
       </div>
     </div>
   </section>
+</main>
 
-  <!-- ================= RODAPÉ ================= -->
-  <footer class="footer">
+<footer class="site-footer">
+  <div class="container">
     <p>© 2026 VitalCare•Todos os direitos reservados</p>
     <p>Feito com <span class="heart">♥</span> para você</p>
-  </footer>
-
-  <!-- ================= MODAL ORÇAMENTO ================= -->
-  <div class="orc-overlay" id="orcamento" hidden>
-    <div class="orc-modal" role="dialog" aria-modal="true" aria-labelledby="orc-title">
-      <button class="orc-close" type="button" aria-label="Fechar">&times;</button>
-      <h2 class="orc-title" id="orc-title">Solicitar Orçamento</h2>
-      <p class="orc-sub">Preencha seus dados e enviaremos as informações do VitalCare para o seu e-mail!</p>
-
-      <form class="orc-form" novalidate>
-        <div class="orc-campo">
-          <label for="orc-nome">Nome Completo</label>
-          <input id="orc-nome" name="name" type="text" placeholder="Seu nome" required />
-        </div>
-        <div class="orc-campo">
-          <label for="orc-email">E-mail</label>
-          <input id="orc-email" name="email" type="email" placeholder="seu@gmail.com" required />
-        </div>
-        <div class="orc-linha">
-          <div class="orc-campo">
-            <label for="orc-cep">CEP</label>
-            <input id="orc-cep" name="cep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code" required />
-            <small class="orc-cep-info" id="orc-cep-info" aria-live="polite"></small>
-          </div>
-          <div class="orc-campo">
-            <label for="orc-tel">Telefone (opcional)</label>
-            <input id="orc-tel" name="phone" type="tel" placeholder="(00) 00000-0000" />
-          </div>
-        </div>
-        <div class="orc-campo">
-          <label for="orc-plano">Plano de interesse</label>
-          <select id="orc-plano" name="plano">
-            <option value="">Ainda não sei</option>
-          </select>
-        </div>
-        <fieldset class="orc-campo orc-funcoes">
-          <legend>Funções de interesse</legend>
-          <label class="orc-check"><input type="checkbox" name="funcoes" value="medicamentos" /> Lembretes de medicamentos</label>
-          <label class="orc-check"><input type="checkbox" name="funcoes" value="consultas" /> Alertas de consultas e compromissos</label>
-          <label class="orc-check"><input type="checkbox" name="funcoes" value="clima" /> Data, horário e clima na tela</label>
-          <label class="orc-check"><input type="checkbox" name="funcoes" value="gas" /> Sensor de vazamento de gás</label>
-          <label class="orc-check"><input type="checkbox" name="funcoes" value="temperatura" /> Sensor de temperatura ambiente</label>
-          <label class="orc-check"><input type="checkbox" name="funcoes" value="cardiaco" /> Frequência cardíaca e saturação</label>
-        </fieldset>
-        <div class="orc-campo">
-          <label for="orc-msg">Mensagem (opcional)</label>
-          <textarea id="orc-msg" name="message" placeholder="Conte o que você precisa"></textarea>
-        </div>
-        <button class="btn-enviar" type="submit">Receber orçamento por e-mail</button>
-        <p class="orc-status" role="status" aria-live="polite"></p>
-      </form>
-    </div>
   </div>
+</footer>
 
+<!-- ================= MODAL ORÇAMENTO ================= -->
+<div class="modal" id="orcamento" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="orc-title">
+    <button class="modal-close" type="button" aria-label="Fechar">&times;</button>
+    <h2 id="orc-title">Solicitar Orçamento</h2>
+    <p class="modal-sub">Preencha seus dados e enviaremos as informações do VitalCare para o seu e-mail!</p>
 
+    <form class="form-grid orc-form" novalidate>
+      <div class="field">
+        <label for="orc-nome">Nome Completo</label>
+        <input id="orc-nome" name="name" type="text" placeholder="Seu nome" required />
+      </div>
+      <div class="field">
+        <label for="orc-email">E-mail</label>
+        <input id="orc-email" name="email" type="email" placeholder="seu@gmail.com" required />
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="orc-cep">CEP</label>
+          <input id="orc-cep" name="cep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code" required />
+          <small id="orc-cep-info" aria-live="polite"></small>
+        </div>
+        <div class="field">
+          <label for="orc-tel">Telefone (opcional)</label>
+          <input id="orc-tel" name="phone" type="tel" placeholder="(00) 00000-0000" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="orc-plano">Plano de interesse</label>
+        <select id="orc-plano" name="plano">
+          <option value="">Ainda não sei</option>
+        </select>
+      </div>
+      <fieldset class="field">
+        <legend>Funções de interesse</legend>
+        <label class="check-option"><input type="checkbox" name="funcoes" value="medicamentos" /> Lembretes de medicamentos</label>
+        <label class="check-option"><input type="checkbox" name="funcoes" value="consultas" /> Alertas de consultas e compromissos</label>
+        <label class="check-option"><input type="checkbox" name="funcoes" value="clima" /> Data, horário e clima na tela</label>
+        <label class="check-option"><input type="checkbox" name="funcoes" value="gas" /> Sensor de vazamento de gás</label>
+        <label class="check-option"><input type="checkbox" name="funcoes" value="temperatura" /> Sensor de temperatura ambiente</label>
+        <label class="check-option"><input type="checkbox" name="funcoes" value="cardiaco" /> Frequência cardíaca e saturação</label>
+      </fieldset>
+      <div class="field">
+        <label for="orc-msg">Mensagem (opcional)</label>
+        <textarea id="orc-msg" name="message" placeholder="Conte o que você precisa"></textarea>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Receber orçamento por e-mail</button>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
 </div>
-<script>
-  (function () {
-    var root = document.documentElement;
-    try { if (localStorage.getItem("vc-theme") === "dark") root.classList.add("dark"); } catch (e) {}
-    document.addEventListener("click", function (event) {
-      var toggle = event.target.closest(".theme-toggle");
-      if (!toggle) return;
-      root.classList.toggle("dark");
-      try { localStorage.setItem("vc-theme", root.classList.contains("dark") ? "dark" : "light"); } catch (e) {}
-    });
-  }());
 
+<script>
   (function () {
     var overlay = document.getElementById("orcamento");
     var form = overlay.querySelector(".orc-form");
-    var status = overlay.querySelector(".orc-status");
-    var submit = form.querySelector(".btn-enviar");
+    var status = overlay.querySelector(".form-status");
+    var submit = form.querySelector('[type="submit"]');
 
     function abrir(event) {
       if (event) event.preventDefault();
       overlay.hidden = false;
-      document.body.classList.add("orc-aberto");
+      document.body.classList.add("modal-open");
       document.getElementById("orc-nome").focus();
     }
     function fechar() {
       overlay.hidden = true;
-      document.body.classList.remove("orc-aberto");
+      document.body.classList.remove("modal-open");
     }
     function mostrar(texto, ok) {
       status.textContent = texto;
-      status.className = "orc-status " + (ok ? "is-ok" : "is-erro");
+      status.className = "form-status " + (ok ? "is-ok" : "is-erro");
     }
 
     // Qualquer botão "#orcamento" abre o formulário (inclusive os dos cards dos planos)
@@ -308,7 +293,7 @@
       });
     }
     planoSelect.addEventListener("change", function () { escolherPlano(planoSelect.value); });
-    overlay.querySelector(".orc-close").addEventListener("click", fechar);
+    overlay.querySelector(".modal-close").addEventListener("click", fechar);
     overlay.addEventListener("click", function (event) { if (event.target === overlay) fechar(); });
     document.addEventListener("keydown", function (event) { if (event.key === "Escape" && !overlay.hidden) fechar(); });
 
@@ -384,18 +369,16 @@
 
   window.VitalPlanos = PLANOS;
 
-  const check = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13l6 6L20 5" fill="none" stroke="#F86FA6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
   document.getElementById("planosGrid").innerHTML = PLANOS.map((plano) => `
-    <article class="plano-card${plano.recomendado ? " is-recomendado" : ""}">
-      ${plano.recomendado ? '<span class="plano-selo">Mais recomendado</span>' : ""}
-      <h3 class="plano-nome">${plano.nome}</h3>
-      <p class="plano-preco">${formatarPreco(plano.preco)}</p>
-      <p class="plano-nota">pagamento único</p>
-      <ul class="plano-lista">
-        ${plano.recursos.map((recurso) => `<li>${check}<span>${recurso}</span></li>`).join("")}
+    <article class="card hover plan-card${plano.recomendado ? " is-recomendado" : ""}">
+      ${plano.recomendado ? '<span class="plan-badge">Mais recomendado</span>' : ""}
+      <h3>${plano.nome}</h3>
+      <p class="plan-price">${formatarPreco(plano.preco)}</p>
+      <p class="plan-note">pagamento único</p>
+      <ul class="check-list">
+        ${plano.recursos.map((recurso) => `<li>${recurso}</li>`).join("")}
       </ul>
-      <a class="btn-pink plano-btn" href="#orcamento" data-plano="${plano.id}">Quero o ${plano.nome}</a>
+      <a class="btn ${plano.recomendado ? "btn-primary" : "btn-ghost"} btn-block" href="#orcamento" data-plano="${plano.id}">Quero o ${plano.nome}</a>
     </article>
   `).join("");
 
@@ -407,6 +390,6 @@
     select.insertAdjacentHTML("beforeend", `<option value="${plano.id}">${plano.nome} – ${formatarPreco(plano.preco)}</option>`);
   });
 </script>
-<script src="/header.js"></script>
+<script src="/vc.js"></script>
 </body>
 </html>

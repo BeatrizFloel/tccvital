@@ -4,9 +4,11 @@ import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mysql from "mysql2/promise";
-import nodemailer from "nodemailer";
+import { sendEmail, hasMailConfig } from "./email.js";
 import { registerDashboardRoutes } from "./dashboard.js";
+import { registerAssistantRoutes } from "./assistente.js";
 import { PROPOSTA, FUNCOES, consultarCep, montarProposta, montarAvisoEquipe } from "./proposta.js";
+import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -157,25 +159,73 @@ app.post(["/login", "/api/login"], async (req, res) => {
   }
 });
 
-registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secretKey, tableName, readLocalUsers, backendDirectory });
+/* ---------- Entrar / cadastrar com Google ----------
+   Precisa de GOOGLE_CLIENT_ID no .env (criado no Google Cloud Console). */
+app.get(["/config", "/api/config"], (_req, res) => {
+  res.json({ googleClientId: process.env.GOOGLE_CLIENT_ID || null });
+});
+
+app.post(["/login/google", "/api/login/google"], async (req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const accessToken = String(req.body?.accessToken || "");
+  if (!clientId) return res.status(503).json({ message: "Login com Google não configurado. Defina GOOGLE_CLIENT_ID." });
+  if (!accessToken) return res.status(400).json({ message: "Token do Google ausente." });
+
+  try {
+    // Confirma com o Google que o token é válido e foi emitido para o NOSSO site
+    const infoResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(accessToken)}`);
+    const info = await infoResponse.json();
+    if (!infoResponse.ok || (info.aud !== clientId && info.azp !== clientId)) {
+      return res.status(401).json({ message: "Não foi possível confirmar sua conta Google." });
+    }
+    if (String(info.email_verified) !== "true" || !info.email) {
+      return res.status(401).json({ message: "Sua conta Google não tem e-mail verificado." });
+    }
+
+    const profile = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    }).then((response) => response.json()).catch(() => ({}));
+
+    const email = String(info.email).trim().toLowerCase();
+    const name = String(profile.name || email.split("@")[0]).trim().slice(0, 120);
+    // Conta criada pelo Google não tem senha própria: guardamos uma senha aleatória impossível de adivinhar
+    const randomPassword = await bcrypt.hash(crypto.randomUUID() + crypto.randomUUID(), 10);
+
+    let user;
+    if (!hasDatabaseConfig()) {
+      if (process.env.VERCEL === "1") return res.status(503).json({ message: "Banco de dados não configurado no deploy." });
+      const users = await readLocalUsers();
+      user = users.find((item) => item.email === email);
+      if (!user) {
+        user = { id_usuario: Date.now(), nome: name, email, senha: randomPassword, data_cadastro: new Date().toISOString().slice(0, 10) };
+        users.push(user);
+        await writeLocalUsers(users);
+      }
+    } else {
+      const db = getPool();
+      const [rows] = await db.query(`SELECT id_usuario, nome, email FROM ${tableName} WHERE email = ? LIMIT 1`, [email]);
+      user = rows[0];
+      if (!user) {
+        const [result] = await db.query(
+          `INSERT INTO ${tableName} (nome, email, senha, data_cadastro) VALUES (?, ?, ?, CURDATE())`,
+          [name, email, randomPassword]
+        );
+        user = { id_usuario: result.insertId, nome: name, email };
+      }
+    }
+
+    const token = createToken(user);
+    return res.json({ message: "Login com Google realizado!", token, user: { id: user.id_usuario, name: user.nome, email: user.email } });
+  } catch (error) {
+    console.error("Erro no login com Google:", error.message);
+    return res.status(500).json({ message: "Não foi possível entrar com o Google agora." });
+  }
+});
+
+const dashboard = registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secretKey, tableName, readLocalUsers, backendDirectory });
+registerAssistantRoutes(app, dashboard);
 
 /* ---------- Orçamento: proposta automática por e-mail (modelo em proposta.js) ---------- */
-const MAIL_USER = process.env.SMTP_USER || PROPOSTA.email;
-
-function hasMailConfig() {
-  return Boolean(process.env.SMTP_PASS);
-}
-
-function getMailer() {
-  const port = Number(process.env.SMTP_PORT || 465);
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port,
-    secure: port === 465,
-    auth: { user: MAIL_USER, pass: String(process.env.SMTP_PASS).replace(/\s/g, "") }
-  });
-}
-
 app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
   const nome = String(req.body?.name || "").trim().slice(0, 120);
   const email = String(req.body?.email || "").trim().toLowerCase();
@@ -188,26 +238,30 @@ app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
   if (!nome || !email) return res.status(400).json({ message: "Nome e e-mail são obrigatórios." });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Digite um e-mail válido." });
   if (cep.length !== 8) return res.status(400).json({ message: "Digite um CEP válido (8 números)." });
-  if (!hasMailConfig()) return res.status(503).json({ message: "Envio de e-mail não configurado. Defina SMTP_USER e SMTP_PASS (chave SMTP do Brevo) no .env." });
+  if (!hasMailConfig()) return res.status(503).json({ message: "Envio de e-mail não configurado. Defina BREVO_API_KEY (chave de API do Brevo) no .env." });
 
   const local = await consultarCep(cep);
   if (!local) return res.status(400).json({ message: "CEP não encontrado. Confira os números." });
 
-  const from = process.env.MAIL_FROM || `VitalCare <${MAIL_USER}>`;
-  const teamEmail = process.env.MAIL_TO || MAIL_USER;
+  const teamEmail = process.env.MAIL_TO || PROPOSTA.email;
   const proposta = montarProposta({ nome, local });
   const aviso = montarAvisoEquipe({ nome, email, telefone, local, plano, funcoes, mensagem });
 
+  // 1) proposta para o cliente (é o que importa para quem preencheu o formulário)
   try {
-    const mailer = getMailer();
-    await mailer.sendMail({ from, to: email, replyTo: teamEmail, subject: proposta.assunto, text: proposta.texto, html: proposta.html });
-    await mailer.sendMail({ from, to: teamEmail, replyTo: email, subject: aviso.assunto, text: aviso.texto, html: aviso.html });
-    return res.json({ message: "Pronto! Enviamos a proposta para o seu e-mail." });
+    await sendEmail({ to: { email, name: nome }, replyTo: teamEmail, subject: proposta.assunto, text: proposta.texto, html: proposta.html });
   } catch (error) {
-    console.error("Erro ao enviar orçamento:", error.message);
-    const motivo = error.code === "EAUTH" ? " (login SMTP recusado — confira SMTP_USER e SMTP_PASS no .env)" : "";
-    return res.status(500).json({ message: `Não foi possível enviar o e-mail agora. Tente novamente.${motivo}` });
+    console.error("Erro ao enviar a proposta:", error.message);
+    return res.status(502).json({ message: error.publicMessage || "Não foi possível enviar o e-mail agora. Tente novamente." });
   }
+
+  // 2) aviso para a equipe: se falhar, o cliente já recebeu a proposta, então só registra o erro
+  try {
+    await sendEmail({ to: teamEmail, replyTo: email, subject: aviso.assunto, text: aviso.texto, html: aviso.html });
+  } catch (error) {
+    console.error("Proposta enviada, mas o aviso para a equipe falhou:", error.message);
+  }
+  return res.json({ message: "Pronto! Enviamos a proposta para o seu e-mail." });
 });
 
 app.use(express.static(projectRoot));

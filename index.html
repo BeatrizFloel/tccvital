@@ -4,1050 +4,147 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VitalCare — Home</title>
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" />
-<style>
-/* ============ VitalCare — folha de estilos ============ */
-
-:root {
-  --amarelo-hero: #FBEFB0;
-  --amarelo-claro: #FAFBDC;
-  --azul-card: #A8BCEA;
-  --laranja-card: #FBCB84;
-  --lilas-bg: #A5BDF0;
-  --lilas-btn: #A99AD8;
-  --ciano: #29B6E8;
-  --azul-escuro: #1F2A44;
-  --texto: #1E2433;
-  --texto-suave: #3A4256;
-  --branco: #FFFFFF;
-  --cinza-rodape: #F5F5F3;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: "Nunito", system-ui, sans-serif;
-  color: var(--texto);
-  background-color: var(--branco);
-  line-height: 2.5;
-}
-
-img { display: block; max-width: 100%; }
-a { text-decoration: none; color: inherit; }
-
-/* ---------------- HEADER ---------------- */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 14px 34px;
-  background: var(--branco);
-}
-
-.logo { display: flex; align-items: center; gap: 8px; }
-.logo-mark { width: 30px; height: 30px; }
-.logo-text {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--azul-escuro);
-  letter-spacing: .2px;
-}
-
-.logo-text-alt { color: #2E7D9A; }
-.vc-page > .header .nav,
-.auth-page > .header .nav {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 26px;
-    margin: 0;
-}
-
-.nav { display: flex; align-items: center; gap: 30px; }
-.nav-link {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--texto-suave);
-  transition: color .2s ease;
-}
-.nav-link:hover { color: var(--ciano); }
-.nav-link.is-active { color: var(--ciano); }
-
-.theme-toggle {
-  width: 34px; height: 34px;
-  display: grid; place-items: center;
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.theme-toggle svg { width: 19px; height: 19px; }
-.theme-toggle:hover { background: #F1F3F7; }
-
-/* ---------------- HERO ---------------- */
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: var(--amarelo-hero);
-  min-height: 620px;
-}
-
-.hero-content {
-  position: relative;
-  padding: 74px 60px 46px 74px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.badge {
-  align-self: flex-start;
-  background: #CFE6F3;
-  color: var(--texto-suave);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 5px 14px;
-  border-radius: 999px;
-  margin-bottom: 26px;
-}
-
-.hero-title {
-  font-family: "Playfair Display", Georgia, serif;
-  font-weight: 900;
-  font-size: 54px;
-  line-height: 1.14;
-  color: var(--azul-escuro);
-  max-width: 9.5em;
-}
-
-.hero-text {
-  margin-top: 22px;
-  max-width: 420px;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--texto-suave);
-  line-height: 1.6;
-}
-
-.hero-actions { margin-top: 30px; display: flex; gap: 14px; }
-
-.btn {
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 11px 20px;
-  border-radius: 8px;
-  transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
-}
-.btn:hover { transform: translateY(-1px); }
-
-.btn-primary { background: #CFE6F3; color: var(--azul-escuro); }
-.btn-primary:hover { background: #BFDDEF; }
-
-.btn-outline {
-  background: var(--branco);
-  color: var(--azul-escuro);
-  border: 1px solid #2B3348;
-}
-.btn-outline:hover { background: #F6F6F6; }
-
-.hero-media { overflow: hidden; }
-.hero-media img { width: 100%; height: 100%; object-fit: cover; }
-
-.page-tag {
-  position: absolute;
-  left: 34px;
-  bottom: 18px;
-  font-size: 13px;
-  font-weight: 700;
-  color: rgba(31, 42, 68, .28);
-}
-.page-tag-dark { color: rgba(31, 42, 68, .35); }
-
-/* ---------------- SEÇÕES ---------------- */
-.section {
-  position: relative;
-  background: var(--amarelo-claro);
-  padding: 78px 60px 66px;
-}
-
-.section-title {
-  font-family: "Baloo 2", "Nunito", sans-serif;
-  font-weight: 800;
-  font-size: 34px;
-  text-align: center;
-  color: var(--ciano);
-}
-.section-title.dark { color: var(--azul-escuro); }
-.section-title.center { text-align: center; }
-
-.section-subtitle {
-  margin: 12px auto 0;
-  max-width: 430px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--texto-suave);
-}
-
-/* ------- cards de diferenciais ------- */
-.cards {
-  margin-top: 48px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px;
-}
-
-.card {
-  border-radius: 14px;
-  padding: 22px 22px 26px;
-}
-.card-blue { background: var(--azul-card); }
-.card-orange { background: var(--laranja-card); }
-
-.card-icon {
-  width: 34px; height: 34px;
-  display: grid; place-items: center;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, .55);
-  margin-bottom: 34px;
-}
-.card-icon svg { width: 18px; height: 18px; }
-.card-icon.icon-orange { background: rgba(255, 255, 255, .6); }
-
-.card-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--azul-escuro);
-  margin-bottom: 10px;
-}
-.card-text {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #23304F;
-  line-height: 1.6;
-}
-
-/* ------- público alvo / objeto ------- */
-.section-publico { padding: 74px 74px 70px; }
-
-.two-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 70px;
-  align-items: start;
-}
-
-.two-cols .section-title { margin-bottom: 34px; }
-
-.list-item { display: flex; gap: 16px; margin-bottom: 34px; }
-.list-icon {
-  flex: 0 0 30px;
-  width: 30px; height: 30px;
-  display: grid; place-items: center;
-  border-radius: 8px;
-  background: #DDE6F7;
-}
-.list-icon svg { width: 17px; height: 17px; }
-.list-title {
-  font-size: 14.5px;
-  font-weight: 800;
-  color: var(--azul-escuro);
-  margin-bottom: 4px;
-}
-.list-text {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--texto-suave);
-  line-height: 1.55;
-  max-width: 34em;
-}
-
-.obj-item {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  background: var(--laranja-card);
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 14px;
-}
-.obj-icon {
-  flex: 0 0 22px;
-  width: 22px; height: 22px;
-  display: grid; place-items: center;
-}
-.obj-icon svg { width: 18px; height: 18px; }
-.obj-title {
-  font-size: 11.5px;
-  font-weight: 800;
-  color: #1B2540;
-  margin-bottom: 3px;
-}
-.obj-text {
-  font-size: 10.5px;
-  font-weight: 600;
-  color: #2A3450;
-  line-height: 1.5;
-}
-
-/* ---------------- POR QUE VITALCARE ---------------- */
-.section-why {
-  background: var(--lilas-bg);
-  text-align: center;
-  padding: 62px 40px 96px;
-}
-
-.why-title {
-  font-family: "Baloo 2", "Nunito", sans-serif;
-  font-weight: 800;
-  font-size: 32px;
-  color: var(--branco);
-}
-
-.why-text {
-  margin: 18px auto 0;
-  max-width: 640px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--branco);
-  line-height: 1.55;
-}
-
-.btn-purple {
-  margin-top: 36px;
-  background: var(--lilas-btn);
-  color: var(--branco);
-  font-size: 14px;
-  font-weight: 800;
-  padding: 15px 32px;
-  border-radius: 10px;
-}
-.btn-purple:hover { background: #9B8AD2; }
-
-/* ---------------- FOOTER ---------------- */
-.footer {
-  background: var(--cinza-rodape);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 26px 40px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #4B5262;
-}
-.heart { color: #E0475F; }
-
-/* ---------------- RESPONSIVO ---------------- */
-@media (max-width: 980px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-content { padding: 54px 32px 40px; }
-  .hero-title { font-size: 40px; }
-  .hero-media { height: 340px; }
-  .cards { grid-template-columns: 1fr; }
-  .two-cols { grid-template-columns: 1fr; gap: 46px; }
-  .section, .section-publico { padding: 56px 28px; }
-  .nav { display: none; }
-  .why-text br { display: none; }
-  .footer { flex-direction: column; gap: 8px; text-align: center; }
-}
-
-
-/* ================= VitalCare — logo, tipografia padrão e modo escuro ================= */
-
-.vc-page .logo-img,
-.vc-page .logo .logo-img {
-  height: 46px;
-  width: auto;
-  object-fit: contain;
-}
-
-/* --- Tipografia padronizada (mesmo tamanho da aba Jogo) --- */
-.vc-std,
-.vc-std p,
-.vc-std li,
-.vc-std span,
-.vc-std a,
-.vc-std button,
-.vc-std input,
-.vc-std textarea,
-.vc-std label {
-  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
-}
-.vc-std h1, .vc-std h2, .vc-std h3, .vc-std h4 {
-  font-family: "Poppins", "Nunito", Arial, sans-serif !important;
-}
-
-/* Fontes de destaque preservadas (identidade original) */
-.vc-std .hero-title,
-.vc-std .logo-text,
-.vc-std .ins-hero-title,
-.vc-std .why-title,
-.vc-std .section-title {
-  font-family: "Playfair Display", Georgia, serif !important;
-}
-.vc-std .section-title,
-.vc-std .why-title {
-  font-family: "Baloo 2", "Nunito", sans-serif !important;
-}
-
-.vc-std h1 { font-size: 42px !important; line-height: 1.15 !important; }
-.vc-std h2 { font-size: 20px !important; line-height: 1.3 !important; }
-.vc-std h3 { font-size: 16px !important; line-height: 1.35 !important; }
-.vc-std h4 { font-size: 15px !important; }
-.vc-std p,
-.vc-std li,
-.vc-std label,
-.vc-std input,
-.vc-std textarea,
-.vc-std td { font-size: 16px !important; line-height: 1.6 !important; }
-.vc-std .nav-link,
-.vc-std .nav-links a { font-size: 15px !important; }
-.vc-std .btn,
-.vc-std .pill,
-.vc-std .btn-enviar,
-.vc-std .badge { font-size: 13px !important; }
-.vc-std .page-tag,
-.vc-std .ins-page-tag { font-size: 12px !important; }
-
-/* Exceções de tamanho (blocos de destaque) */
-.vc-std .hero-title { font-size: 54px !important; line-height: 1.14 !important; }
-.vc-std .price-name { font-size: 22px !important; }
-.vc-std .price-value { font-size: 34px !important; line-height: 1.2 !important; }
-.vc-std .price-label,
-.vc-std .price-note { font-size: 13px !important; }
-.vc-std .final-title { font-size: 26px !important; }
-
-@media (max-width: 700px) {
-  .vc-std h1 { font-size: 30px !important; }
-  .vc-std .hero-title { font-size: 32px !important; }
-  .vc-std .price-value { font-size: 28px !important; }
-}
-
-/* ================= RESPONSIVO GLOBAL ================= */
-@media (max-width: 900px) {
-  .vc-page .header,
-  .vc-page .navbar {
-    flex-wrap: wrap;
-    padding: 12px 16px !important;
-    gap: 10px !important;
-  }
-  .vc-page .nav,
-  .vc-page .nav-links {
-    display: flex !important;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px 16px !important;
-    order: 3;
-    width: 100%;
-  }
-  .vc-page .cards,
-  .vc-page .two-cols,
-  .vc-page .spec-grid,
-  .vc-page .design-cols,
-  .vc-page .equipe-grid,
-  .vc-page .res-grid,
-  .vc-page .rem-list,
-  .vc-page .recursos-grid,
-  .vc-page .info-cards,
-  .vc-page .final,
-  .vc-page .steps-inner,
-  .vc-page .contato-wrap,
-  .vc-page .refs-inner {
-    grid-template-columns: 1fr !important;
-    display: grid !important;
-    gap: 20px !important;
-  }
-  .vc-page .hero { grid-template-columns: 1fr !important; }
-  .vc-page .hero-media { height: 260px; }
-  .vc-page .section,
-  .vc-page .section-publico,
-  .vc-page .section-why,
-  .vc-page .prod-hero,
-  .vc-page .ins-hero,
-  .vc-page .equipe,
-  .vc-page .refs,
-  .vc-page .recursos,
-  .vc-page .cta-section,
-  .vc-page .video-section,
-  .vc-page .hero-content { padding-left: 20px !important; padding-right: 20px !important; }
-  .vc-page .footer {
-    flex-direction: column;
-    gap: 8px;
-    text-align: center;
-  }
-  .vc-page img { max-width: 100%; height: auto; }
-}
-
-/* ================= MODO ESCURO ================= */
-html.dark body { background: #0f1725; }
-
-html.dark .vc-page {
-  --branco: #131c2b;
-  --amarelo-hero: #131c2b;
-  --amarelo-claro: #0f1725;
-  --cinza-rodape: #0f1725;
-  --cinza-form: #1b2740;
-  --cinza-pill: #22304a;
-  --azul-interno: #16233a;
-  --laranja-interno: #16233a;
-  --texto: #E8EDF5;
-  --texto-suave: #C2CBDA;
-  --azul-escuro: #E8EDF5;
-  --white: #131c2b;
-  --cream: #16233a;
-  --cream-soft: #131c2b;
-  --nav-bg: #ffffff;
-  --footer-bg: #0f1725;
-  --border-soft: #26324a;
-  --text: #E8EDF5;
-  --navy: #E8EDF5;
-  --muted: #AAB4C4;
-  background: #0f1725;
-  color: #E8EDF5;
-}
-
-/* Fundos das seções */
-html.dark .vc-page .hero,
-html.dark .vc-page .section,
-html.dark .vc-page .section-diferenciais,
-html.dark .vc-page .section-publico,
-html.dark .vc-page .ins-hero,
-html.dark .vc-page .prod-hero,
-html.dark .vc-page .equipe,
-html.dark .vc-page .refs,
-html.dark .vc-page .recursos,
-html.dark .vc-page .recursos-wrap,
-html.dark .vc-page .steps,
-html.dark .vc-page .resources,
-html.dark .vc-page .design,
-html.dark .vc-page .cta-section,
-html.dark .vc-page .video-section,
-html.dark .vc-page .contato-wrap,
-html.dark .vc-page .footer { background: #0f1725 !important; }
-
-html.dark .vc-page .section-why { background: #131c2b !important; }
-
-/* Blocos e cartões */
-html.dark .vc-page .card,
-html.dark .vc-page .card-blue,
-html.dark .vc-page .card-orange,
-html.dark .vc-page .obj-item,
-html.dark .vc-page .spec-card,
-html.dark .vc-page .block,
-html.dark .vc-page .block-blue,
-html.dark .vc-page .block-orange,
-html.dark .vc-page .final,
-html.dark .vc-page .price-card,
-html.dark .vc-page .membro,
-html.dark .vc-page .contato,
-html.dark .vc-page .ref-card,
-html.dark .vc-page .fundamentacao,
-html.dark .vc-page .recurso,
-html.dark .vc-page .video-card,
-html.dark .vc-page .step-card,
-html.dark .vc-page .rem-card,
-html.dark .vc-page .res-card,
-html.dark .vc-page .info-card,
-html.dark .vc-page .card-story,
-html.dark .vc-page .card-facts,
-html.dark .vc-page .cta-card,
-html.dark .vc-page .step,
-html.dark .vc-page .diff-card {
-  background: #16233a !important;
-  border-color: #26324a !important;
-}
-
-html.dark .vc-page .price-card { background: #1b2740 !important; }
-html.dark .vc-page .card-icon,
-html.dark .vc-page .list-icon,
-html.dark .vc-page .ref-icon,
-html.dark .vc-page .step-num,
-html.dark .vc-page .badge,
-html.dark .vc-page .pill { background: #22304a !important; }
-
-/* Texto */
-html.dark .vc-page h1,
-html.dark .vc-page h2,
-html.dark .vc-page h3,
-html.dark .vc-page h4,
-html.dark .vc-page h5,
-html.dark .vc-page p,
-html.dark .vc-page li,
-html.dark .vc-page label,
-html.dark .vc-page td,
-html.dark .vc-page span,
-html.dark .vc-page strong,
-html.dark .vc-page .card-title,
-html.dark .vc-page .card-text,
-html.dark .vc-page .list-title,
-html.dark .vc-page .list-text,
-html.dark .vc-page .obj-title,
-html.dark .vc-page .obj-text,
-html.dark .vc-page .why-title,
-html.dark .vc-page .why-text,
-html.dark .vc-page .final-title,
-html.dark .vc-page .final-text,
-html.dark .vc-page .price-name,
-html.dark .vc-page .price-label,
-html.dark .vc-page .price-note,
-html.dark .vc-page .check-list li,
-html.dark .vc-page .spec-name,
-html.dark .vc-page .spec-text,
-html.dark .vc-page .block-title { color: #E8EDF5 !important; }
-
-html.dark .vc-page .section-title,
-html.dark .vc-page .section-title.dark,
-html.dark .vc-page .prod-title,
-html.dark .vc-page .ins-hero-title,
-html.dark .vc-page .equipe-title,
-html.dark .vc-page .refs-title,
-html.dark .vc-page .contato-title { color: #E8EDF5 !important; }
-
-html.dark .vc-page .price-value { color: #F2529A !important; }
-html.dark .vc-page .btn-pink,
-html.dark .vc-page .btn-pink * { color: #ffffff !important; }
-html.dark .vc-page .btn-primary,
-html.dark .vc-page .btn-outline { background: #1b2740 !important; color: #E8EDF5 !important; border-color: #2b3856 !important; }
-
-html.dark .vc-page input,
-html.dark .vc-page textarea {
-  background: #1b2740 !important;
-  border-color: #2b3856 !important;
-  color: #E8EDF5 !important;
-}
-html.dark .vc-page input::placeholder,
-html.dark .vc-page textarea::placeholder { color: #8892A6 !important; }
-
-/* Cabeçalho permanece branco no modo escuro (igual ao modo claro) */
-html.dark .vc-page .header,
-html.dark .vc-page .navbar {
-  background: #ffffff !important;
-  border-color: #E6E9F0 !important;
-}
-html.dark .vc-page .header .nav-link,
-html.dark .vc-page .navbar .nav-links a,
-html.dark .vc-page .header .logo-text,
-html.dark .vc-page .navbar .logo-text,
-html.dark .vc-page .header span,
-html.dark .vc-page .navbar span { color: #3A4256 !important; }
-html.dark .vc-page .header .nav-link.is-active,
-html.dark .vc-page .navbar .nav-links a.active { color: #29B6E8 !important; }
-html.dark .vc-page .header .theme-toggle svg path,
-html.dark .vc-page .navbar .theme-toggle svg path { stroke: #1F2A44 !important; }
-html.dark .vc-page .header .theme-toggle,
-html.dark .vc-page .navbar .theme-toggle { color: #1F2A44 !important; }
-
-.vc-page .theme-toggle { cursor: pointer; }
-
-/* ================= TEXT SIZE STANDARDIZATION ================= */
-/* Corpo principal: 16px para parágrafos e textos de conteúdo */
-.hero-text, .video-text, .step-text, .card-text, .list-text, .obj-text, .why-text, .hero .subtitle,
-.fundamentacao p, .ref-desc, .res-list li, .rem-list li, .facts-list li, .info-card ul,
-.info-card ul li, .page-subtitle, .card p, .obj-text { font-size: 16px !important; line-height: 1.6 !important; }
-
-/* Micro textos (badges, tags, notas) */
-.badge, .page-tag, .ins-page-tag, .pill, .cta-note, small { font-size: 13px !important; }
-
-
-/* ================= VitalCare — ajustes mobile ================= */
-html,
-body {
-  /* clip (e não hidden) para não quebrar o cabeçalho fixo ao rolar */
-  overflow-x: clip;
-}
-
-@media (max-width: 900px) {
-  .vc-page .step-row,
-  .vc-page .facts-list,
-  .vc-page .prices,
-  .vc-page .comp-grid,
-  .vc-page .team-grid,
-  .vc-page .refs-grid,
-  .vc-page .ref-cards {
-    grid-template-columns: 1fr !important;
-    gap: 18px !important;
-  }
-  .vc-page .arrow,
-  .vc-page .arrow-spacer,
-  .vc-page .arrow-up,
-  .vc-page .arrow-curve {
-    display: none !important;
-  }
-  .vc-page .container,
-  .vc-page .block,
-  .vc-page .design,
-  .vc-page .video-section,
-  .vc-page .cta-section,
-  .vc-page .final {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-  .vc-page .video-frame,
-  .vc-page iframe {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  .vc-page table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
-  .vc-page .nav,
-  .vc-page .nav-links {
-    row-gap: 8px !important;
-  }
-}
-
-@media (max-width: 600px) {
-  .vc-std .hero-title,
-  .vc-std h1 {
-    font-size: 28px !important;
-    line-height: 1.2 !important;
-  }
-  .vc-std .section-title,
-  .vc-std .why-title,
-  .vc-std .prod-title,
-  .vc-std .final-title {
-    font-size: 22px !important;
-    line-height: 1.25 !important;
-  }
-  .vc-page .hero-content {
-    padding-top: 34px !important;
-    padding-bottom: 30px !important;
-  }
-  .vc-page .hero-media {
-    height: 200px !important;
-  }
-  .vc-page .hero-actions {
-    flex-wrap: wrap;
-    gap: 10px !important;
-  }
-  .vc-page .btn,
-  .vc-page .btn-purple,
-  .vc-page .btn-play {
-    width: 100%;
-    text-align: center;
-  }
-  .vc-page .logo-img {
-    height: 36px !important;
-  }
-  .vc-page .nav-link,
-  .vc-page .nav-links a {
-    font-size: 13px !important;
-  }
-  .vc-page .section,
-  .vc-page .section-publico,
-  .vc-page .section-why {
-    padding-top: 40px !important;
-    padding-bottom: 40px !important;
-  }
-  .vc-page .page-tag,
-  .vc-page .ins-page-tag {
-    display: none !important;
-  }
-}
-
-@media (max-width: 600px) {
-  .vc-page .membro-links {
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 8px !important;
-  }
-  .vc-page .pill {
-    max-width: 100%;
-    word-break: break-word;
-    font-size: 11px !important;
-  }
-  .vc-page .contato {
-    padding: 22px 16px 26px !important;
-  }
-}
-
-
-/* ================= Menu hambúrguer (mobile) ================= */
-.vc-burger {
-  display: none;
-  position: relative;
-  width: 42px;
-  height: 42px;
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  border-radius: 10px;
-}
-.vc-burger span {
-  position: absolute;
-  left: 9px;
-  width: 24px;
-  height: 2.5px;
-  border-radius: 2px;
-  background: #1F2A44;
-  transition: transform .25s ease, opacity .2s ease;
-}
-.vc-burger span:nth-child(1) { top: 13px; }
-.vc-burger span:nth-child(2) { top: 20px; }
-.vc-burger span:nth-child(3) { top: 27px; }
-@media (max-width: 900px) {
-  .vc-page .header,
-  .vc-page .navbar {
-    position: relative;
-    flex-wrap: nowrap !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-  }
-  .vc-page .header .vc-burger,
-  .vc-page .navbar .vc-burger {
-    display: block;
-    order: 9;
-  }
-  .vc-page .header .theme-toggle,
-  .vc-page .navbar .theme-toggle {
-    order: 8;
-  }
-  .vc-page .header .vc-mobile-nav,
-  .vc-page .navbar .vc-mobile-nav {
-    display: none !important;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 60;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    width: 100% !important;
-    gap: 0 !important;
-    padding: 8px 0 12px !important;
-    background: var(--branco, #fff);
-    border-top: 1px solid rgba(31, 42, 68, .1);
-    box-shadow: 0 14px 30px rgba(31, 42, 68, .14);
-  }
-  .vc-page .header.vc-nav-open .vc-mobile-nav,
-  .vc-page .navbar.vc-nav-open .vc-mobile-nav {
-    display: flex !important;
-  }
-  .vc-page .vc-mobile-nav a {
-    display: block;
-    padding: 12px 22px !important;
-    font-size: 15px !important;
-    line-height: 1.3 !important;
-    text-align: left;
-    border-bottom: 1px solid rgba(31, 42, 68, .06);
-  }
-  .vc-page .header.vc-nav-open .vc-burger span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-  .vc-page .header.vc-nav-open .vc-burger span:nth-child(2) {
-    opacity: 0;
-  }
-  .vc-page .header.vc-nav-open .vc-burger span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(2) {
-    opacity: 0;
-  }
-  .vc-page .navbar.vc-nav-open .vc-burger span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-}
-
-.dark .vc-burger span,
-html.dark .vc-burger span {
-  background: #EAF0FF;
-}
-
-</style>
-<link rel="stylesheet" href="/global.css" />
-<link rel="stylesheet" href="/header.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="/vc.css" />
 </head>
 <body>
-<div class="vc-page vc-std">
 
-
-  <!-- ================= HEADER ================= -->
-  <header class="header">
-    <a class="logo" href="/index.html">
-      <img class="logo-img" src="/pages/imagens/logo.png" alt="VitalCare" />
-    </a>
-
-    <nav class="nav">
-      <a class="nav-link is-active" href="/index.html">Home</a>
-      <a class="nav-link" href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
-      <a class="nav-link" href="/pages/produtos/produto.html">Produto</a>
-      <a class="nav-link" href="/pages/equipe/equipe (1).html">Equipe</a>
-      <a class="nav-link" href="/pages/referencias/referencias (1).html">Referências</a>
-      <a class="nav-link" href="/pages/jogo/jogo (2).html">Jogo</a>
-      <a class="nav-link" href="/pages/login/login.html">Login</a>
-    </nav>
-
-    <button class="theme-toggle" type="button" aria-label="Alternar tema">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" fill="none" stroke="#1F2A44" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+<header class="site-header">
+  <a class="logo" href="/index.html"><img src="/pages/imagens/logo-vitalcare.png" alt="VitalCare" width="168" height="50" /></a>
+  <nav class="site-nav" aria-label="Principal">
+    <a href="/index.html" class="is-active" aria-current="page">Home</a>
+    <a href="/pages/intrucoes/instrucoes (1).html">Instruções</a>
+    <a href="/pages/produtos/produto.html">Produto</a>
+    <a href="/pages/equipe/equipe (1).html">Equipe</a>
+    <a href="/pages/referencias/referencias (1).html">Referências</a>
+    <a href="/pages/jogo/jogo (2).html">Jogo</a>
+    <a href="/pages/login/login.html">Login</a>
+  </nav>
+  <div class="header-actions">
+    <button class="icon-btn theme-toggle" type="button" aria-label="Alternar tema">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     </button>
-    <button class="vc-burger" type="button" aria-label="Abrir menu" aria-expanded="false">
-      <span></span><span></span><span></span>
+    <button class="icon-btn menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
-  </header>
+  </div>
+</header>
 
+<main>
   <!-- ================= HERO ================= -->
-  <section class="hero" id="home">
-    <div class="hero-content">
-      <span class="badge">Cuidado inteligente para idosos</span>
-      <h1 class="hero-title">VITALCARE: O Cuidado que Acompanha</h1>
-      <p class="hero-text">
-        Um sistema inteligente de monitoramento e assistência domiciliar que auxilia no cuidado de
-        idosos, promovendo mais segurança, tranquilidade e autonomia para toda a família.
-      </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="./pages/intrucoes/instrucoes (1).html">Como funciona</a>
-        <a class="btn btn-outline" href="./pages/produtos/produto.html">Ver produto</a>
+  <section class="page-hero home-hero" id="home">
+    <div class="container">
+      <div>
+        <span class="eyebrow">Cuidado inteligente para idosos</span>
+        <h1>VITALCARE: <span>O Cuidado que Acompanha</span></h1>
+        <p class="lead">
+          Um sistema inteligente de monitoramento e assistência domiciliar que auxilia no cuidado de
+          idosos, promovendo mais segurança, tranquilidade e autonomia para toda a família.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/pages/intrucoes/instrucoes (1).html">Como funciona</a>
+          <a class="btn btn-glass" href="/pages/produtos/produto.html">Ver produto</a>
+        </div>
+      </div>
+      <div class="hero-frame">
+        <img src="/pages/imagens/old age care 1.png" alt="Cuidadora sorrindo ao lado de idosa em cadeira de rodas em um jardim" />
       </div>
     </div>
-
-    <div class="hero-media">
-      <img src="/pages/imagens/old age care 1.png" alt="Cuidadora sorrindo ao lado de idosa em cadeira de rodas em um jardim" />
-    </div>
+    <svg class="hero-pulse" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40h420l18-22 16 36 18-50 16 36h712"/></svg>
   </section>
 
   <!-- ================= DIFERENCIAIS ================= -->
-  <section class="section section-diferenciais" id="produto">
-    <h2 class="section-title cyan">Diferenciais do VitalCare</h2>
-    <p class="section-subtitle">
-      Uma solução integrada para monitoramento, segurança e<br />
-      cuidado do idoso no ambiente domiciliar.
-    </p>
+  <section class="section" id="produto">
+    <div class="container">
+      <div class="section-head">
+        <h2>Diferenciais do VitalCare</h2>
+        <p>Uma solução integrada para monitoramento, segurança e cuidado do idoso no ambiente domiciliar.</p>
+      </div>
 
-    <div class="cards">
-      <article class="card card-blue">
-        <span class="card-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" fill="none" stroke="#2E4A8A" stroke-width="1.8" stroke-linejoin="round"/></svg>
-        </span>
-        <h3 class="card-title">Monitoramento Integrado</h3>
-        <p class="card-text">
-          O VitalCare reúne informações importantes sobre a saúde e o ambiente em um único sistema,
-          facilitando o acompanhamento diário.
-        </p>
-      </article>
-
-      <article class="card card-orange">
-        <span class="card-icon icon-orange">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.2A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7 2.8C19 15.4 12 20 12 20Z" fill="none" stroke="#B45309" stroke-width="1.8" stroke-linejoin="round"/></svg>
-        </span>
-        <h3 class="card-title">Rotina Personalizada</h3>
-        <p class="card-text">
-          Medicamentos, horários de medição e compromissos podem ser configurados de acordo com as
-          necessidades de cada usuário.
-        </p>
-      </article>
-
-      <article class="card card-blue">
-        <span class="card-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l2.3 4.9 5.2.7-3.8 3.7.9 5.2L12 16l-4.6 2.5.9-5.2L4.5 9.6l5.2-.7L12 4Z" fill="none" stroke="#2E4A8A" stroke-width="1.8" stroke-linejoin="round"/></svg>
-        </span>
-        <h3 class="card-title">Segurança domiciliar</h3>
-        <p class="card-text">
-          Sensores ambientais ajudam a identificar situações que exigem atenção, como alterações de
-          temperatura e presença de gás.
-        </p>
-      </article>
+      <div class="grid grid-3" data-reveal>
+        <article class="card hover">
+          <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/></svg></span>
+          <h3>Monitoramento Integrado</h3>
+          <p>O VitalCare reúne informações importantes sobre a saúde e o ambiente em um único sistema, facilitando o acompanhamento diário.</p>
+        </article>
+        <article class="card hover">
+          <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.2A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7 2.8C19 15.4 12 20 12 20Z"/></svg></span>
+          <h3>Rotina Personalizada</h3>
+          <p>Medicamentos, horários de medição e compromissos podem ser configurados de acordo com as necessidades de cada usuário.</p>
+        </article>
+        <article class="card hover">
+          <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8Z"/><path d="M9 20v-5h6v5"/></svg></span>
+          <h3>Segurança domiciliar</h3>
+          <p>Sensores ambientais ajudam a identificar situações que exigem atenção, como alterações de temperatura e presença de gás.</p>
+        </article>
+      </div>
     </div>
   </section>
 
-  <!-- ================= PÚBLICO ALVO / OBJETO ================= -->
-  <section class="section section-publico" id="instrucoes">
-    <div class="two-cols">
-      <div class="col">
-        <h2 class="section-title dark center">Público Alvo</h2>
-
-        <div class="list-item">
-          <span class="list-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3" fill="none" stroke="#2E4A8A" stroke-width="1.8"/><circle cx="16" cy="10" r="2.3" fill="none" stroke="#2E4A8A" stroke-width="1.8"/><path d="M3.5 18c.7-2.6 2.9-4 5.5-4s4.8 1.4 5.5 4" fill="none" stroke="#2E4A8A" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <div>
-            <h3 class="list-title">Idosos</h3>
-            <p class="list-text">Pessoas que desejam mais autonomia e segurança em sua rotina, especialmente aquelas que necessitam de acompanhamento frequente.</p>
+  <!-- ================= PÚBLICO ALVO / OBJETIVOS ================= -->
+  <section class="section alt" id="instrucoes">
+    <div class="container grid grid-2" style="align-items: start; gap: clamp(32px, 5vw, 64px);">
+      <div>
+        <h2 class="col-title">Público Alvo</h2>
+        <div class="audience" data-reveal>
+          <div class="row-item">
+            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3"/><circle cx="16" cy="10" r="2.3"/><path d="M3.5 18c.7-2.6 2.9-4 5.5-4s4.8 1.4 5.5 4"/></svg></span>
+            <div>
+              <h3>Idosos</h3>
+              <p>Pessoas que desejam mais autonomia e segurança em sua rotina, especialmente aquelas que necessitam de acompanhamento frequente.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="list-item">
-          <span class="list-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="#2E4A8A" stroke-width="1.8"/><path d="M8 12h8M8 16h5" stroke="#2E4A8A" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </span>
-          <div>
-            <h3 class="list-title">Familiares e cuidadores</h3>
-            <p class="list-text">Responsáveis que precisam acompanhar informações importantes e auxiliar na organização dos cuidados diários.</p>
+          <div class="row-item">
+            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8M8 16h5"/></svg></span>
+            <div>
+              <h3>Familiares e cuidadores</h3>
+              <p>Responsáveis que precisam acompanhar informações importantes e auxiliar na organização dos cuidados diários.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="list-item">
-          <span class="list-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8Z" fill="none" stroke="#2E4A8A" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          </span>
-          <div>
-            <h3 class="list-title">Profissionais e Instituições de Saúde</h3>
-            <p class="list-text">Profissionais, cuidadores e instituições que atendem idosos e buscam recursos tecnológicos para complementar o acompanhamento.</p>
+          <div class="row-item">
+            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8Z"/><path d="M12 11v5M9.5 13.5h5"/></svg></span>
+            <div>
+              <h3>Profissionais e Instituições de Saúde</h3>
+              <p>Profissionais, cuidadores e instituições que atendem idosos e buscam recursos tecnológicos para complementar o acompanhamento.</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="col">
-        <h2 class="section-title dark center">Objetivos</h2>
-
-        <div class="obj-item">
-          <span class="obj-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="none" stroke="#2E4A8A" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="none" stroke="#2E4A8A" stroke-width="1.8"/></svg>
-          </span>
-          <div>
-            <h3 class="obj-title">Monitorar informações de saúde</h3>
-            <p class="obj-text">Registrar e apresentar dados como frequência cardíaca e saturação de oxigênio.</p>
+      <div>
+        <h2 class="col-title">Objetivos</h2>
+        <div class="audience" data-reveal>
+          <div class="row-item">
+            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+            <div>
+              <h3>Monitorar informações de saúde</h3>
+              <p>Registrar e apresentar dados como frequência cardíaca e saturação de oxigênio.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="obj-item">
-          <span class="obj-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M12 6l-5 5M12 6l5 5" fill="none" stroke="#2E4A8A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-          <div>
-            <h3 class="obj-title">Auxiliar na rotina de medicamentos</h3>
-            <p class="obj-text">Emitir alertas nos horários configurados e apresentar informações sobre os medicamentos.</p>
+          <div class="row-item">
+            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/></svg></span>
+            <div>
+              <h3>Auxiliar na rotina de medicamentos</h3>
+              <p>Emitir alertas nos horários configurados e apresentar informações sobre os medicamentos.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="obj-item">
-          <span class="obj-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l2.3 4.9 5.2.7-3.8 3.7.9 5.2L12 16l-4.6 2.5.9-5.2L4.5 9.6l5.2-.7L12 4Z" fill="#4C6FBF"/></svg>
-          </span>
-          <div>
-            <h3 class="obj-title">Monitorar o ambiente</h3>
-            <p class="obj-text">Acompanhar condições como temperatura e possíveis vazamentos de gás.</p>
+          <div class="row-item">
+            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/><path d="M12 10v6"/></svg></span>
+            <div>
+              <h3>Monitorar o ambiente</h3>
+              <p>Acompanhar condições como temperatura e possíveis vazamentos de gás.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="obj-item">
-          <span class="obj-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20S4 15 4 9.8A4 4 0 0 1 12 7.6 4 4 0 0 1 20 9.8C20 15 12 20 12 20Z" fill="#4C6FBF"/></svg>
-          </span>
-          <div>
-            <h3 class="obj-title">Organizar compromissos</h3>
-            <p class="obj-text">Exibir lembretes de consultas, exames e outros compromissos importantes.</p>
+          <div class="row-item">
+            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg></span>
+            <div>
+              <h3>Organizar compromissos</h3>
+              <p>Exibir lembretes de consultas, exames e outros compromissos importantes.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1055,43 +152,30 @@ html.dark .vc-burger span {
   </section>
 
   <!-- ================= POR QUE VITALCARE ================= -->
-  <section class="section-why" id="equipe">
-    <h2 class="why-title">Por que VitalCare?</h2>
-    <p class="why-text">
-      Enquanto muitos idosos dependem de diferentes dispositivos, anotações ou<br />
-      da supervisão constante de familiares para organizar cuidados básicos, o<br />
-      VitalCare propõe centralizar essas informações em uma única interface.<br />
-      O sistema integra monitoramento de sinais vitais, lembretes, sensores<br />
-      ambientais e alertas, proporcionando uma rotina mais organizada e segura.
-    </p>
-    <a class="btn btn-purple" href="/pages/produtos/produto.html">Conhecer o produto completo</a>
+  <section class="section" id="equipe">
+    <div class="container">
+      <div class="why reveal-item">
+        <h2>Por que VitalCare?</h2>
+        <p>
+          Enquanto muitos idosos dependem de diferentes dispositivos, anotações ou
+          da supervisão constante de familiares para organizar cuidados básicos, o
+          VitalCare propõe centralizar essas informações em uma única interface.
+          O sistema integra monitoramento de sinais vitais, lembretes, sensores
+          ambientais e alertas, proporcionando uma rotina mais organizada e segura.
+        </p>
+        <a class="btn btn-primary" href="/pages/produtos/produto.html">Conhecer o produto completo</a>
+      </div>
+    </div>
   </section>
+</main>
 
-  <!-- ================= FOOTER ================= -->
-  <footer class="footer" id="referencias">
-    <p class="footer-left">© 2026 VitalCare•Todos os direitos reservados</p>
-    <p class="footer-right">Feito com <span class="heart">♥</span> para você</p>
-  </footer>
+<footer class="site-footer" id="referencias">
+  <div class="container">
+    <p>© 2026 VitalCare•Todos os direitos reservados</p>
+    <p>Feito com <span class="heart">♥</span> para você</p>
+  </div>
+</footer>
 
-
-</div>
-<script>
-// Modo escuro persistente (clique na lua)
-(function () {
-  var root = document.documentElement;
-  try { if (localStorage.getItem("vc-theme") === "dark") root.classList.add("dark"); } catch (e) {}
-  document.addEventListener("click", function (ev) {
-    var t = ev.target.closest(".theme-toggle");
-    if (!t) return;
-    ev.preventDefault();
-    var dark = !root.classList.contains("dark");
-    root.classList.toggle("dark", dark);
-    try { localStorage.setItem("vc-theme", dark ? "dark" : "light"); } catch (e) {}
-  });
-})();
-
-</script>
-<script src="menu.js"></script>
-<script src="/header.js"></script>
+<script src="/vc.js"></script>
 </body>
 </html>

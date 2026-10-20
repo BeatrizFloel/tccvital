@@ -1,14 +1,15 @@
-/* VITALCARE — LOGIN E CADASTRO */
+/* VITALCARE — LOGIN E CADASTRO
+   Carregado depois do /vc.css: usa as mesmas cores (e o modo escuro) do resto do site. */
 
 :root {
-  --bege-fundo: #F7F0DD;
-  --bege-input: #FBF7EA;
-  --bege-tab: #EEEADF;
-  --azul-escuro: #10283A;
-  --azul-texto: #526B7C;
-  --verde: #079B8C;
-  --verde-hover: #078B7E;
-  --borda: #C8D4D7;
+  --bege-fundo: var(--bg);
+  --bege-input: var(--surface-2);
+  --bege-tab: var(--bg-alt);
+  --azul-escuro: var(--ink);
+  --azul-texto: var(--muted);
+  --verde: var(--brand);
+  --verde-hover: var(--brand-strong);
+  --borda: var(--line-strong);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,7 +17,7 @@
 html, body { width: 100%; min-height: 100%; }
 
 body {
-  font-family: "Poppins", Arial, sans-serif;
+  font-family: "Inter", system-ui, Arial, sans-serif;
   color: var(--azul-escuro);
   background: var(--bege-fundo);
 }
@@ -26,7 +27,7 @@ button { cursor: pointer; }
 a { text-decoration: none; }
 
 .auth-page {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-h));
   display: grid;
   grid-template-columns: 55% 45%;
 }
@@ -34,7 +35,7 @@ a { text-decoration: none; }
 /* IMAGEM */
 .auth-image {
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-h));
   background-image: url("../imagens/login-cuidadora.png");
   background-size: cover;
   background-position: center;
@@ -44,7 +45,7 @@ a { text-decoration: none; }
 .image-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(13,34,40,.02) 20%, rgba(7,24,29,.38) 100%);
+  background: linear-gradient(180deg, rgba(8,22,33,.05) 25%, rgba(8,22,33,.72) 100%);
 }
 
 .image-content {
@@ -61,15 +62,16 @@ a { text-decoration: none; }
   padding: 9px 18px;
   margin-bottom: 25px;
   border-radius: 999px;
-  background: #B8E6E8;
-  color: #123347;
+  background: #F8A466;
+  color: #081621;
   font-size: 14px;
   font-weight: 600;
 }
 
 .image-content h1 {
   max-width: 760px;
-  font-family: "Playfair Display", Georgia, serif;
+  color: #fff;
+  font-family: "Space Grotesk", "Inter", sans-serif;
   font-size: clamp(42px, 4vw, 68px);
   font-weight: 900;
   line-height: 1.05;
@@ -78,7 +80,7 @@ a { text-decoration: none; }
 
 /* PAINEL */
 .auth-panel {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--header-h));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -94,7 +96,7 @@ a { text-decoration: none; }
 .safe-title {
   display: block;
   margin-bottom: 24px;
-  color: #008F86;
+  color: var(--accent-ink);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -102,7 +104,7 @@ a { text-decoration: none; }
 
 .auth-content h2 {
   margin-bottom: 24px;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Space Grotesk", "Inter", sans-serif;
   font-size: clamp(44px, 4vw, 66px);
   font-weight: 900;
   line-height: 1.02;
@@ -139,10 +141,10 @@ a { text-decoration: none; }
 }
 
 .tab.active {
-  background: #fff;
-  border-color: #C8D8DA;
+  background: var(--surface);
+  border-color: var(--borda);
   color: var(--azul-escuro);
-  box-shadow: 0 2px 6px rgba(31,42,68,.08);
+  box-shadow: 0 2px 6px rgba(8,22,33,.08);
 }
 
 /* FORM */
@@ -151,13 +153,13 @@ a { text-decoration: none; }
 .auth-message {
   min-height: 20px;
   margin: 14px 0 4px;
-  color: #627987;
+  color: var(--muted);
   font-size: 13px;
   text-align: center;
 }
-.auth-message.error { color: #c74655; }
-.auth-message.success { color: #078f80; }
-.auth-message.loading { color: #627987; }
+.auth-message.error { color: var(--bad-ink); }
+.auth-message.success { color: var(--good-ink); }
+.auth-message.loading { color: var(--muted); }
 
 .auth-form label {
   display: block;
@@ -175,7 +177,7 @@ a { text-decoration: none; }
 }
 
 .password-label a {
-  color: #008F86;
+  color: var(--accent-ink);
   font-size: 12px;
   font-weight: 600;
 }
@@ -194,15 +196,15 @@ a { text-decoration: none; }
 }
 
 .input-box:focus-within {
-  border-color: #77BFC0;
-  box-shadow: 0 0 0 3px rgba(7,155,140,.08);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .input-icon {
   width: 42px;
   display: flex;
   justify-content: center;
-  color: #627987;
+  color: var(--muted);
   font-size: 15px;
 }
 
@@ -217,14 +219,14 @@ a { text-decoration: none; }
   font-size: 14px;
 }
 
-.input-box input::placeholder { color: #778994; }
+.input-box input::placeholder { color: var(--muted); }
 
 .show-password {
   width: 45px;
   height: 100%;
   border: none;
   background: transparent;
-  color: #687D88;
+  color: var(--muted);
 }
 
 /* BOTÃO */
@@ -235,7 +237,7 @@ a { text-decoration: none; }
   border: none;
   border-radius: 7px;
   background: var(--verde);
-  color: #fff;
+  color: var(--on-brand);
   font-size: 15px;
   font-weight: 700;
   transition: .2s;
@@ -258,11 +260,11 @@ a { text-decoration: none; }
 .divider span {
   flex: 1;
   height: 1px;
-  background: #C8D4D7;
+  background: var(--borda);
 }
 
 .divider p {
-  color: #71818A;
+  color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
 }
@@ -270,27 +272,31 @@ a { text-decoration: none; }
 .google-button {
   width: 100%;
   height: 54px;
-  border: 1px solid #C8D4D7;
+  border: 1px solid var(--borda);
   border-radius: 7px;
-  background: rgba(255,255,255,.35);
+  background: var(--surface);
   color: var(--azul-escuro);
   font-size: 14px;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease;
 }
+
+.google-button:hover { background: var(--surface-2); border-color: var(--accent-ink); }
 
 .google-button strong {
   margin-right: 8px;
-  color: #009B8F;
+  color: var(--accent-ink);
 }
 
 .bottom-text {
   margin-top: 26px;
   text-align: center;
-  color: #74838B;
+  color: var(--muted);
   font-size: 13px;
 }
 
 .bottom-text a {
-  color: #008F86;
+  color: var(--accent-ink);
   font-weight: 700;
 }
 
@@ -318,3 +324,6 @@ a { text-decoration: none; }
   .auth-content h2 { font-size: 42px; }
   .intro { font-size: 14px; line-height: 1.6; }
 }
+
+.google-button { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; }
+.google-logo { width: 20px; height: 20px; flex: none; }

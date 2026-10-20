@@ -56,3 +56,23 @@ CREATE TABLE IF NOT EXISTS vc_leituras_gas (
   lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_gas_usuario (id_usuario, lido_em)
 );
+
+-- Histórico do sensor cardíaco / oxímetro (batimentos por minuto e saturação de oxigênio)
+CREATE TABLE IF NOT EXISTS vc_leituras_cardiacas (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_usuario INT NOT NULL,
+  bpm DECIMAL(5,1) NULL,
+  spo2 DECIMAL(4,1) NULL,
+  lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_cardiaca_usuario (id_usuario, lido_em)
+);
+
+-- Histórico do sensor de temperatura do ambiente (umidade é opcional, ex.: DHT11/DHT22)
+CREATE TABLE IF NOT EXISTS vc_leituras_temperatura (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_usuario INT NOT NULL,
+  celsius DECIMAL(5,2) NOT NULL,
+  umidade DECIMAL(5,2) NULL,
+  lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_temperatura_usuario (id_usuario, lido_em)
+);
