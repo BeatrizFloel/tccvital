@@ -3,6 +3,8 @@
 #include <MAX30105.h>
 #include <MQUnifiedsensor.h>
 #include <WiFi.h>
+#include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include <WebSocketsClient.h>   // biblioteca "WebSockets" (Markus Sattler)
 #include <ArduinoJson.h>        // biblioteca "ArduinoJson" (Benoit Blanchon)
 #include "spo2_algorithm.h"     // vem junto com a biblioteca do MAX30105 (SparkFun)
@@ -10,12 +12,18 @@
 // ==========================================================
 //  CONFIGURACAO - troque so o que esta entre aspas
 // ==========================================================
-const char* WIFI_SSID     = "NOME_DA_REDE";           // Wi-Fi 2.4 GHz (o mesmo do computador e do celular)
+const char* WIFI_SSID     = "NOME_DA_REDE";           // qualquer Wi-Fi 2.4 GHz com internet
 const char* WIFI_PASSWORD = "SENHA_DA_REDE";
-const char* SERVER_HOST   = "192.168.0.10";           // IP que aparece no terminal ao rodar npm run dev
-const uint16_t SERVER_PORT = 3000;
-const char* ACCOUNT_EMAIL = "seu-email@exemplo.com";  // e-mail da conta usada para entrar no app
+const char* ACCOUNT_EMAIL = "byacururu@gmail.com";    // e-mail da conta usada para entrar no app
 const char* SENSOR_KEY    = "";                       // deixe vazio (so use se colocar SENSOR_KEY no .env)
+
+// Para onde vao as leituras:
+//   1 = site na Vercel (https://tccvital.vercel.app) pela internet. Nao precisa do computador ligado.
+//   0 = backend no computador (npm run dev), em tempo real. Computador, celular e ESP no mesmo Wi-Fi.
+#define ENVIAR_PARA_VERCEL 1
+const char* VERCEL_URL    = "https://tccvital.vercel.app/api/sensores";
+const char* SERVER_HOST   = "192.168.42.115";         // so no modo 0: IP que aparece no terminal do npm run dev
+const uint16_t SERVER_PORT = 3000;
 
 // ==========================================================
 //  LIGACOES (ESP32 DevKit 30 pinos)
@@ -64,10 +72,12 @@ bool mqOk = false;
 // ------------------ Conexao com o backend ------------------
 WebSocketsClient webSocket;
 bool conectado = false;
+WiFiClientSecure clienteHttps;
+HTTPClient http;
 
 // ------------------ Tempo ------------------
 unsigned long tempoAnteriorSensores = 0;
-const long intervaloSensores = 2000;
+const long intervaloSensores = 3000;
 
 // Le um DHT11, mostra no Monitor Serial e devolve se deu certo
 bool leDHT(const char* nome, DHT& sensor, float& temperatura, float& umidade) {
@@ -185,7 +195,13 @@ void setup() {
   Serial.print("\nWi-Fi conectado. IP do ESP: ");
   Serial.println(WiFi.localIP());
 
-  // 5. Backend (WebSocket)
+#if ENVIAR_PARA_VERCEL
+  // 5. Site na Vercel (HTTPS)
+  clienteHttps.setInsecure();   // nao confere o certificado (suficiente para o prototipo)
+  http.setReuse(true);          // mantem a conexao aberta entre um envio e outro (mais rapido)
+  Serial.print("Enviando as leituras para "); Serial.println(VERCEL_URL);
+#else
+  // 5. Backend no computador (WebSocket)
   String caminho = String("/ws?email=") + codificaUrl(ACCOUNT_EMAIL);
   if (strlen(SENSOR_KEY)) caminho += String("&key=") + codificaUrl(SENSOR_KEY);
   webSocket.begin(SERVER_HOST, SERVER_PORT, caminho);
@@ -194,10 +210,37 @@ void setup() {
   webSocket.enableHeartbeat(15000, 3000, 2);  // percebe quando a conexao caiu
   Serial.print("Conectando no backend ws://");
   Serial.print(SERVER_HOST); Serial.print(":"); Serial.print(SERVER_PORT); Serial.println("/ws ...");
+#endif
 }
 
+#if ENVIAR_PARA_VERCEL
+// Manda as leituras para a Vercel, que salva no banco; o app mostra em ate 5 segundos
+void enviaVercel(JsonDocument& leitura) {
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Vercel: sem Wi-Fi, tentando reconectar...");
+    WiFi.reconnect();
+    return;
+  }
+  leitura["email"] = ACCOUNT_EMAIL;
+  String json;
+  serializeJson(leitura, json);
+
+  http.begin(clienteHttps, VERCEL_URL);
+  http.setTimeout(8000);
+  http.addHeader("Content-Type", "application/json");
+  if (strlen(SENSOR_KEY)) http.addHeader("x-sensor-key", SENSOR_KEY);
+  int status = http.POST(json);
+  Serial.print("Enviado: "); Serial.println(json);
+  Serial.print(">> Vercel respondeu "); Serial.print(status); Serial.print(": ");
+  Serial.println(status > 0 ? http.getString() : http.errorToString(status));
+  http.end();
+}
+#endif
+
 void loop() {
+#if !ENVIAR_PARA_VERCEL
   webSocket.loop();   // precisa rodar o tempo todo
+#endif
   leOximetro();       // precisa rodar o tempo todo
 
   unsigned long tempoAtual = millis();
@@ -234,7 +277,10 @@ void loop() {
     Serial.print(ppm); Serial.println(" ppm");
     if (mqOk && isfinite(ppm)) leitura["gas"] = ppm;
 
-    // Envia para o backend, que salva e mostra na hora no app
+    // Envia para o backend, que salva e mostra no app
+#if ENVIAR_PARA_VERCEL
+    if (leitura.size() > 0) enviaVercel(leitura);
+#else
     if (!conectado) {
       Serial.println("Backend: aguardando conexao (o npm run dev esta rodando? o IP esta certo?)");
     } else if (leitura.size() > 0) {
@@ -243,6 +289,7 @@ void loop() {
       webSocket.sendTXT(json);
       Serial.print("Enviado: "); Serial.println(json);
     }
+#endif
 
     Serial.println("===========================================");
   }

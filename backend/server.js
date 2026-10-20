@@ -58,6 +58,8 @@ app.get(["/api/health", "/health"], (_req, res) => res.json({ status: "ok", stor
 app.get(["/api/login", "/login"], (_req, res) => res.status(200).json({ message: "Use POST para fazer login." }));
 app.get(["/api/cadastro", "/cadastro"], (_req, res) => res.status(200).json({ message: "Use POST para criar o cadastro." }));
 
+const LOST_CONNECTION_CODES = new Set(["PROTOCOL_CONNECTION_LOST", "ECONNRESET", "ETIMEDOUT", "EPIPE", "ECONNREFUSED"]);
+
 function getPool() {
   if (!pool) {
     let host = process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.DB_HOST;
@@ -87,8 +89,25 @@ function getPool() {
       database,
       waitForConnections: true,
       connectionLimit: 5,
-      connectTimeout: 10000
+      connectTimeout: 10000,
+      // O servidor da escola derruba conexões paradas: mantém vivas e descarta as ociosas
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 10000,
+      maxIdle: 2,
+      idleTimeout: 60000
     });
+
+    // Se a conexão tiver caído mesmo assim, tenta mais uma vez com uma conexão nova
+    const query = pool.query.bind(pool);
+    pool.query = async (...args) => {
+      try {
+        return await query(...args);
+      } catch (error) {
+        if (!LOST_CONNECTION_CODES.has(error.code)) throw error;
+        console.warn("Conexão com o banco caiu, tentando de novo:", error.code);
+        return query(...args);
+      }
+    };
   }
   return pool;
 }
