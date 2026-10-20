@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VitalCare — Jogo</title>
+<title>VitalCare — A Aventura das Galinhas</title>
 <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,8 +15,12 @@
   .facts li { display: flex; align-items: center; gap: 12px; color: var(--ink); font-weight: 500; }
   .facts .icon-box { width: 36px; height: 36px; margin: 0; border-radius: 10px; }
   .facts .icon-box svg { width: 17px; height: 17px; }
-  .game-video .play-ring { margin: 0; }
   .game-video-wrap h2 { margin-bottom: 18px; font-size: 22px; text-align: center; }
+  .shots { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .shots figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--hero-2); }
+  .shots img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; image-rendering: pixelated; }
+  .shots figcaption { padding: 10px 14px; font-size: 14px; color: var(--ink-2); background: var(--surface, transparent); }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -46,8 +50,8 @@
 <main>
   <section class="page-hero">
     <div class="container">
-      <h1>Além da Memória</h1>
-      <p class="lead">Uma jornada de investigação, cuidado e segurança.</p>
+      <h1>A Aventura das Galinhas</h1>
+      <p class="lead">Uma jornada cheia de saltos, ovos voadores e galinhas nada amigáveis.</p>
     </div>
     <svg class="hero-pulse" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40h420l18-22 16 36 18-50 16 36h712"/></svg>
   </section>
@@ -58,12 +62,13 @@
         <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 5.4L20 9.3l-4.5 3.9 1.4 5.8L12 16l-4.9 3 1.4-5.8L4 9.3l5.9-.9Z"/></svg></span>
         <h2 style="font-size: 24px; margin-bottom: 14px;">A História</h2>
         <p>
-          Você assume o papel de um cuidador responsável por acompanhar um idoso. Ao chegar à
-          residência, percebe que ele saiu da área considerada segura.
+          Um jovem decide sair de casa em busca de aventura. O que parecia um passeio tranquilo
+          pelos campos muda de rumo quando ele cruza o caminho de um bando de galinhas malvadas.
         </p>
         <p>
-          Com a ajuda do aparelho VitalCare, será necessário interpretar alertas, localizar
-          pistas e tomar decisões para encontrá-lo com segurança.
+          Elas atacam dos céus lançando ovos e bloqueiam a passagem. Para voltar à sua vida
+          normal, o jovem precisa enfrentar e derrotar cada uma delas — saltando entre plataformas,
+          desviando dos ataques e recuperando vida pelo caminho.
         </p>
       </article>
 
@@ -71,22 +76,33 @@
         <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v.5M12 11v5"/></svg></span>
         <h2 style="font-size: 24px; margin-bottom: 14px;">Curiosidades</h2>
         <ul class="facts">
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Jogo de aventura e investigação em 2D</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>Sistema de pistas e decisões</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Diferentes caminhos possíveis</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>Monitoramento integrado à jogabilidade</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg></span>Sistema de recompensas motivador</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a6 6 0 0 0 6-6C22 6 17.5 2 12 2Z"/></svg></span>Gráficos coloridos e amigáveis</li>
+          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Jogo de plataforma e aventura em 2D</li>
+          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="8"/></svg></span>Galinhas que atacam lançando ovos do céu</li>
+          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></span>Corações espalhados para recuperar vida</li>
+          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>Barra de vida que acompanha o personagem</li>
+          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 12h18M9 5v14M15 5v14"/></svg></span>Inventário para guardar itens da jornada</li>
+          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a6 6 0 0 0 6-6C22 6 17.5 2 12 2Z"/></svg></span>Visual em pixel art colorido</li>
         </ul>
       </article>
     </div>
   </section>
 
   <section class="section alt">
-    <div class="container narrow game-video-wrap reveal-item">
-      <h2>Vídeo Demonstrativo</h2>
-      <div class="game-video">
-        <span class="play-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4.5v15L19.5 12z"/></svg></span>
+    <div class="container game-video-wrap reveal-item">
+      <h2>Imagens do Jogo</h2>
+      <div class="shots">
+        <figure>
+          <img src="/pages/imagens/galinhas-1.png" alt="O jovem caminha pelo campo enquanto uma galinha voa no céu e solta um ovo" width="791" height="600" loading="lazy" />
+          <figcaption>Cuidado com os ovos que caem do céu!</figcaption>
+        </figure>
+        <figure>
+          <img src="/pages/imagens/galinhas-2.png" alt="Jovem correndo com o inventário aberto e uma galinha voando acima" width="791" height="600" loading="lazy" />
+          <figcaption>Inventário aberto durante a aventura</figcaption>
+        </figure>
+        <figure>
+          <img src="/pages/imagens/galinhas-3.png" alt="Jovem parado ao lado de plataformas de terra com uma galinha no alto" width="800" height="600" loading="lazy" />
+          <figcaption>Plataformas e corações pelo caminho</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -94,32 +110,32 @@
   <section class="section">
     <div class="container">
       <div class="why cta reveal-item">
-        <h2>Pronto para começar a busca?</h2>
+        <h2>Pronto para enfrentar as galinhas?</h2>
         <p>
-          Acompanhe os alertas, investigue as pistas e tome decisões para localizar o idoso com
-          segurança. Cada informação pode aproximar você do destino final.
+          Pule, desvie dos ovos, colete corações e derrote as galinhas malvadas para ajudar o
+          jovem a voltar para casa. Cada fase é um novo desafio!
         </p>
-        <a href="#" class="btn btn-primary">Jogar agora</a>
+        <a href="https://gd.games/games/fc7aea2a-bb79-4d81-a7e3-62472e37f653" class="btn btn-primary" target="_blank" rel="noopener">Jogar agora</a>
         <p class="note" style="margin: 22px 0 0; color: var(--hero-muted);">Desenvolvido com GDevelop • Compatível com navegadores modernos</p>
       </div>
 
       <div class="grid grid-2" style="margin-top: 24px;" data-reveal>
         <article class="card">
-          <h3 style="margin-bottom: 16px;">Objetivos Educacionais</h3>
+          <h3 style="margin-bottom: 16px;">Como Jogar</h3>
           <ul class="check-list">
-            <li>Incentivar a tomada de decisões responsáveis;</li>
-            <li>Demonstrar a importância do monitoramento;</li>
-            <li>Relacionar tecnologia, segurança e cuidado;</li>
-            <li>Mostrar como diferentes informações podem ser cruzadas.</li>
+            <li>Movimente o jovem pelo cenário e salte entre as plataformas;</li>
+            <li>Desvie dos ovos lançados pelas galinhas;</li>
+            <li>Colete os corações para recuperar sua vida;</li>
+            <li>Derrote todas as galinhas para voltar à vida normal.</li>
           </ul>
         </article>
         <article class="card">
           <h3 style="margin-bottom: 16px;">Faixa Etária Recomendada</h3>
           <ul class="check-list">
-            <li>Adolescentes e adultos</li>
-            <li>Interface acessível e intuitiva</li>
-            <li>Interface intuitiva e acessível</li>
-            <li>Conteúdo voltado à conscientização sobre cuidado e segurança</li>
+            <li>Livre para todos os públicos</li>
+            <li>Controles simples e intuitivos</li>
+            <li>Partidas rápidas, ideais para jogar no navegador</li>
+            <li>Diversão leve, sem violência realista</li>
           </ul>
         </article>
       </div>
