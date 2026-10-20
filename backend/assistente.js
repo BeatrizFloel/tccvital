@@ -2,11 +2,17 @@
    - /api/assistente         : assistente do site (página Equipe), responde dúvidas por texto.
    - /api/assistente/painel  : "Vital", assistente de voz do painel. Conhece os remédios, consultas,
                                lembretes e sensores da pessoa logada e pode marcar remédio como tomado.
-   Usa a Claude API: precisa de ANTHROPIC_API_KEY no .env (crie em console.anthropic.com).
+   Qual IA é usada (a primeira chave preenchida no .env):
+     1. GEMINI_API_KEY    — Google Gemini, GRATUITO (aistudio.google.com > Get API key)
+     2. ANTHROPIC_API_KEY — Claude (pago, console.anthropic.com)
+     3. nenhuma chave     — respostas prontas (assistente-local.js), sem custo e sem internet
+   Se a IA falhar (sem internet, limite gratuito esgotado...), também caem nas respostas prontas.
    Planos/preços vêm de /shared/planos.js e frete/pagamento de proposta.js (mesmos valores do site). */
 import Anthropic from "@anthropic-ai/sdk";
 import { PLANOS, formatarPreco } from "../shared/planos.js";
 import { PROPOSTA } from "./proposta.js";
+import { geminiGenerate, toGeminiContents } from "./gemini.js";
+import { siteAnswer, vitalAnswer } from "./assistente-local.js";
 
 const MODEL = "claude-opus-5-5";
 const MAX_HISTORY = 20;          // últimas mensagens enviadas para a IA
@@ -155,20 +161,29 @@ function createMessage(system, messages, extra = {}) {
   });
 }
 
-function sendApiError(res, error) {
-  console.error("Erro na assistente:", error.status || "", error.message);
-  if (error instanceof Anthropic.AuthenticationError) {
-    return res.status(503).json({ message: "A chave da assistente (ANTHROPIC_API_KEY) é inválida." });
-  }
-  if (error instanceof Anthropic.RateLimitError) {
-    return res.status(429).json({ message: "A assistente está muito ocupada agora. Tente de novo em instantes." });
-  }
-  return res.status(502).json({ message: "A assistente não conseguiu responder agora. Tente novamente em instantes." });
+// Gemini (grátis) tem preferência; sem nenhuma chave, só respostas prontas
+function aiProvider() {
+  if (process.env.GEMINI_API_KEY) return "gemini";
+  if (process.env.ANTHROPIC_API_KEY) return "claude";
+  return null;
 }
 
-function notConfigured(res) {
-  return res.status(503).json({ message: "A assistente ainda não foi configurada no site (falta a ANTHROPIC_API_KEY)." });
+function logAiError(provider, error) {
+  const hint = [400, 401, 403].includes(error.status) ? " (confira a chave no .env)"
+    : error.status === 429 ? " (limite de uso atingido)" : "";
+  console.error(`Assistente (${provider}) falhou${hint}; usando respostas prontas:`, error.status || "", error.message);
 }
+
+// Mesma ferramenta da Vital no formato do Gemini
+const GEMINI_FUNCTIONS = [{
+  name: "marcar_remedio_tomado",
+  description: VOICE_TOOLS[0].description,
+  parameters: {
+    type: "OBJECT",
+    properties: { medicamento_id: { type: "INTEGER", description: "O id do remédio, como aparece no bloco <painel>." } },
+    required: ["medicamento_id"]
+  }
+}];
 
 /* ---------- Bloco <painel> com os dados da pessoa ---------- */
 const WEEKDAYS = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
@@ -241,10 +256,61 @@ function panelBlock(data, context, userName) {
   return `<painel>\n${lines.join("\n")}\n</painel>`;
 }
 
+/* ---------- Assistente do site com IA ---------- */
+async function siteWithAi(provider, messages) {
+  if (provider === "gemini") {
+    const result = await geminiGenerate({ system: SITE_PROMPT, contents: toGeminiContents(messages) });
+    return result.blocked ? "Desculpe, não posso ajudar com esse assunto. Posso tirar outras dúvidas sobre o VitalCare?" : result.text;
+  }
+  const response = await createMessage(SITE_PROMPT, messages);
+  if (response.stop_reason === "refusal") return "Desculpe, não posso ajudar com esse assunto. Posso tirar outras dúvidas sobre o VitalCare?";
+  return textOf(response);
+}
+
+/* ---------- Vital com IA (pode marcar remédio como tomado) ----------
+   markTaken(id) marca no painel e devolve o texto do resultado para a IA */
+async function vitalWithAi(provider, messages, panel, markTaken) {
+  const last = messages.at(-1);
+
+  if (provider === "gemini") {
+    const contents = [...toGeminiContents(messages.slice(0, -1)), { role: "user", parts: [{ text: panel }, { text: last.content }] }];
+    for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+      const result = await geminiGenerate({ system: VOICE_PROMPT, contents, functions: GEMINI_FUNCTIONS });
+      if (result.blocked) return "Desculpe, não posso ajudar com isso. Quer saber dos seus remédios ou das suas consultas?";
+      if (!result.calls.length) return result.text;
+      contents.push(result.content);
+      const parts = [];
+      for (const call of result.calls) {
+        const output = call.name === "marcar_remedio_tomado" ? await markTaken(Number(call.args?.medicamento_id)) : "Ferramenta desconhecida.";
+        parts.push({ functionResponse: { ...(call.id ? { id: call.id } : {}), name: call.name, response: { resultado: output } } });
+      }
+      contents.push({ role: "user", parts });
+    }
+    return "";
+  }
+
+  const history = [...messages.slice(0, -1), { role: "user", content: [{ type: "text", text: panel }, { type: "text", text: last.content }] }];
+  let response;
+  for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    response = await createMessage(VOICE_PROMPT, history, { tools: VOICE_TOOLS });
+    if (response.stop_reason !== "tool_use") break;
+    // Executa as ferramentas pedidas e devolve todos os resultados numa única mensagem
+    history.push({ role: "assistant", content: response.content });
+    const results = [];
+    for (const block of response.content) {
+      if (block.type !== "tool_use") continue;
+      const output = block.name === "marcar_remedio_tomado" ? await markTaken(Number(block.input?.medicamento_id)) : "Ferramenta desconhecida.";
+      results.push({ type: "tool_result", tool_use_id: block.id, content: output });
+    }
+    history.push({ role: "user", content: results });
+  }
+  if (response.stop_reason === "refusal") return "Desculpe, não posso ajudar com isso. Quer saber dos seus remédios ou das suas consultas?";
+  return textOf(response);
+}
+
 export function registerAssistantRoutes(app, dashboard) {
   /* ---------- Assistente do site ---------- */
   app.post(["/assistente", "/api/assistente"], async (req, res) => {
-    if (!process.env.ANTHROPIC_API_KEY) return notConfigured(res);
     const messages = cleanHistory(req.body?.messages);
     if (!messages) return res.status(400).json({ message: "Envie sua pergunta." });
 
@@ -253,20 +319,20 @@ export function registerAssistantRoutes(app, dashboard) {
       return res.status(429).json({ message: "Você enviou muitas perguntas seguidas. Aguarde alguns minutos e tente de novo." });
     }
 
-    try {
-      const response = await createMessage(SITE_PROMPT, messages);
-      if (response.stop_reason === "refusal") {
-        return res.json({ reply: "Desculpe, não posso ajudar com esse assunto. Posso tirar outras dúvidas sobre o VitalCare?" });
+    const provider = aiProvider();
+    if (provider) {
+      try {
+        const reply = await siteWithAi(provider, messages);
+        if (reply) return res.json({ reply });
+      } catch (error) {
+        logAiError(provider, error);
       }
-      return res.json({ reply: textOf(response) || "Desculpe, não consegui responder agora. Pode perguntar de outro jeito?" });
-    } catch (error) {
-      return sendApiError(res, error);
     }
+    return res.json({ reply: siteAnswer(messages.at(-1).content) });
   });
 
   /* ---------- Vital: assistente de voz do painel (pessoa logada) ---------- */
   app.post(["/assistente/painel", "/api/assistente/painel"], dashboard.auth, async (req, res) => {
-    if (!process.env.ANTHROPIC_API_KEY) return notConfigured(res);
     const messages = cleanHistory(req.body?.messages);
     if (!messages) return res.status(400).json({ message: "Não entendi a pergunta." });
 
@@ -281,43 +347,41 @@ export function registerAssistantRoutes(app, dashboard) {
       return res.status(429).json({ message: "Muitas perguntas seguidas. Espere um pouquinho e tente de novo." });
     }
 
+    let data;
     try {
-      const data = await dashboard.loadDashboardData(req.userId);
-      const userName = String(req.body?.nome || "").trim().slice(0, 60) || "a pessoa";
-      const last = messages.pop();
-      messages.push({ role: "user", content: [{ type: "text", text: panelBlock(data, context, userName) }, { type: "text", text: last.content }] });
-
-      let changed = false;
-      let response;
-      for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
-        response = await createMessage(VOICE_PROMPT, messages, { tools: VOICE_TOOLS });
-        if (response.stop_reason !== "tool_use") break;
-
-        // Executa as ferramentas pedidas e devolve todos os resultados numa única mensagem
-        messages.push({ role: "assistant", content: response.content });
-        const results = [];
-        for (const block of response.content) {
-          if (block.type !== "tool_use") continue;
-          const id = Number(block.input?.medicamento_id);
-          const med = data.medications.find((item) => item.id === id);
-          if (block.name !== "marcar_remedio_tomado" || !med) {
-            results.push({ type: "tool_result", tool_use_id: block.id, content: "Remédio não encontrado no painel.", is_error: true });
-            continue;
-          }
-          await dashboard.setMedicationTaken(req.userId, id, context.hoje);
-          med.takenOn = context.hoje;
-          changed = true;
-          results.push({ type: "tool_result", tool_use_id: block.id, content: `Pronto: ${med.name} marcado como tomado hoje.` });
-        }
-        messages.push({ role: "user", content: results });
-      }
-
-      if (response.stop_reason === "refusal") {
-        return res.json({ reply: "Desculpe, não posso ajudar com isso. Quer saber dos seus remédios ou das suas consultas?", changed });
-      }
-      return res.json({ reply: textOf(response) || "Desculpe, não entendi. Pode repetir?", changed });
+      data = await dashboard.loadDashboardData(req.userId);
     } catch (error) {
-      return sendApiError(res, error);
+      console.error("Vital: erro ao ler o painel:", error.message);
+      return res.status(500).json({ message: "Não consegui ler os dados do painel agora." });
+    }
+    const userName = String(req.body?.nome || "").trim().slice(0, 60) || "a pessoa";
+    let changed = false;
+    const markTaken = async (id) => {
+      const med = data.medications.find((item) => item.id === id);
+      if (!med) return "Remédio não encontrado no painel.";
+      await dashboard.setMedicationTaken(req.userId, id, context.hoje);
+      med.takenOn = context.hoje;
+      changed = true;
+      return `Pronto: ${med.name} marcado como tomado hoje.`;
+    };
+
+    const provider = aiProvider();
+    if (provider) {
+      try {
+        const reply = await vitalWithAi(provider, messages, panelBlock(data, context, userName), markTaken);
+        if (reply) return res.json({ reply, changed });
+      } catch (error) {
+        logAiError(provider, error);
+      }
+    }
+
+    try {
+      const answer = vitalAnswer(messages.at(-1).content, data, context, userName);
+      if (answer.takeMedicationId) await markTaken(answer.takeMedicationId);
+      return res.json({ reply: answer.reply, changed });
+    } catch (error) {
+      console.error("Vital: erro nas respostas prontas:", error.message);
+      return res.status(500).json({ message: "Não consegui responder agora. Tente de novo." });
     }
   });
 }
