@@ -150,7 +150,7 @@
     var suggestions = document.getElementById("chatSuggestions");
     var history = [];
     var busy = false;
-    var servers = [location.origin, "http://localhost:3000", "http://127.0.0.1:3000"]
+    var servers = [location.origin, "https://tccvital.vercel.app"]
       .filter(function (url, i, list) { return url && url !== "null" && list.indexOf(url) === i; });
 
     function escapeHtml(text) {
@@ -177,7 +177,7 @@
       return el;
     }
 
-    // Tenta o próprio site e, se a página foi aberta pelo Live Server, o servidor local (npm run dev)
+    // Tenta o próprio site e, se a página foi aberta pelo Live Server, o servidor da Vercel
     async function askServer() {
       for (var i = 0; i < servers.length; i++) {
         var response, data;
@@ -195,7 +195,7 @@
         if (!response.ok) throw new Error(data.message || "A assistente não conseguiu responder agora.");
         return data.reply;
       }
-      throw new Error("A assistente está indisponível no momento. Rode npm run dev na pasta do projeto.");
+      throw new Error("A assistente está indisponível no momento. Confira sua internet.");
     }
 
     async function ask(text) {

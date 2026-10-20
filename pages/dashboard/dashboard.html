@@ -626,7 +626,7 @@
        Tudo é salvo no banco (MySQL) pelo servidor: /api/dashboard
        Clima: localização do monitor + Open-Meteo.
        Gás, batimentos/oxímetro e temperatura: somente pelos sensores (POST /api/sensores). */
-    const API_CANDIDATES = [window.location.origin, "http://localhost:3000", "http://127.0.0.1:3000"]
+    const API_CANDIDATES = [window.location.origin, "https://tccvital.vercel.app"]
       .filter((value, index, list) => value && value !== "null" && list.indexOf(value) === index);
     let apiBase = null;
 
@@ -658,7 +658,7 @@
       window.location.href = "../login/login.html";
     }
 
-    // Chama o servidor (tenta o próprio site e, no Live Server, o npm run dev na porta 3000)
+    // Chama o servidor (tenta o próprio site e, se não for o do VitalCare, o da Vercel)
     async function api(path, options = {}) {
       const bases = apiBase ? [apiBase] : API_CANDIDATES;
       let lastError = null;
@@ -670,7 +670,7 @@
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}`, ...(options.headers || {}) }
           });
         } catch (error) {
-          lastError = new Error("Servidor indisponível. Rode npm run dev na pasta do projeto.");
+          lastError = new Error("Servidor indisponível. Confira sua internet.");
           continue;
         }
         const data = await response.json().catch(() => undefined);

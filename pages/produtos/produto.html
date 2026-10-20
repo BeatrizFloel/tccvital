@@ -328,8 +328,8 @@
 
       submit.disabled = true;
       mostrar("Enviando...", true);
-      // Tenta o próprio site e, se a página foi aberta pelo Live Server, o servidor local (npm run dev)
-      var servidores = [location.origin, "http://localhost:3000", "http://127.0.0.1:3000"]
+      // Tenta o próprio site e, se a página foi aberta pelo Live Server, o servidor da Vercel
+      var servidores = [location.origin, "https://tccvital.vercel.app"]
         .filter(function (url, i, lista) { return url && url !== "null" && lista.indexOf(url) === i; });
       try {
         var ultimoErro = null;
@@ -342,7 +342,7 @@
               body: JSON.stringify(dados)
             });
             var corpo = await resposta.json().catch(function () { return null; });
-            if (!corpo) throw new Error("Servidor não encontrado. Rode npm run dev na pasta do projeto.");
+            if (!corpo) throw new Error("Servidor não encontrado. Confira sua internet.");
             if (!resposta.ok) { ultimoErro = new Error(corpo.message || "Não foi possível enviar."); break; }
             json = corpo;
           } catch (erro) {
