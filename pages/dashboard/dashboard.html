@@ -9,383 +9,55 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="/vc.css" />
+  <link rel="stylesheet" href="painel.css" />
   <style>
-    .layout { width: min(1320px, 100%); margin: 0 auto; padding: 0 clamp(16px, 3vw, 32px) 56px; }
-
-    /* ---------- Topo ---------- */
-    .dash-hero {
-      margin: 24px 0;
-      padding: clamp(24px, 3vw, 36px);
-      border-radius: 24px;
-      text-align: left;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-    .dash-hero h1 { font-size: clamp(28px, 3.4vw, 40px); }
-    .dash-hero p { margin-top: 6px; color: var(--hero-muted); }
-    .clock-box {
-      padding: 14px 18px;
-      border: 1px solid rgba(126, 206, 200, .22);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, .04);
-      text-align: right;
-    }
-    .clock { color: #fff; font-family: var(--font-mono); font-size: clamp(28px, 3vw, 36px); font-weight: 600; line-height: 1.1; }
-    .date-badge { margin-top: 4px; color: var(--hero-muted); font-size: 14px; }
-
-    .block-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 32px 0 14px;
-      color: var(--muted);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-    .block-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-    .block-title .panel-badge { order: 1; letter-spacing: 0; text-transform: none; }
-
-    /* ---------- Indicadores ---------- */
-    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-    .stat-card {
-      position: relative;
-      overflow: hidden;
-      padding: 18px 20px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: var(--shadow-sm);
-    }
-    .stat-card:nth-child(even)::before { background: var(--warm); }
-    .stat-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: var(--accent);
-    }
-    .stat-label { color: var(--muted); font-size: 13px; font-weight: 600; }
-    .stat-value { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 8px; font-family: var(--font-display); font-size: 32px; font-weight: 700; letter-spacing: -.02em; }
-    .tiny { color: var(--muted); font-family: var(--font); font-size: 13px; font-weight: 500; letter-spacing: 0; text-align: right; }
-    .panel-badge:empty, .tiny:empty { display: none; }
-
-    /* ---------- Painéis ---------- */
-    .panel {
-      padding: 20px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: var(--shadow-sm);
-    }
-    .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-    .panel-header h2 { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; }
-    .panel-header h2 svg { width: 20px; height: 20px; flex: none; color: var(--accent); fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-    .panel-actions { display: flex; align-items: center; gap: 8px; }
-    .panel-badge {
-      padding: 5px 10px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--surface-2);
-      color: var(--ink-2);
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .panel-add {
-      padding: 7px 12px;
-      border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-      border-radius: 10px;
-      background: var(--accent-soft);
-      color: var(--accent-ink);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .2s ease, border-color .2s ease;
-    }
-    .panel-add { white-space: nowrap; }
-    .panel-add:hover { border-color: var(--accent); }
-
-    .content-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; }
-    .stack { display: flex; flex-direction: column; gap: 16px; }
-    .two-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-
-    /* ---------- Sinais vitais ---------- */
-    .vitals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .vital { display: flex; flex-direction: column; }
-    .vital.tone-bad { border-color: color-mix(in srgb, var(--bad) 55%, var(--line)); box-shadow: 0 0 0 3px var(--bad-soft); }
-    .vital-main { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .vital-value { font-family: var(--font-display); font-size: 52px; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
-    .vital-value small { margin-left: 6px; color: var(--muted); font-family: var(--font); font-size: 16px; font-weight: 500; letter-spacing: 0; }
-    .vital-sub { margin-top: 8px; color: var(--muted); font-size: 14px; }
-    .vital-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 14px; color: var(--muted); font-size: 12px; }
-    .vital-foot span:last-child { font-family: var(--font-mono); }
-
-    .status { display: inline-flex; align-items: center; gap: 6px; }
-    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
-    .status.tone-good { border-color: color-mix(in srgb, var(--good) 40%, transparent); background: var(--good-soft); color: var(--good-ink); }
-    .status.tone-good::before { background: var(--good); }
-    .status.tone-warn { border-color: color-mix(in srgb, var(--warn) 50%, transparent); background: var(--warn-soft); color: var(--warn-ink); }
-    .status.tone-warn::before { background: var(--warn); }
-    .status.tone-bad { border-color: color-mix(in srgb, var(--bad) 45%, transparent); background: var(--bad-soft); color: var(--bad-ink); }
-    .status.tone-bad::before { background: var(--bad); }
-
-    .heart-icon { width: 64px; height: 64px; flex: none; display: grid; place-items: center; border-radius: 18px; background: var(--warm-soft); color: var(--warm); }
-    .heart-icon svg { width: 34px; height: 34px; fill: currentColor; }
-    .heart-icon.beating svg { animation: beat var(--beat, 1s) ease-in-out infinite; }
-    @keyframes beat { 0%, 60%, 100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(.96); } 45% { transform: scale(1.08); } }
-
-    .gauge { position: relative; width: 112px; height: 112px; flex: none; }
-    .gauge svg { width: 100%; height: 100%; transform: rotate(135deg); }
-    .gauge .track { fill: none; stroke: var(--accent-soft); stroke-width: 10; stroke-linecap: round; }
-    .gauge .fill { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; transition: stroke-dasharray .6s ease, stroke .3s ease; }
-    .gauge-label { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
-    .gauge-label strong { color: var(--ink); font-family: var(--font-display); font-size: 15px; }
-
-    .thermo { width: 112px; flex: none; }
-    .thermo-bar { position: relative; height: 10px; border-radius: 999px; background: linear-gradient(90deg, #38BDF8, #34D399 35%, #34D399 55%, #FAB219 75%, #D03B3B); }
-    .thermo-mark { position: absolute; top: 50%; width: 16px; height: 16px; border: 3px solid var(--surface); border-radius: 50%; background: var(--ink); box-shadow: var(--shadow-sm); transform: translate(-50%, -50%); transition: left .6s ease; }
-    .thermo-scale { display: flex; justify-content: space-between; margin-top: 6px; color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
-
-    .spark { position: relative; height: 76px; margin-top: 18px; cursor: crosshair; touch-action: pan-y; }
-    .spark svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-    .spark .area { fill: url(#sparkFill); }
-    .spark .line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-    .spark-dot, .spark-cursor-dot { position: absolute; width: 10px; height: 10px; border: 2px solid var(--surface); border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); pointer-events: none; }
-    .spark-cursor { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--line-strong); pointer-events: none; }
-    .spark-tip {
-      position: absolute;
-      top: -8px;
-      z-index: 2;
-      padding: 6px 10px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--surface);
-      box-shadow: var(--shadow);
-      color: var(--ink);
-      font-size: 12px;
-      white-space: nowrap;
-      transform: translate(-50%, -100%);
-      pointer-events: none;
-    }
-    .spark-tip strong { font-size: 14px; }
-    .spark-tip span { display: block; color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
-    .spark [hidden] { display: none; }
-    .spark-empty { display: grid; place-items: center; height: 100%; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); font-size: 13px; text-align: center; padding: 8px; }
-    .spark-caption { margin-top: 6px; color: var(--muted); font-size: 12px; }
-
-    /* ---------- Listas ---------- */
-    .med-list, .reminder-list, .consult-list { display: flex; flex-direction: column; gap: 10px; }
-    .med-item, .reminder-item, .consult-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--surface-2);
-      transition: border-color .2s ease;
-    }
-    .med-item:hover, .reminder-item:hover, .consult-item:hover { border-color: var(--line-strong); }
-    .item-title { font-weight: 600; }
-    .item-actions { display: flex; align-items: center; gap: 8px; }
-    .drug-name { display: flex; align-items: center; gap: 12px; font-weight: 600; }
-    .med-meta, .reminder-meta, .consult-meta { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; color: var(--muted); font-size: 13px; font-weight: 400; }
-    .time-pill { padding: 5px 10px; border-radius: 8px; background: var(--accent-soft); color: var(--accent-ink); font-family: var(--font-mono); font-size: 13px; font-weight: 600; white-space: nowrap; }
-    .status-pill { padding: 6px 10px; border: none; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; }
-    .status-ok { background: var(--good-soft); color: var(--good-ink); }
-    .status-pending { background: var(--warn-soft); color: var(--warn-ink); }
-    .item-remove {
-      width: 30px;
-      height: 30px;
-      flex: none;
-      border: 1px solid transparent;
-      border-radius: 9px;
-      background: transparent;
-      color: var(--muted);
-      font-size: 18px;
-      line-height: 1;
-      cursor: pointer;
-    }
-    .item-remove:hover { border-color: color-mix(in srgb, var(--bad) 40%, transparent); background: var(--bad-soft); color: var(--bad-ink); }
-    .empty-note { padding: 18px; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); font-size: 14px; text-align: center; }
-    .med-thumb { width: 40px; height: 40px; flex: none; border-radius: 10px; object-fit: cover; }
-
-    /* ---------- Clima e gás ---------- */
-    .weather-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-    .weather-temp { margin-top: 6px; font-family: var(--font-display); font-size: 48px; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
-    .weather-icon { font-size: 44px; line-height: 1; }
-    .weather-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-    .weather-box { padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--muted); font-size: 12px; text-align: center; }
-    .weather-box strong { display: block; margin-top: 2px; color: var(--ink); font-size: 16px; }
-    .gas-meter { height: 12px; overflow: hidden; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
-    .gas-meter-fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #0CA30C, #FAB219, #D03B3B); transition: width .6s ease; }
-    .gas-reading { display: flex; align-items: baseline; justify-content: space-between; margin-top: 12px; color: var(--muted); font-weight: 500; }
-    .gas-reading strong { color: var(--ink); font-family: var(--font-display); font-size: 24px; }
-    .footer-note { margin-top: 12px; color: var(--muted); font-size: 13px; }
-
-    /* ---------- Modais ---------- */
-    .medicine-alert { text-align: center; }
-    .alert-tag { display: inline-block; margin-bottom: 16px; padding: 5px 12px; border-radius: 999px; background: var(--bad-soft); color: var(--bad-ink); font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
-    .medicine-visual { width: 140px; height: 140px; margin: 0 auto 18px; overflow: hidden; border: 1px solid var(--line); border-radius: 24px; background: var(--surface-2); }
-    .medicine-visual img { width: 100%; height: 100%; object-fit: cover; }
-    .medicine-name { font-size: clamp(26px, 4vw, 34px); }
-    .medicine-dose { margin-top: 8px; color: var(--ink-2); font-size: 17px; }
-    .medicine-time { display: inline-block; margin-top: 14px; padding: 8px 16px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font-family: var(--font-mono); font-size: 18px; font-weight: 600; }
-    .medicine-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
-
-    .dash-form-title { text-align: center; font-size: 24px; }
-    .dash-form-hint { margin-top: 4px; color: var(--muted); font-size: 14px; text-align: center; }
-    .dash-form-hint:empty { display: none; }
-    .dash-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; text-align: left; }
-    .dash-field.full { grid-column: 1 / -1; }
-    .dash-form-error { min-height: 1.2em; margin-top: 12px; color: var(--bad-ink); font-size: 14px; font-weight: 600; text-align: center; }
-
-    /* Remédios: foto, sugestões e relacionados */
-    .med-suggest { max-height: 240px; margin-top: 4px; padding: 6px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
-    .med-suggest button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 8px; border: 0; border-radius: 10px; background: transparent; text-align: left; cursor: pointer; }
-    .med-suggest button:hover, .med-suggest button:focus { background: var(--accent-soft); outline: none; }
-    .med-suggest img { width: 44px; height: 44px; flex: none; border-radius: 10px; }
-    .med-sug-name { display: block; font-weight: 600; }
-    .med-sug-meta { display: block; color: var(--muted); font-size: 13px; }
-    .med-preview { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 14px; background: var(--accent-soft); }
-    .med-preview img { width: 72px; height: 72px; flex: none; border-radius: 16px; }
-    .med-related { grid-column: 1 / -1; }
-    .med-related-title { margin-bottom: 8px; font-size: 14px; font-weight: 600; }
-    .med-related-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .med-chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); font-size: 14px; font-weight: 500; cursor: pointer; }
-    .med-chip:hover { border-color: var(--accent); }
-    .med-chip img { width: 28px; height: 28px; border-radius: 50%; }
-    .med-suggest[hidden], .med-preview[hidden], .med-related[hidden] { display: none; }
-
-    .logout-btn { padding: 8px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 14px; font-weight: 600; cursor: pointer; }
-    .logout-btn:hover { border-color: var(--bad); color: var(--bad-ink); }
-
-    /* ---------- Vital (assistente de voz) ---------- */
-    .vital-assist { position: fixed; right: clamp(12px, 2vw, 24px); bottom: clamp(12px, 2vw, 24px); z-index: 60; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 12px; }
-    .vital-orb {
-      position: relative;
-      width: 68px;
-      height: 68px;
-      display: grid;
-      place-items: center;
+    /* ---------- Painel do idoso: letras e botões maiores ---------- */
+    .elder-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+    .elder-grid .med-item { padding: 16px; }
+    .elder-grid .drug-name { font-size: 19px; }
+    .elder-grid .med-meta { font-size: 15px; }
+    .elder-grid .med-thumb { width: 56px; height: 56px; border-radius: 14px; }
+    .elder-grid .time-pill { font-size: 16px; }
+    .tomei-btn {
+      min-width: 112px;
+      padding: 12px 20px;
       border: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #A6DCCF, var(--brand) 55%, var(--brand-strong));
-      color: var(--on-brand);
-      box-shadow: 0 14px 30px -10px color-mix(in srgb, var(--brand) 90%, transparent), 0 0 0 4px var(--surface);
-      cursor: pointer;
-    }
-    .vital-orb svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .vital-ring { position: absolute; inset: -6px; border-radius: 50%; border: 2px solid var(--brand); opacity: 0; pointer-events: none; }
-    .vital-assist[data-state="idle"] .vital-ring { animation: vital-pulse 2.6s ease-out infinite; }
-    .vital-assist[data-state="listening"] .vital-ring { border-color: var(--warm); animation: vital-pulse 1s ease-out infinite; }
-    .vital-assist[data-state="listening"] .vital-orb { background: radial-gradient(circle at 30% 30%, #FFD3B0, var(--warm) 60%, #E98F4F); }
-    .vital-assist[data-state="thinking"] .vital-ring { opacity: 1; border-color: transparent; border-top-color: var(--brand); animation: vital-spin .9s linear infinite; }
-    .vital-assist[data-state="speaking"] .vital-orb { animation: vital-talk .5s ease-in-out infinite alternate; }
-    .vital-assist[data-state="off"] .vital-orb, .vital-assist[data-state="blocked"] .vital-orb, .vital-assist[data-state="unsupported"] .vital-orb { background: var(--surface-2); color: var(--muted); box-shadow: var(--shadow), 0 0 0 4px var(--surface); }
-    @keyframes vital-pulse { 0% { opacity: .8; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.35); } }
-    @keyframes vital-spin { to { transform: rotate(360deg); } }
-    @keyframes vital-talk { to { transform: scale(1.07); } }
-    .vital-card {
-      width: min(360px, calc(100vw - 24px));
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: var(--surface);
-      box-shadow: var(--shadow-lg);
-    }
-    .vital-card[hidden] { display: none; }
-    .vital-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-    .vital-title { display: block; font-family: var(--font-display); font-size: 17px; }
-    .vital-hint { margin-top: 2px; color: var(--muted); font-size: 13px; }
-    .vital-close { width: 30px; height: 30px; flex: none; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); font-size: 18px; line-height: 1; cursor: pointer; }
-    .vital-unlock { width: 100%; margin-top: 12px; padding: 10px; border: 1px dashed var(--warm); border-radius: 12px; background: var(--warm-soft); color: var(--warm-ink); font-size: 14px; font-weight: 600; cursor: pointer; }
-    .vital-unlock[hidden], .vital-heard[hidden], .vital-reply[hidden] { display: none; }
-    .vital-heard { margin-top: 12px; color: var(--muted); font-size: 14px; font-style: italic; }
-    .vital-heard.interim { opacity: .7; }
-    .vital-reply { margin-top: 8px; padding: 12px 14px; border-radius: 14px; border-bottom-left-radius: 4px; background: var(--accent-soft); color: var(--ink); font-size: 15px; line-height: 1.5; }
-    .vital-reply.error { background: var(--bad-soft); color: var(--bad-ink); }
-    .vital-form { display: flex; gap: 8px; margin-top: 12px; }
-    .vital-form input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-2); font-size: 14px; }
-    .vital-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-    .vital-send { width: 42px; flex: none; border: 0; border-radius: 12px; background: var(--brand); color: var(--on-brand); cursor: pointer; }
-    .vital-send svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .vital-actions { display: flex; gap: 8px; margin-top: 10px; }
-    .vital-actions button { flex: 1; padding: 9px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); font-size: 13px; font-weight: 600; cursor: pointer; }
-    .vital-actions .vital-talk { border-color: color-mix(in srgb, var(--warm) 50%, transparent); background: var(--warm-soft); color: var(--warm-ink); }
-    .vital-actions button:hover { border-color: var(--accent); }
-
-    .vital-toasts { position: fixed; top: calc(var(--header-h) + 12px); right: clamp(12px, 2vw, 24px); z-index: 70; display: flex; flex-direction: column; gap: 10px; width: min(360px, calc(100vw - 24px)); pointer-events: none; }
-    .vital-toast {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-left: 4px solid var(--brand);
       border-radius: 14px;
-      background: var(--surface);
-      box-shadow: var(--shadow-lg);
-      pointer-events: auto;
-      animation: toast-in .35s cubic-bezier(.2, .7, .2, 1);
+      background: var(--brand);
+      color: var(--on-brand);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
     }
-    .vital-toast.warm { border-left-color: var(--warm); }
-    .vital-toast.bad { border-left-color: var(--bad); background: color-mix(in srgb, var(--bad-soft) 60%, var(--surface)); }
-    .vital-toast strong { display: block; font-size: 15px; }
-    .vital-toast p { margin-top: 2px; color: var(--ink-2); font-size: 14px; }
-    .vital-toast button { width: 26px; height: 26px; flex: none; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 18px; cursor: pointer; }
-    @keyframes toast-in { from { opacity: 0; transform: translateX(24px); } }
-    .layout { padding-bottom: 120px; }
+    .tomei-btn:hover { background: var(--brand-strong); }
+    .taken-pill { min-width: 112px; padding: 10px 14px; border-radius: 14px; background: var(--good-soft); color: var(--good-ink); font-size: 15px; font-weight: 700; text-align: center; }
+    .pending-pill { padding: 8px 12px; border-radius: 999px; background: var(--warn-soft); color: var(--warn-ink); font-size: 14px; font-weight: 700; white-space: nowrap; }
+    .med-item.is-taken { opacity: .8; }
+    .reminder-item .item-title { font-size: 17px; }
 
-    /* Alertas dos sensores: ficam no topo do painel enquanto a situação continuar */
-    .sensor-alerts { display: grid; gap: 10px; margin-bottom: 18px; scroll-margin-top: calc(var(--header-h) + 12px); }
-    .sensor-alerts[hidden] { display: none; }
-    .sensor-alert { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--warn) 55%, transparent); border-left: 6px solid var(--warn); border-radius: 16px; background: color-mix(in srgb, var(--warn-soft) 85%, var(--surface)); box-shadow: var(--shadow-lg); }
-    .sensor-alert.bad { border-color: color-mix(in srgb, var(--bad) 60%, transparent); border-left-color: var(--bad); background: color-mix(in srgb, var(--bad-soft) 85%, var(--surface)); }
-    .sensor-alert.bad.loud { animation: alert-pulse 1.2s ease-in-out infinite; }
-    .sensor-alert-icon { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: 12px; background: var(--warn); color: #3a2600; }
-    .sensor-alert.bad .sensor-alert-icon { background: var(--bad); color: #fff; }
-    .sensor-alert-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-    .sensor-alert-body { flex: 1; min-width: 0; }
-    .sensor-alert-body strong { display: block; color: var(--warn-ink); font-family: var(--font-display); font-size: 18px; }
-    .sensor-alert.bad .sensor-alert-body strong { color: var(--bad-ink); }
-    .sensor-alert-body p { margin-top: 2px; color: var(--ink); font-size: 15px; }
-    .sensor-alert button { flex: none; padding: 10px 14px; border: 1px solid currentColor; border-radius: 10px; background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .sensor-alert .silenced { flex: none; color: var(--muted); font-size: 13px; }
-    .panel.tone-bad { border-color: color-mix(in srgb, var(--bad) 55%, var(--line)); box-shadow: 0 0 0 3px var(--bad-soft); }
-    .panel.tone-warn { border-color: color-mix(in srgb, var(--warn) 60%, var(--line)); box-shadow: 0 0 0 3px var(--warn-soft); }
-    @keyframes alert-pulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--bad) 30%, transparent), var(--shadow-lg); } }
-    @media (max-width: 600px) {
-      .sensor-alert { flex-wrap: wrap; }
-      .sensor-alert button { width: 100%; }
-    }
-    @media (prefers-reduced-motion: reduce) { .sensor-alert.bad.loud { animation: none; } }
+    /* ---------- Música (Spotify / YouTube) ---------- */
+    .music-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .music-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 4px 4px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); }
+    .music-chip.active { border-color: var(--accent); background: var(--accent-soft); }
+    .music-chip button { border: 0; background: transparent; font: inherit; cursor: pointer; }
+    .music-play { display: inline-flex; align-items: center; gap: 8px; padding: 6px 4px; font-size: 15px; font-weight: 600; color: var(--ink); }
+    .music-tag { padding: 2px 8px; border-radius: 999px; color: #fff; font-size: 11px; font-weight: 700; }
+    .music-tag.spotify { background: #1DB954; color: #062b12; }
+    .music-tag.youtube { background: #E62117; }
+    .music-chip .item-remove { width: 28px; height: 28px; font-size: 16px; }
+    .music-player iframe { display: block; width: 100%; border: 0; border-radius: 14px; }
+    .music-player .yt { aspect-ratio: 16 / 9; height: auto; }
+    .music-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .music-links a { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; }
+    .music-links a:hover { border-color: var(--accent); }
+    .music-player:empty { display: none; }
 
-    @media (max-width: 1100px) {
-      .vitals { grid-template-columns: 1fr 1fr; }
-      .vitals .vital:last-child { grid-column: 1 / -1; }
-      .content-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 860px) { .cards { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 720px) {
-      .vitals, .two-grid { grid-template-columns: 1fr; }
-      .vitals .vital:last-child { grid-column: auto; }
-      .clock-box { text-align: left; }
-    }
+    @media (max-width: 1000px) { .elder-grid { grid-template-columns: 1fr; } }
     @media (max-width: 520px) {
-      .dash-form-grid { grid-template-columns: 1fr; }
-      .med-item, .reminder-item, .consult-item { flex-wrap: wrap; }
-      .vital-value { font-size: 44px; }
+      .elder-grid .item-actions { flex-wrap: wrap; width: 100%; }
+      .tomei-btn, .taken-pill { width: 100%; }
     }
   </style>
 </head>
@@ -400,6 +72,7 @@
     <a href="/pages/equipe/equipe (1).html">Equipe</a>
     <a href="/pages/referencias/referencias (1).html">Referências</a>
     <a href="/pages/jogo/jogo (2).html">Jogo</a>
+    <a href="/pages/cuidador/cuidador.html">Painel do cuidador</a>
   </nav>
   <div class="header-actions">
     <span id="userPill" class="user-pill">Carregando...</span>
@@ -427,97 +100,15 @@
     </div>
   </section>
 
+  <!-- Só aparece em emergência (vazamento de gás, oxigenação/batimentos fora do normal) -->
   <section class="sensor-alerts" id="sensorAlerts" role="alert" aria-live="assertive" hidden></section>
 
-  <section class="cards">
-    <article class="stat-card">
-      <div class="stat-label">Medicamentos</div>
-      <div class="stat-value"><span id="medCount">0</span><span class="tiny">hoje</span></div>
-    </article>
-    <article class="stat-card">
-      <div class="stat-label">Consultas</div>
-      <div class="stat-value"><span id="consultCount">0</span><span class="tiny">agendadas</span></div>
-    </article>
-    <article class="stat-card">
-      <div class="stat-label">Clima</div>
-      <div class="stat-value"><span id="climaTemp">--</span><span id="climaCity" class="tiny"></span></div>
-    </article>
-    <article class="stat-card">
-      <div class="stat-label">Gás</div>
-      <div class="stat-value"><span id="gasLevel">--</span><span class="tiny">ppm</span></div>
-    </article>
-  </section>
-
-  <!-- ================= SINAIS VITAIS E SENSORES =================
-       Valores enviados pelo protótipo: WebSocket /ws (backend/tempo-real.js) ou POST /api/sensores (backend/dashboard.js) -->
-  <h2 class="block-title">Sinais vitais e sensores <span id="deviceStatus" class="panel-badge status" title="Conexão com o protótipo (ESP)"></span></h2>
-  <section class="vitals">
-    <article class="panel vital" id="heartPanel">
-      <div class="panel-header">
-        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Batimentos cardíacos</h2>
-        <span id="heartStatus" class="panel-badge status">Aguardando sensor</span>
-      </div>
-      <div class="vital-main">
-        <div>
-          <div class="vital-value"><span id="heartBpm">--</span><small>bpm</small></div>
-          <div class="vital-sub">Frequência cardíaca</div>
-        </div>
-        <div class="heart-icon" id="heartIcon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.4C.9 8.2 3 4.5 6.6 4.5c2.1 0 3.6 1.1 5.4 3 1.8-1.9 3.3-3 5.4-3 3.6 0 5.7 3.7 4.2 7.1C19.5 16.4 12 21 12 21Z"/></svg>
-        </div>
-      </div>
-      <div class="spark" id="heartSpark"></div>
-      <div class="vital-foot"><span id="heartAvg">Últimas leituras</span><span id="heartTime"></span></div>
-    </article>
-
-    <article class="panel vital" id="oxiPanel">
-      <div class="panel-header">
-        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/></svg>Oxímetro</h2>
-        <span id="oxiStatus" class="panel-badge status">Aguardando sensor</span>
-      </div>
-      <div class="vital-main">
-        <div>
-          <div class="vital-value"><span id="oxiValue">--</span><small>%</small></div>
-          <div class="vital-sub">Saturação de oxigênio (SpO₂)</div>
-        </div>
-        <div class="gauge" role="img" id="oxiGauge" aria-label="Saturação de oxigênio">
-          <svg viewBox="0 0 120 120" aria-hidden="true">
-            <circle class="track" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray="75 100" />
-            <circle class="fill" id="oxiFill" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray="0 100" />
-          </svg>
-          <div class="gauge-label"><span>escala</span><strong>80–100</strong></div>
-        </div>
-      </div>
-      <div class="spark" id="oxiSpark"></div>
-      <div class="vital-foot"><span id="oxiAvg">Últimas leituras</span><span id="oxiTime"></span></div>
-    </article>
-
-    <article class="panel vital" id="tempPanel">
-      <div class="panel-header">
-        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/><path d="M12 10v6"/></svg>Temperatura do ambiente</h2>
-        <span id="tempStatus" class="panel-badge status">Aguardando sensor</span>
-      </div>
-      <div class="vital-main">
-        <div>
-          <div class="vital-value"><span id="tempValue">--</span><small>°C</small></div>
-          <div class="vital-sub" id="tempHumidity">Sensor da casa</div>
-        </div>
-        <div class="thermo" aria-hidden="true">
-          <div class="thermo-bar"><span class="thermo-mark" id="tempMark" style="left: 50%; display: none;"></span></div>
-          <div class="thermo-scale"><span>10°</span><span>40°</span></div>
-        </div>
-      </div>
-      <div class="spark" id="tempSpark"></div>
-      <div class="vital-foot"><span id="tempAvg">Últimas leituras</span><span id="tempTime"></span></div>
-    </article>
-  </section>
-
-  <h2 class="block-title">Rotina e ambiente</h2>
-  <section class="content-grid">
+  <!-- Medicamentos e lembretes são cadastrados pelo cuidador (pages/cuidador/cuidador.html) -->
+  <section class="elder-grid">
     <div class="panel">
       <div class="panel-header">
-        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/></svg>Medicamentos e horário</h2>
-        <div class="panel-actions"><span class="panel-badge">Hoje</span><button class="panel-add" type="button" data-form="medication">+ Adicionar</button></div>
+        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/></svg>Seus remédios de hoje</h2>
+        <span id="medCount" class="panel-badge"></span>
       </div>
       <ul id="medList" class="med-list"></ul>
     </div>
@@ -542,50 +133,43 @@
         </div>
       </div>
 
-      <div class="panel" id="gasPanel">
+      <div class="panel">
         <div class="panel-header">
-          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-3.8 2.3-5 .3 1.5 1 2.5 2.2 3C11 8.5 11 5.5 12 3Z"/></svg>Identificador de gás</h2>
-          <div class="panel-actions"><span id="gasStatus" class="panel-badge"></span></div>
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Lembretes</h2>
+          <span class="panel-badge">Todos os dias</span>
         </div>
-        <div class="gas-meter"><div id="gasMeterFill" class="gas-meter-fill"></div></div>
-        <div class="gas-reading">
-          <span>Leitura</span>
-          <strong id="gasRead">--</strong>
-        </div>
-        <div class="footer-note">Monitoramento sugerido para ambientes internos e áreas de uso diário.</div>
+        <ul id="reminderList" class="reminder-list"></ul>
       </div>
     </div>
   </section>
 
-  <section class="two-grid">
-    <div class="panel">
-      <div class="panel-header">
-        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>Consultas</h2>
-        <div class="panel-actions"><span class="panel-badge">Próximas</span><button class="panel-add" type="button" data-form="appointment">+ Adicionar</button></div>
-      </div>
-      <ul id="consultList" class="consult-list"></ul>
+  <section class="panel" style="margin-top: 16px;">
+    <div class="panel-header">
+      <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Música</h2>
+      <button class="panel-add" type="button" id="openMusicForm">+ Conectar Spotify ou YouTube</button>
     </div>
-
-    <div class="panel">
-      <div class="panel-header">
-        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Lembretes</h2>
-        <div class="panel-actions"><span class="panel-badge">Marcados</span><button class="panel-add" type="button" data-form="reminder">+ Adicionar</button></div>
-      </div>
-      <ul id="reminderList" class="reminder-list"></ul>
+    <div id="musicList" class="music-list"></div>
+    <div id="musicPlayer" class="music-player"></div>
+    <div class="music-links">
+      <a href="https://open.spotify.com/" target="_blank" rel="noopener"><span class="music-tag spotify">Spotify</span>Abrir o Spotify</a>
+      <a href="https://music.youtube.com/" target="_blank" rel="noopener"><span class="music-tag youtube">YouTube</span>Abrir o YouTube Music</a>
     </div>
   </section>
 
-  <div id="dashFormModal" class="modal hidden">
-    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="dashFormTitle">
-      <button id="closeDashForm" class="modal-close" type="button" aria-label="Fechar">×</button>
-      <form id="dashForm" novalidate>
-        <h3 id="dashFormTitle" class="dash-form-title"></h3>
-        <p id="dashFormHint" class="dash-form-hint"></p>
-        <div id="dashFormFields" class="dash-form-grid"></div>
-        <p id="dashFormError" class="dash-form-error" role="alert"></p>
+  <div id="musicModal" class="modal hidden">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="musicFormTitle">
+      <button id="closeMusicForm" class="modal-close" type="button" aria-label="Fechar">×</button>
+      <form id="musicForm" novalidate>
+        <h3 id="musicFormTitle" class="dash-form-title">Conectar música</h3>
+        <p class="dash-form-hint">No Spotify ou no YouTube, toque em “Compartilhar” → “Copiar link” e cole aqui. Vale música, álbum, playlist ou vídeo.</p>
+        <div class="dash-form-grid">
+          <div class="field dash-field full"><label for="musicUrl">Link</label><input id="musicUrl" name="url" type="url" placeholder="https://open.spotify.com/playlist/..." required autocomplete="off" /></div>
+          <div class="field dash-field full"><label for="musicTitle">Nome (opcional)</label><input id="musicTitle" name="title" type="text" maxlength="120" placeholder="Ex.: Músicas da Jovem Guarda" autocomplete="off" /></div>
+        </div>
+        <p id="musicFormError" class="dash-form-error" role="alert"></p>
         <div class="medicine-actions">
           <button class="btn btn-primary" type="submit">Salvar</button>
-          <button id="cancelDashForm" class="btn btn-ghost" type="button">Cancelar</button>
+          <button id="cancelMusicForm" class="btn btn-ghost" type="button">Cancelar</button>
         </div>
       </form>
     </div>
@@ -602,143 +186,43 @@
       <p id="reminderDose" class="medicine-dose"></p>
       <div id="reminderTime" class="medicine-time"></div>
       <div class="medicine-actions">
-        <button id="confirmMedicine" class="btn btn-primary" type="button">Já tomei</button>
+        <button id="confirmMedicine" class="btn btn-primary" type="button">TOMEI</button>
         <button id="snoozeMedicine" class="btn btn-ghost" type="button">Lembrar mais tarde</button>
       </div>
     </div>
   </div>
 </main>
 
-<svg width="0" height="0" style="position: absolute;" aria-hidden="true">
-  <defs>
-    <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#73C4B1" stop-opacity=".22" />
-      <stop offset="1" stop-color="#73C4B1" stop-opacity="0" />
-    </linearGradient>
-  </defs>
-</svg>
-
 <div class="vital-toasts" id="vitalToasts" aria-live="polite"></div>
+<script src="painel.js"></script>
 <script src="remedios.js"></script>
 <script src="vital.js"></script>
 <script>
-    /* ================= Dashboard VitalCare =================
-       Tudo é salvo no banco (MySQL) pelo servidor: /api/dashboard
-       Clima: localização do monitor + Open-Meteo.
-       Gás, batimentos/oxímetro e temperatura: somente pelos sensores (POST /api/sensores). */
-    const API_CANDIDATES = [window.location.origin, "https://tccvital.vercel.app"]
-      .filter((value, index, list) => value && value !== "null" && list.indexOf(value) === index);
-    let apiBase = null;
-
-    const state = { medications: [], appointments: [], reminders: [], location: null, gas: null, heart: null, temperature: null };
+    /* ================= Painel do idoso =================
+       Mostra só o clima, os lembretes, os remédios (cadastrados pelo cuidador) e a música.
+       "TOMEI" fica salvo no banco e aparece na hora no painel do cuidador.
+       Os sensores continuam sendo lidos para o alarme de emergência (gás, oxigenação...). */
+    const state = { medications: [], appointments: [], reminders: [], music: [], location: null, gas: null, heart: null, temperature: null };
     let weather = null;
     let reminderMedicationId = null;
     const shownReminders = new Set();
-    const SENSOR_STALE_MINUTES = 10;
 
-    function getCurrentUser() {
-      const stored = localStorage.getItem("vitalcare-current-user");
-      if (!stored) return null;
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed && parsed.email ? parsed : null;
-      } catch (error) {
-        return null;
-      }
-    }
-
-    function getToken() {
-      const token = localStorage.getItem("vitalcare-token");
-      return token && token !== "local-session-token" ? token : null;
-    }
-
-    function goToLogin() {
-      localStorage.removeItem("vitalcare-current-user");
-      localStorage.removeItem("vitalcare-token");
-      window.location.href = "../login/login.html";
-    }
-
-    // Chama o servidor (tenta o próprio site e, se não for o do VitalCare, o da Vercel)
-    async function api(path, options = {}) {
-      const bases = apiBase ? [apiBase] : API_CANDIDATES;
-      let lastError = null;
-      for (const base of bases) {
-        let response;
-        try {
-          response = await fetch(base + path, {
-            ...options,
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}`, ...(options.headers || {}) }
-          });
-        } catch (error) {
-          lastError = new Error("Servidor indisponível. Confira sua internet.");
-          continue;
-        }
-        const data = await response.json().catch(() => undefined);
-        if (data === undefined) { lastError = new Error("Servidor do VitalCare não encontrado."); continue; }
-        apiBase = base;
-        if (response.status === 401) { goToLogin(); throw new Error(data?.message || "Sessão expirada."); }
-        if (!response.ok) throw new Error(data?.message || "Não foi possível salvar.");
-        return data;
-      }
-      throw lastError || new Error("Servidor indisponível.");
-    }
-
-    function hasValue(value) {
-      return value !== null && value !== undefined && value !== "";
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
-    }
-
-    function today() {
-      const now = new Date();
-      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-    }
-
-    function formatDate(date) {
-      return new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).format(date);
-    }
-
-    function formatDay(isoDate) {
-      const [, month, day] = String(isoDate || "").split("-");
-      return day && month ? `${day}/${month}` : "";
-    }
-
-    function formatTime(iso) {
-      return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    }
-
-    function formatNumber(value, digits = 0) {
-      return Number(value).toLocaleString("pt-BR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
-    }
-
-    function emptyNote(text) {
-      return `<li class="empty-note">${text}</li>`;
-    }
-
-    function removeButton(list, id) {
-      return `<button class="item-remove" type="button" data-remove="${list}" data-id="${id}" aria-label="Remover">×</button>`;
-    }
-
-    function isTaken(med) {
-      return med.takenOn === today();
-    }
-
-    /* ---------- Listas ---------- */
+    /* ---------- Remédios (com o botão TOMEI) ---------- */
     function renderMedications() {
       const medList = document.getElementById("medList");
-      document.getElementById("medCount").textContent = state.medications.length;
+      const pending = state.medications.filter((med) => !isTaken(med)).length;
+      document.getElementById("medCount").textContent = state.medications.length
+        ? (pending ? `${pending} pendente${pending > 1 ? "s" : ""}` : "Tudo concluído") : "";
 
       if (!state.medications.length) {
-        medList.innerHTML = emptyNote("Nenhum medicamento adicionado. Clique em “+ Adicionar”.");
+        medList.innerHTML = emptyNote("Nenhum remédio cadastrado. O cuidador cadastra pelo painel do cuidador.");
         return;
       }
 
       medList.innerHTML = state.medications.map((med) => {
         const taken = isTaken(med);
         return `
-          <li class="med-item">
+          <li class="med-item${taken ? " is-taken" : ""}">
             <div class="drug-name">
               <img class="med-thumb" src="${VitalRemedios.imagem(med.name)}" alt="" />
               <div>
@@ -748,43 +232,20 @@
             </div>
             <div class="item-actions">
               <span class="time-pill">${escapeHtml(med.time)}</span>
-              <button class="status-pill ${taken ? "status-ok" : "status-pending"}" type="button" data-toggle-med="${med.id}" title="Clique para marcar como tomado ou pendente">${taken ? "Tomado" : "Pendente"}</button>
-              ${removeButton("medicamentos", med.id)}
+              ${taken
+                ? `<span class="taken-pill">✓ Concluído</span>`
+                : `<span class="pending-pill">Pendente</span><button class="tomei-btn" type="button" data-take-med="${med.id}">TOMEI</button>`}
             </div>
           </li>
         `;
       }).join("");
     }
 
-    function renderAppointments() {
-      const consultList = document.getElementById("consultList");
-      const upcoming = state.appointments.filter((item) => item.date >= today());
-      document.getElementById("consultCount").textContent = upcoming.length;
-
-      if (!state.appointments.length) {
-        consultList.innerHTML = emptyNote("Nenhuma consulta agendada. Clique em “+ Adicionar”.");
-        return;
-      }
-
-      consultList.innerHTML = state.appointments.map((item) => `
-        <li class="consult-item">
-          <div>
-            <div class="item-title">${escapeHtml(item.title)}</div>
-            <div class="consult-meta">${item.doctor ? `<span>${escapeHtml(item.doctor)}</span>` : ""}<span>${formatDay(item.date)} • ${escapeHtml(item.time)}</span></div>
-          </div>
-          <div class="item-actions">
-            <span class="time-pill">${escapeHtml(item.time)}</span>
-            ${removeButton("consultas", item.id)}
-          </div>
-        </li>
-      `).join("");
-    }
-
     function renderReminders() {
       const reminderList = document.getElementById("reminderList");
 
       if (!state.reminders.length) {
-        reminderList.innerHTML = emptyNote("Nenhum lembrete marcado. Clique em “+ Adicionar”.");
+        reminderList.innerHTML = emptyNote("Nenhum lembrete por enquanto.");
         return;
       }
 
@@ -794,10 +255,7 @@
             <div class="item-title">${escapeHtml(item.title)}</div>
             ${item.detail ? `<div class="reminder-meta"><span>${escapeHtml(item.detail)}</span></div>` : ""}
           </div>
-          <div class="item-actions">
-            <span class="time-pill">${escapeHtml(item.time)}</span>
-            ${removeButton("lembretes", item.id)}
-          </div>
+          <span class="time-pill">${escapeHtml(item.time)}</span>
         </li>
       `).join("");
     }
@@ -826,7 +284,6 @@
     function renderClimate() {
       const city = state.location?.city || "";
       document.getElementById("weatherCity").textContent = city;
-      document.getElementById("climaCity").textContent = city;
 
       if (!weather) {
         document.getElementById("weatherCondition").textContent = state.location ? "Buscando o clima..." : "Detectando a localização da casa...";
@@ -837,7 +294,6 @@
       document.getElementById("weatherCondition").textContent = info.text;
       document.getElementById("weatherIcon").textContent = weather.isDay ? info.day : info.night;
       document.getElementById("weatherTemp").textContent = `${Math.round(weather.temp)}°`;
-      document.getElementById("climaTemp").textContent = `${Math.round(weather.temp)}°`;
       document.getElementById("weatherHumidity").textContent = `${Math.round(weather.humidity)}%`;
       document.getElementById("weatherWind").textContent = `${Math.round(weather.wind)} km/h`;
       document.getElementById("weatherIndex").textContent = airIndex(weather.aqi);
@@ -924,276 +380,7 @@
       return true;
     }
 
-    /* ---------- Sensores ---------- */
-    function minutesSince(iso) {
-      return (Date.now() - new Date(iso).getTime()) / 60000;
-    }
-
-    function setStatus(id, label, tone) {
-      const badge = document.getElementById(id);
-      badge.textContent = label;
-      badge.className = `panel-badge status${tone ? ` tone-${tone}` : ""}`;
-    }
-
-    // Gás (somente pelo sensor)
-    function gasStatus(level) {
-      if (level <= 50) return "Normal";
-      if (level <= 200) return "Atenção";
-      return "Perigo";
-    }
-
-    function renderGas() {
-      const gas = state.gas;
-      const read = document.getElementById("gasRead");
-      if (!gas || !hasValue(gas.level)) {
-        document.getElementById("gasMeterFill").style.width = "0%";
-        read.textContent = "--";
-        read.title = "";
-        document.getElementById("gasLevel").textContent = "--";
-        setStatus("gasStatus", "Aguardando sensor");
-        document.getElementById("gasPanel").classList.remove("tone-bad", "tone-warn");
-        return;
-      }
-
-      const stale = minutesSince(gas.updatedAt) > SENSOR_STALE_MINUTES;
-      const label = gasStatus(gas.level);
-      document.getElementById("gasMeterFill").style.width = `${Math.min(gas.level, 100)}%`;
-      read.textContent = `${gas.level} ppm`;
-      read.title = `Última leitura: ${new Date(gas.updatedAt).toLocaleString("pt-BR")}`;
-      document.getElementById("gasLevel").textContent = gas.level;
-      const tone = stale ? "" : { Normal: "good", "Atenção": "warn", Perigo: "bad" }[label];
-      setStatus("gasStatus", stale ? "Sensor sem sinal" : label, tone);
-      document.getElementById("gasPanel").classList.toggle("tone-bad", tone === "bad");
-      document.getElementById("gasPanel").classList.toggle("tone-warn", tone === "warn");
-    }
-
-    // Faixas de referência (repouso, adulto/idoso). Não substituem avaliação profissional.
-    function heartStatus(bpm) {
-      if (bpm < 50) return ["Muito baixo", "bad"];
-      if (bpm < 60) return ["Baixo", "warn"];
-      if (bpm <= 100) return ["Normal", "good"];
-      if (bpm <= 120) return ["Elevado", "warn"];
-      return ["Muito alto", "bad"];
-    }
-
-    function oxygenStatus(spo2) {
-      if (spo2 >= 95) return ["Normal", "good"];
-      if (spo2 >= 90) return ["Atenção", "warn"];
-      return ["Baixa", "bad"];
-    }
-
-    function temperatureStatus(celsius) {
-      if (celsius < 18) return ["Frio", "warn"];
-      if (celsius <= 26) return ["Agradável", "good"];
-      if (celsius <= 30) return ["Quente", "warn"];
-      return ["Muito quente", "bad"];
-    }
-
-    // Gráfico de linha das últimas leituras, com cursor e valor ao passar o mouse/dedo
-    function sparkline(el, points, { unit, digits = 0, minSpan, empty }) {
-      if (points.length < 2) {
-        el.innerHTML = `<div class="spark-empty">${empty}</div>`;
-        el.onpointermove = el.onpointerleave = null;
-        return;
-      }
-      const W = 300, H = 76, PAD = 8;
-      const values = points.map((point) => point.value);
-      let min = Math.min(...values), max = Math.max(...values);
-      if (max - min < minSpan) {
-        const mid = (max + min) / 2;
-        min = mid - minSpan / 2;
-        max = mid + minSpan / 2;
-      }
-      const x = (i) => (i / (points.length - 1)) * W;
-      const y = (v) => PAD + (1 - (v - min) / (max - min)) * (H - PAD * 2);
-      const line = points.map((point, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(point.value).toFixed(1)}`).join(" ");
-      const pct = (i) => ({ left: `${(x(i) / W) * 100}%`, top: `${(y(points[i].value) / H) * 100}%` });
-      const last = pct(points.length - 1);
-
-      el.innerHTML = `
-        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
-          <path class="area" d="${line} L${W} ${H} L0 ${H} Z"/>
-          <path class="line" d="${line}"/>
-        </svg>
-        <span class="spark-dot" style="left: ${last.left}; top: ${last.top};"></span>
-        <span class="spark-cursor" hidden></span>
-        <span class="spark-cursor-dot" hidden></span>
-        <div class="spark-tip" hidden></div>`;
-      el.setAttribute("role", "img");
-      el.setAttribute("aria-label", `Últimas ${points.length} leituras, de ${formatNumber(Math.min(...values), digits)} a ${formatNumber(Math.max(...values), digits)} ${unit}`);
-
-      const cursor = el.querySelector(".spark-cursor");
-      const dot = el.querySelector(".spark-cursor-dot");
-      const tip = el.querySelector(".spark-tip");
-      el.onpointermove = (event) => {
-        const rect = el.getBoundingClientRect();
-        const i = Math.round(Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1) * (points.length - 1));
-        const pos = pct(i);
-        cursor.style.left = dot.style.left = tip.style.left = pos.left;
-        dot.style.top = pos.top;
-        tip.innerHTML = `<strong>${formatNumber(points[i].value, digits)} ${unit}</strong><span>${formatTime(points[i].at)}</span>`;
-        cursor.hidden = dot.hidden = tip.hidden = false;
-        const tipRect = tip.getBoundingClientRect();
-        if (tipRect.left < rect.left) tip.style.left = `${tipRect.width / 2}px`;
-        if (tipRect.right > rect.right) tip.style.left = `${rect.width - tipRect.width / 2}px`;
-      };
-      el.onpointerleave = () => { cursor.hidden = dot.hidden = tip.hidden = true; };
-    }
-
-    // O oxímetro pode mandar só bpm ou só spo2 numa leitura: pega o último valor de cada um
-    function seriesOf(reading, key) {
-      return (reading?.history || []).filter((point) => hasValue(point[key])).map((point) => ({ value: point[key], at: point.at }));
-    }
-
-    // Média das leituras recentes: os alertas usam a média para não disparar por uma leitura isolada
-    // (dedo mal posicionado no oxímetro, sensor perto do fogão por um instante etc.)
-    const AVERAGE_MINUTES = { bpm: 5, spo2: 5, celsius: 30 };
-
-    function recentAverage(series, minutes) {
-      const lastPoint = series.at(-1);
-      if (!lastPoint || minutesSince(lastPoint.at) > SENSOR_STALE_MINUTES) return null;
-      const since = new Date(lastPoint.at).getTime() - minutes * 60000;
-      const values = series.filter((point) => new Date(point.at).getTime() >= since).map((point) => point.value);
-      return values.reduce((sum, value) => sum + value, 0) / values.length;
-    }
-
-    function renderVital({ series, valueId, statusId, panelId, timeId, sparkId, avgId, avgMinutes, digits, unit, minSpan, classify, empty }) {
-      const lastPoint = series.at(-1);
-      const average = recentAverage(series, avgMinutes);
-      document.getElementById(avgId).textContent = average === null
-        ? "Últimas leituras"
-        : `Média (${avgMinutes} min): ${formatNumber(average, digits)} ${unit}`;
-      const panel = document.getElementById(panelId);
-      sparkline(document.getElementById(sparkId), series, { unit, digits, minSpan, empty });
-      panel.classList.remove("tone-bad");
-
-      if (!lastPoint) {
-        document.getElementById(valueId).textContent = "--";
-        document.getElementById(timeId).textContent = "";
-        setStatus(statusId, "Aguardando sensor");
-        return null;
-      }
-
-      const stale = minutesSince(lastPoint.at) > SENSOR_STALE_MINUTES;
-      const [label, tone] = classify(lastPoint.value);
-      document.getElementById(valueId).textContent = formatNumber(lastPoint.value, digits);
-      document.getElementById(timeId).textContent = formatTime(lastPoint.at);
-      document.getElementById(timeId).title = `Última leitura: ${new Date(lastPoint.at).toLocaleString("pt-BR")}`;
-      setStatus(statusId, stale ? "Sensor sem sinal" : label, stale ? "" : tone);
-      if (!stale && tone === "bad") panel.classList.add("tone-bad");
-      return stale ? null : lastPoint.value;
-    }
-
-    function renderHeart() {
-      const bpm = renderVital({
-        series: seriesOf(state.heart, "bpm"), valueId: "heartBpm", statusId: "heartStatus", panelId: "heartPanel",
-        timeId: "heartTime", sparkId: "heartSpark", avgId: "heartAvg", avgMinutes: AVERAGE_MINUTES.bpm, digits: 0, unit: "bpm", minSpan: 20, classify: heartStatus,
-        empty: "Coloque o dedo no sensor para medir os batimentos."
-      });
-      const icon = document.getElementById("heartIcon");
-      icon.classList.toggle("beating", bpm !== null);
-      if (bpm) icon.style.setProperty("--beat", `${(60 / bpm).toFixed(2)}s`);
-    }
-
-    function renderOxygen() {
-      const spo2 = renderVital({
-        series: seriesOf(state.heart, "spo2"), valueId: "oxiValue", statusId: "oxiStatus", panelId: "oxiPanel",
-        timeId: "oxiTime", sparkId: "oxiSpark", avgId: "oxiAvg", avgMinutes: AVERAGE_MINUTES.spo2, digits: 0, unit: "%", minSpan: 6, classify: oxygenStatus,
-        empty: "Aguardando a leitura do oxímetro."
-      });
-      const fill = document.getElementById("oxiFill");
-      const value = hasValue(spo2) ? spo2 : null;
-      // arco de 270° (75 de 100) representando a escala de 80% a 100%
-      const share = value === null ? 0 : Math.min(Math.max((value - 80) / 20, 0), 1);
-      fill.setAttribute("stroke-dasharray", `${(share * 75).toFixed(1)} 100`);
-      fill.style.stroke = value === null ? "" : { good: "var(--good)", warn: "var(--warn)", bad: "var(--bad)" }[oxygenStatus(value)[1]];
-    }
-
-    function renderTemperature() {
-      const celsius = renderVital({
-        series: seriesOf(state.temperature, "celsius"), valueId: "tempValue", statusId: "tempStatus", panelId: "tempPanel",
-        timeId: "tempTime", sparkId: "tempSpark", avgId: "tempAvg", avgMinutes: AVERAGE_MINUTES.celsius, digits: 1, unit: "°C", minSpan: 2, classify: temperatureStatus,
-        empty: "Aguardando o sensor de temperatura."
-      });
-      const mark = document.getElementById("tempMark");
-      const humidity = state.temperature?.humidity;
-      document.getElementById("tempHumidity").textContent = hasValue(humidity) ? `Umidade ${formatNumber(humidity)}%` : "Sensor da casa";
-      mark.style.display = celsius === null ? "none" : "";
-      if (celsius !== null) mark.style.left = `${Math.min(Math.max((celsius - 10) / 30, 0), 1) * 100}%`;
-    }
-
-    function renderSensors() {
-      renderGas();
-      renderHeart();
-      renderOxygen();
-      renderTemperature();
-      updateSensorAlerts();
-    }
-
     /* ---------- Alertas dos sensores (tela + alarme + voz da Vital) ---------- */
-    // Gás: leitura atual (precisa avisar na hora). Batimentos, oxímetro e temperatura: média recente.
-    function sensorAlerts() {
-      const alerts = [];
-      const add = (kind, tone, title, text, spoken) => alerts.push({ key: `${kind}-${tone}`, kind, tone, title, text, spoken });
-
-      const gas = state.gas;
-      if (gas && hasValue(gas.level) && minutesSince(gas.updatedAt) <= SENSOR_STALE_MINUTES) {
-        const label = gasStatus(gas.level);
-        if (label === "Perigo") {
-          add("gas", "bad", "Vazamento de gás!",
-            `O sensor detectou ${gas.level} ppm de gás. Não acenda luzes, fósforos nem o fogão. Abra portas e janelas, saia de casa e ligue para os Bombeiros (193).`,
-            "Atenção! Vazamento de gás detectado. Não acenda luzes nem fósforos. Abra portas e janelas, saia de casa e ligue para os Bombeiros, no 193.");
-        } else if (label === "Atenção") {
-          add("gas", "warn", "Cheiro de gás detectado",
-            `O sensor detectou ${gas.level} ppm de gás. Verifique se o fogão está desligado e o botijão fechado, e abra as janelas.`,
-            "Atenção: o sensor detectou cheiro de gás. Verifique se o fogão está desligado e o botijão fechado, e abra as janelas.");
-        }
-      }
-
-      const bpm = recentAverage(seriesOf(state.heart, "bpm"), AVERAGE_MINUTES.bpm);
-      if (bpm !== null) {
-        const [label, tone] = heartStatus(bpm);
-        const value = formatNumber(bpm);
-        if (tone !== "good") {
-          add("heart", tone, { "Muito baixo": "Batimentos muito baixos", Baixo: "Batimentos baixos", Elevado: "Batimentos acelerados", "Muito alto": "Batimentos muito acelerados" }[label],
-            `Média dos últimos ${AVERAGE_MINUTES.bpm} minutos: ${value} bpm (o normal em repouso é de 60 a 100). Sente-se e descanse. Se sentir dor no peito, falta de ar ou tontura, ligue para o SAMU (192).`,
-            `Atenção: seus batimentos estão ${bpm > 100 ? "acima" : "abaixo"} do normal, em média ${value} por minuto. Sente-se e descanse. Se sentir dor no peito, falta de ar ou tontura, ligue para o SAMU, no 192.`);
-        }
-      }
-
-      const spo2 = recentAverage(seriesOf(state.heart, "spo2"), AVERAGE_MINUTES.spo2);
-      if (spo2 !== null) {
-        const [, tone] = oxygenStatus(spo2);
-        const value = formatNumber(spo2);
-        if (tone === "warn") {
-          add("spo2", tone, "Oxigenação um pouco baixa",
-            `Média dos últimos ${AVERAGE_MINUTES.spo2} minutos: ${value}% (o normal é 95% ou mais). Sente-se, respire devagar e meça de novo. Se houver falta de ar, ligue para o SAMU (192).`,
-            `Atenção: sua oxigenação está um pouco baixa, em média ${value} por cento. Sente-se, respire devagar e meça de novo. Se houver falta de ar, ligue para o SAMU, no 192.`);
-        } else if (tone === "bad") {
-          add("spo2", tone, "Oxigenação baixa",
-            `Média dos últimos ${AVERAGE_MINUTES.spo2} minutos: ${value}% (o normal é 95% ou mais). Se houver falta de ar, ligue agora para o SAMU (192) ou chame alguém.`,
-            `Atenção! Sua oxigenação está baixa, em média ${value} por cento. Se houver falta de ar, ligue agora para o SAMU, no 192, ou chame alguém para ajudar.`);
-        }
-      }
-
-      const celsius = recentAverage(seriesOf(state.temperature, "celsius"), AVERAGE_MINUTES.celsius);
-      if (celsius !== null) {
-        const [label, tone] = temperatureStatus(celsius);
-        const value = formatNumber(celsius, 1);
-        const intro = `A temperatura média da casa nos últimos ${AVERAGE_MINUTES.celsius} minutos está em ${value} graus.`;
-        if (celsius < 18) {
-          add("temp", tone, "Casa fria",
-            `Temperatura média (${AVERAGE_MINUTES.celsius} min): ${value} °C. Agasalhe-se, feche as janelas e tome algo quente.`,
-            `${intro} Está frio. Agasalhe-se, feche as janelas e tome algo quente.`);
-        } else if (tone !== "good") {
-          add("temp", tone, label === "Muito quente" ? "Casa muito quente" : "Casa quente",
-            `Temperatura média (${AVERAGE_MINUTES.celsius} min): ${value} °C. Beba água, use roupas leves e deixe o ar circular.`,
-            `${intro} Está ${label.toLowerCase()}. Beba água, use roupas leves e deixe o ar circular.`);
-        }
-      }
-      return alerts;
-    }
-
     const ALERT_ICONS = {
       gas: '<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-3.8 2.3-5 .3 1.5 1 2.5 2.2 3C11 8.5 11 5.5 12 3Z"/>',
       heart: '<path d="M3 12h4l2-5 4 10 2-5h6"/>',
@@ -1246,27 +433,20 @@
       window.VitalVoice?.checkSensors(alerts.filter((alert) => !silencedAlerts.has(alert.key)));
     }
 
+    /* ---------- Sensores: só o alarme de emergência ---------- */
     async function loadSensors() {
       if (liveSocket?.readyState === WebSocket.OPEN) return;   // o tempo real já está entregando
       try {
         Object.assign(state, await api("/api/dashboard/sensores"));
-        renderSensors();
+        updateSensorAlerts();
       } catch (error) {
-        // sem conexão: mantém a última leitura na tela
+        // sem conexão: mantém a última leitura
       }
     }
 
-    /* ---------- Tempo real: protótipo (ESP) -> backend -> app ----------
-       Quando o backend roda no computador (npm run dev), as leituras chegam na hora pelo WebSocket.
-       Na Vercel não há WebSocket: o painel segue buscando a cada 5 segundos. */
+    // Tempo real (backend rodando no computador). Na Vercel o painel segue buscando a cada 5 segundos.
     let liveSocket = null;
     let liveRetryMs = 2000;
-
-    function setDeviceStatus(text, tone) {
-      const badge = document.getElementById("deviceStatus");
-      badge.textContent = text;
-      badge.className = `panel-badge status${tone ? ` tone-${tone}` : ""}`;
-    }
 
     async function connectLive() {
       try {
@@ -1275,27 +455,118 @@
       } catch (error) {
         return;
       }
-      const url = `${apiBase.replace(/^http/, "ws")}/ws?token=${encodeURIComponent(getToken())}`;
-      liveSocket = new WebSocket(url);
+      liveSocket = new WebSocket(`${apiBase.replace(/^http/, "ws")}/ws?token=${encodeURIComponent(getToken())}`);
       liveSocket.addEventListener("open", () => { liveRetryMs = 2000; });
       liveSocket.addEventListener("message", (event) => {
         let message;
         try { message = JSON.parse(event.data); } catch (error) { return; }
         if (message.type === "sensores") {
           Object.assign(state, message.data);
-          renderSensors();
-        } else if (message.type === "dispositivo") {
-          setDeviceStatus(message.online ? "Protótipo conectado" : "Protótipo desconectado", message.online ? "good" : "warn");
+          updateSensorAlerts();
         }
       });
       liveSocket.addEventListener("close", (event) => {
         liveSocket = null;
-        setDeviceStatus("");
         if (event.code === 4001) return goToLogin();
-        setTimeout(connectLive, liveRetryMs);           // servidor reiniciou ou o Wi-Fi caiu: tenta de novo
+        setTimeout(connectLive, liveRetryMs);
         liveRetryMs = Math.min(liveRetryMs * 2, 30000);
       });
     }
+
+    /* ---------- Música: links do Spotify e do YouTube tocando dentro do painel ---------- */
+    let playingMusicId = null;
+
+    // Converte o link copiado do app em { tipo, link limpo, endereço do player }
+    function musicSource(link) {
+      let url;
+      try { url = new URL(String(link).trim()); } catch (error) { return null; }
+      const host = url.hostname.replace(/^(www|m)\./, "");
+      if (host === "open.spotify.com") {
+        const match = url.pathname.match(/^(?:\/intl-[a-z-]+)?(?:\/embed)?\/(track|album|playlist|artist|episode|show)\/([A-Za-z0-9]+)/);
+        return match && { kind: "spotify", url: `https://open.spotify.com/${match[1]}/${match[2]}`, embed: `https://open.spotify.com/embed/${match[1]}/${match[2]}` };
+      }
+      if (host === "youtube.com" || host === "music.youtube.com" || host === "youtu.be") {
+        const id = host === "youtu.be" ? url.pathname.slice(1) : url.searchParams.get("v") || (url.pathname.match(/^\/(?:shorts|embed|live)\/([\w-]+)/) || [])[1];
+        const list = url.searchParams.get("list");
+        const ok = (value) => value && /^[\w-]+$/.test(value);
+        if (ok(id)) {
+          const extra = ok(list) ? `list=${list}` : "";
+          return { kind: "youtube", url: `https://www.youtube.com/watch?v=${id}${extra ? "&" + extra : ""}`, embed: `https://www.youtube.com/embed/${id}${extra ? "?" + extra : ""}` };
+        }
+        if (ok(list)) return { kind: "youtube", url: `https://www.youtube.com/playlist?list=${list}`, embed: `https://www.youtube.com/embed/videoseries?list=${list}` };
+      }
+      return null;
+    }
+
+    function renderMusic() {
+      const list = document.getElementById("musicList");
+      const items = state.music.map((item) => ({ ...item, source: musicSource(item.url) })).filter((item) => item.source);
+      if (!items.length) {
+        list.innerHTML = `<p class="empty-note" style="width: 100%;">Nenhuma música conectada. Toque em “+ Conectar Spotify ou YouTube” e cole o link de uma playlist.</p>`;
+        document.getElementById("musicPlayer").innerHTML = "";
+        return;
+      }
+      if (!items.some((item) => item.id === playingMusicId)) playingMusicId = items[0].id;
+
+      list.innerHTML = items.map((item) => `
+        <span class="music-chip${item.id === playingMusicId ? " active" : ""}">
+          <button class="music-play" type="button" data-play-music="${item.id}">
+            <span class="music-tag ${item.source.kind}">${item.source.kind === "spotify" ? "Spotify" : "YouTube"}</span>
+            ${escapeHtml(item.title || (item.source.kind === "spotify" ? "Spotify" : "YouTube"))}
+          </button>
+          ${removeButton("musicas", item.id)}
+        </span>`).join("");
+
+      const playing = items.find((item) => item.id === playingMusicId);
+      const player = document.getElementById("musicPlayer");
+      if (player.dataset.src !== playing.source.embed) {
+        player.dataset.src = playing.source.embed;
+        player.innerHTML = playing.source.kind === "spotify"
+          ? `<iframe src="${playing.source.embed}" height="352" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Player do Spotify"></iframe>`
+          : `<iframe class="yt" src="${playing.source.embed}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="Player do YouTube"></iframe>`;
+      }
+    }
+
+    function openMusicForm(show) {
+      document.getElementById("musicModal").classList.toggle("hidden", !show);
+      if (show) {
+        document.getElementById("musicForm").reset();
+        document.getElementById("musicFormError").textContent = "";
+        document.getElementById("musicUrl").focus();
+      }
+    }
+
+    document.getElementById("openMusicForm").addEventListener("click", () => openMusicForm(true));
+    document.getElementById("closeMusicForm").addEventListener("click", () => openMusicForm(false));
+    document.getElementById("cancelMusicForm").addEventListener("click", () => openMusicForm(false));
+    document.getElementById("musicModal").addEventListener("click", (event) => {
+      if (event.target.id === "musicModal") openMusicForm(false);
+    });
+
+    document.getElementById("musicForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const error = document.getElementById("musicFormError");
+      const source = musicSource(document.getElementById("musicUrl").value);
+      if (!source) {
+        error.textContent = "Esse link não é do Spotify nem do YouTube. Copie pelo botão “Compartilhar” do app.";
+        return;
+      }
+      const submit = event.target.querySelector('[type="submit"]');
+      submit.disabled = true;
+      try {
+        const { id } = await api("/api/dashboard/musicas", {
+          method: "POST",
+          body: JSON.stringify({ url: source.url, title: document.getElementById("musicTitle").value.trim() })
+        });
+        playingMusicId = id;
+        openMusicForm(false);
+        await loadDashboard();
+      } catch (err) {
+        error.textContent = err.message;
+      } finally {
+        submit.disabled = false;
+      }
+    });
 
     /* ---------- Lembrete na hora do remédio ---------- */
     function showMedicineReminder(medicine) {
@@ -1323,19 +594,19 @@
       }
     }
 
-    async function setTaken(id, taken) {
-      if (taken) window.VitalVoice?.onMedicineDone(id);
-      await api(`/api/dashboard/medicamentos/${id}`, { method: "PATCH", body: JSON.stringify({ takenOn: taken ? today() : null }) });
+    async function setTaken(id) {
+      window.VitalVoice?.onMedicineDone(id);
+      await api(`/api/dashboard/medicamentos/${id}`, { method: "PATCH", body: JSON.stringify({ takenOn: today() }) });
       await loadDashboard();
     }
 
     /* ---------- Carregar tudo do banco ---------- */
     function renderAll() {
       renderMedications();
-      renderAppointments();
       renderReminders();
+      renderMusic();
       renderClimate();
-      renderSensors();
+      updateSensorAlerts();
     }
 
     async function loadDashboard() {
@@ -1345,193 +616,31 @@
       checkMedicineSchedule();
     }
 
-    /* ---------- Formulários ---------- */
-    const FORMS = {
-      medication: {
-        list: "medicamentos",
-        title: "Novo medicamento",
-        fields: [
-          { name: "name", label: "Nome do remédio", type: "text", placeholder: "Comece a digitar, ex.: Losartana", required: true, full: true },
-          { name: "dose", label: "Dose", type: "text", placeholder: "Ex.: 50 mg" },
-          { name: "time", label: "Horário", type: "time", required: true }
-        ]
-      },
-      appointment: {
-        list: "consultas",
-        title: "Nova consulta",
-        fields: [
-          { name: "title", label: "Consulta", type: "text", placeholder: "Ex.: Cardiologista", required: true, full: true },
-          { name: "doctor", label: "Médico(a) ou local", type: "text", placeholder: "Ex.: Dra. Ana", full: true },
-          { name: "date", label: "Data", type: "date", required: true },
-          { name: "time", label: "Horário", type: "time", required: true }
-        ]
-      },
-      reminder: {
-        list: "lembretes",
-        title: "Novo lembrete",
-        fields: [
-          { name: "title", label: "Lembrete", type: "text", placeholder: "Ex.: Beber água", required: true, full: true },
-          { name: "detail", label: "Detalhe", type: "text", placeholder: "Ex.: 2 copos antes do almoço", full: true },
-          { name: "time", label: "Horário", type: "time", required: true }
-        ]
-      }
-    };
-
-    let openFormKey = null;
-
-    function fieldHtml(field) {
-      const id = `dash-${field.name}`;
-      return `<div class="field dash-field${field.full ? " full" : ""}"><label for="${id}">${field.label}</label>` +
-        `<input id="${id}" name="${field.name}" type="${field.type}" placeholder="${escapeHtml(field.placeholder || "")}"${field.required ? " required" : ""} autocomplete="off" /></div>`;
-    }
-
-    function openForm(key) {
-      const config = FORMS[key];
-      openFormKey = key;
-      document.getElementById("dashFormTitle").textContent = config.title;
-      document.getElementById("dashFormHint").textContent = "";
-      document.getElementById("dashFormError").textContent = "";
-      document.getElementById("dashFormFields").innerHTML = config.fields.map(fieldHtml).join("");
-      if (key === "medication") setupMedicineSearch();
-      document.getElementById("dashFormModal").classList.remove("hidden");
-      document.querySelector("#dashFormFields input")?.focus();
-    }
-
-    function closeForm() {
-      openFormKey = null;
-      document.getElementById("dashFormModal").classList.add("hidden");
-    }
-
-    // Busca de remédio: sugestões com a foto e remédios relacionados
-    function setupMedicineSearch() {
-      const nameInput = document.getElementById("dash-name");
-      const doseInput = document.getElementById("dash-dose");
-      const nameField = nameInput.closest(".dash-field");
-      nameField.insertAdjacentHTML("beforeend", '<ul class="med-suggest" id="medSuggest" hidden></ul>');
-      document.getElementById("dashFormFields").insertAdjacentHTML("beforeend",
-        '<div class="med-preview" id="medPreview" hidden></div><div class="med-related" id="medRelated" hidden></div>');
-
-      const suggest = document.getElementById("medSuggest");
-
-      function card(remedio) {
-        return `<img src="${VitalRemedios.imagem(remedio)}" alt="" /><span><span class="med-sug-name">${escapeHtml(remedio.nome)}</span>` +
-          `<span class="med-sug-meta">${escapeHtml(remedio.dose)} • ${escapeHtml(remedio.classe)}</span></span>`;
-      }
-
-      function choose(remedio) {
-        nameInput.value = remedio.nome;
-        if (!doseInput.value) doseInput.value = remedio.dose;
-        suggest.hidden = true;
-        showSelected(remedio);
-        document.getElementById("dash-time").focus();
-      }
-
-      function showSelected(remedio) {
-        const preview = document.getElementById("medPreview");
-        const related = document.getElementById("medRelated");
-        if (!remedio) {
-          preview.hidden = true;
-          related.hidden = true;
-          return;
-        }
-        preview.innerHTML = `<img src="${VitalRemedios.imagem(remedio)}" alt="Comprimido de ${escapeHtml(remedio.nome)}" />` +
-          `<div><div class="med-sug-name">${escapeHtml(remedio.nome)}</div><div class="med-sug-meta">${escapeHtml(remedio.dose)} • ${escapeHtml(remedio.classe)}</div></div>`;
-        preview.hidden = false;
-
-        const others = VitalRemedios.relacionados(remedio);
-        related.innerHTML = others.length
-          ? `<p class="med-related-title">Remédios relacionados (${escapeHtml(remedio.classe)})</p><div class="med-related-list">` +
-            others.map((item) => `<button class="med-chip" type="button" data-remedio="${escapeHtml(item.nome)}"><img src="${VitalRemedios.imagem(item)}" alt="" />${escapeHtml(item.nome)}</button>`).join("") + "</div>"
-          : "";
-        related.hidden = !others.length;
-      }
-
-      nameInput.addEventListener("input", () => {
-        const results = VitalRemedios.buscar(nameInput.value);
-        suggest.innerHTML = results.map((remedio, index) =>
-          `<li><button type="button" data-index="${index}">${card(remedio)}</button></li>`).join("");
-        suggest.hidden = !results.length;
-        suggest.onclick = (event) => {
-          const button = event.target.closest("button[data-index]");
-          if (button) choose(results[Number(button.dataset.index)]);
-        };
-        showSelected(VitalRemedios.encontrar(nameInput.value));
-      });
-
-      nameInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && !suggest.hidden) {
-          event.preventDefault();
-          suggest.querySelector("button")?.click();
-        }
-      });
-
-      document.getElementById("medRelated").addEventListener("click", (event) => {
-        const chip = event.target.closest("[data-remedio]");
-        if (!chip) return;
-        doseInput.value = "";
-        choose(VitalRemedios.encontrar(chip.dataset.remedio));
-      });
-    }
-
-    document.querySelectorAll("[data-form]").forEach((button) => {
-      button.addEventListener("click", () => openForm(button.dataset.form));
-    });
-    document.getElementById("closeDashForm").addEventListener("click", closeForm);
-    document.getElementById("cancelDashForm").addEventListener("click", closeForm);
-    document.getElementById("dashFormModal").addEventListener("click", (event) => {
-      if (event.target.id === "dashFormModal") closeForm();
-    });
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && openFormKey) closeForm();
-    });
-
-    document.getElementById("dashForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!openFormKey) return;
-
-      const config = FORMS[openFormKey];
-      const error = document.getElementById("dashFormError");
-      const data = Object.fromEntries([...new FormData(event.target)].map(([key, value]) => [key, String(value).trim()]));
-      const missing = config.fields.find((field) => field.required && !data[field.name]);
-      if (missing) {
-        error.textContent = `Preencha o campo “${missing.label}”.`;
-        return;
-      }
-
-      const submit = event.target.querySelector('[type="submit"]');
-      submit.disabled = true;
-      error.textContent = "";
-      try {
-        await api(`/api/dashboard/${config.list}`, { method: "POST", body: JSON.stringify(data) });
-        closeForm();
-        await loadDashboard();
-      } catch (err) {
-        error.textContent = err.message;
-      } finally {
-        submit.disabled = false;
-      }
-    });
-
-    // Remover itens e marcar remédio como tomado/pendente
+    // TOMEI na lista, tocar uma música e remover música
     document.querySelector(".layout").addEventListener("click", async (event) => {
+      const take = event.target.closest("[data-take-med]");
+      const play = event.target.closest("[data-play-music]");
       const remove = event.target.closest("[data-remove]");
-      const toggle = event.target.closest("[data-toggle-med]");
       try {
-        if (remove) {
+        if (take) {
+          take.disabled = true;
+          await setTaken(Number(take.dataset.takeMed));
+        } else if (play) {
+          playingMusicId = Number(play.dataset.playMusic);
+          renderMusic();
+        } else if (remove && confirm("Remover esta música do painel?")) {
           await api(`/api/dashboard/${remove.dataset.remove}/${remove.dataset.id}`, { method: "DELETE" });
           await loadDashboard();
-        } else if (toggle) {
-          const med = state.medications.find((item) => String(item.id) === toggle.dataset.toggleMed);
-          if (med) await setTaken(med.id, !isTaken(med));
         }
       } catch (error) {
+        if (take) take.disabled = false;
         alert(error.message);
       }
     });
 
     document.getElementById("confirmMedicine").addEventListener("click", async () => {
       closeMedicineReminder();
-      if (reminderMedicationId) await setTaken(reminderMedicationId, true).catch(() => {});
+      if (reminderMedicationId) await setTaken(reminderMedicationId).catch(() => {});
     });
 
     // "Lembrar mais tarde" e o × adiam o aviso: a Vital lembra de novo em 10 minutos
@@ -1543,6 +652,9 @@
 
     document.getElementById("snoozeMedicine").addEventListener("click", snoozeMedicine);
     document.getElementById("closeReminder").addEventListener("click", snoozeMedicine);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") openMusicForm(false);
+    });
 
     document.getElementById("refreshWeather").addEventListener("click", async () => {
       weather = null;
@@ -1564,6 +676,7 @@
     async function start() {
       const user = getCurrentUser();
       if (!user || !getToken()) return goToLogin();
+      try { localStorage.setItem("vc-painel", "idoso"); } catch (e) {}   // o login volta para este painel
 
       const name = user.name || "Usuário";
       document.getElementById("userPill").textContent = `Olá, ${name}`;
@@ -1584,6 +697,8 @@
 
       setInterval(checkMedicineSchedule, 30000);
       setInterval(loadSensors, 5000);
+      // remédios e lembretes novos cadastrados pelo cuidador aparecem sozinhos
+      setInterval(() => { if (!document.hidden) loadDashboard().catch(() => {}); }, 60000);
       connectLive();
       setInterval(loadWeather, 15 * 60 * 1000);
     }

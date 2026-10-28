@@ -120,6 +120,49 @@ a { text-decoration: none; }
   line-height: 1.8;
 }
 
+/* ESCOLHA DO PAINEL (idoso ou cuidador) */
+.panel-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+  border: 0;
+}
+
+.panel-choice legend {
+  margin-bottom: 10px;
+  color: var(--azul-escuro);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.panel-option { position: relative; cursor: pointer; }
+.panel-option input { position: absolute; opacity: 0; }
+
+.panel-option span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 9px;
+  background: var(--surface);
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.panel-option strong { font-size: 15px; }
+.panel-option small { color: var(--muted); font-size: 12px; line-height: 1.4; }
+.panel-option:hover span { border-color: var(--accent); }
+.panel-option input:checked + span {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.panel-option input:focus-visible + span { box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 2px var(--accent); }
+
+@media (max-width: 420px) { .panel-choice { grid-template-columns: 1fr; } }
+
 /* ABAS */
 .auth-tabs {
   display: grid;

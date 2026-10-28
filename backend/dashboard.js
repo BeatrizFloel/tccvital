@@ -20,8 +20,16 @@ const LISTS = {
     table: "vc_lembretes",
     fields: { title: "titulo", detail: "detalhe", time: "horario" },
     required: ["title", "time"]
+  },
+  // Músicas do idoso: links do Spotify ou do YouTube que tocam direto no painel
+  musicas: {
+    table: "vc_musicas",
+    fields: { title: "titulo", url: "url" },
+    required: ["url"],
+    check: (values) => MUSIC_URL_RE.test(values.url) ? null : "Cole um link do Spotify ou do YouTube."
   }
 };
+const MUSIC_URL_RE = /^https:\/\/(open\.spotify\.com|(www\.|m\.|music\.)?youtube\.com|youtu\.be)\//i;
 
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS vc_medicamentos (
@@ -82,6 +90,26 @@ const SCHEMA = [
     umidade DECIMAL(5,2) NULL,
     lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_temperatura_usuario (id_usuario, lido_em)
+  )`,
+  // Cada "TOMEI" do idoso (botão ou voz): o painel do cuidador mostra o horário e o histórico
+  `CREATE TABLE IF NOT EXISTS vc_tomadas (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_medicamento INT NOT NULL,
+    nome VARCHAR(120) NOT NULL,
+    dose VARCHAR(60) NULL,
+    horario VARCHAR(5) NOT NULL,
+    dia DATE NOT NULL,
+    tomado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_tomada_usuario (id_usuario, tomado_em)
+  )`,
+  `CREATE TABLE IF NOT EXISTS vc_musicas (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    titulo VARCHAR(120) NULL,
+    url VARCHAR(200) NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_musica_usuario (id_usuario)
   )`
 ];
 
@@ -123,7 +151,7 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   }
 
   async function readLocal() {
-    const empty = { nextId: 1, medicamentos: [], consultas: [], lembretes: [], locais: {}, leituras_gas: [], leituras_cardiacas: [], leituras_temperatura: [] };
+    const empty = { nextId: 1, medicamentos: [], consultas: [], lembretes: [], musicas: [], tomadas: [], locais: {}, leituras_gas: [], leituras_cardiacas: [], leituras_temperatura: [] };
     try {
       return { ...empty, ...JSON.parse(await fs.readFile(localPath, "utf8")) };
     } catch (error) {
@@ -165,6 +193,8 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   const toMedication = (row) => ({ id: row.id, name: row.nome, dose: row.dose || "", time: row.horario, takenOn: row.tomado_em || null });
   const toAppointment = (row) => ({ id: row.id, title: row.titulo, doctor: row.medico || "", date: row.data, time: row.horario });
   const toReminder = (row) => ({ id: row.id, title: row.titulo, detail: row.detalhe || "", time: row.horario });
+  const toMusic = (row) => ({ id: row.id, title: row.titulo || "", url: row.url });
+  const toDose = (row) => ({ medicationId: row.id_medicamento, name: row.nome, dose: row.dose || "", time: row.horario, day: row.dia, at: new Date(row.tomado_em).toISOString() });
   const toLocation = (row) => row ? { latitude: Number(row.latitude), longitude: Number(row.longitude), city: row.cidade || "" } : null;
   const toGas = (row) => row ? { level: Number(row.ppm), updatedAt: new Date(row.lido_em).toISOString() } : null;
   const numberOrNull = (value) => value === null || value === undefined ? null : Number(value);
@@ -206,16 +236,18 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   async function loadDashboardData(userId) {
     if (usingMysql()) {
       const pool = await db();
-      const [[meds], [appointments], [reminders], [locations]] = await Promise.all([
+      const [[meds], [appointments], [reminders], [music], [locations]] = await Promise.all([
         pool.query("SELECT id, nome, dose, horario, DATE_FORMAT(tomado_em, '%Y-%m-%d') AS tomado_em FROM vc_medicamentos WHERE id_usuario = ? ORDER BY horario", [userId]),
         pool.query("SELECT id, titulo, medico, DATE_FORMAT(data, '%Y-%m-%d') AS data, horario FROM vc_consultas WHERE id_usuario = ? ORDER BY data, horario", [userId]),
         pool.query("SELECT id, titulo, detalhe, horario FROM vc_lembretes WHERE id_usuario = ? ORDER BY horario", [userId]),
+        pool.query("SELECT id, titulo, url FROM vc_musicas WHERE id_usuario = ? ORDER BY id", [userId]),
         pool.query("SELECT latitude, longitude, cidade FROM vc_locais WHERE id_usuario = ?", [userId])
       ]);
       return {
         medications: meds.map(toMedication),
         appointments: appointments.map(toAppointment),
         reminders: reminders.map(toReminder),
+        music: music.map(toMusic),
         location: toLocation(locations[0]),
         ...(await loadSensors(userId))
       };
@@ -228,24 +260,116 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
       medications: mine("medicamentos").map(toMedication),
       appointments: mine("consultas").map(toAppointment),
       reminders: mine("lembretes").map(toReminder),
+      music: data.musicas.filter((row) => row.id_usuario === userId).map(toMusic),
       location: toLocation(data.locais[userId]),
       ...(await loadSensors(userId))
     };
   }
 
   // Marca o remédio como tomado no dia `takenOn` (AAAA-MM-DD) ou volta para pendente (null)
+  // Também registra a dose em vc_tomadas (ou apaga o registro do dia, se voltar para pendente)
   async function setMedicationTaken(userId, id, takenOn) {
     if (usingMysql()) {
-      const [result] = await (await db()).query("UPDATE vc_medicamentos SET tomado_em = ? WHERE id = ? AND id_usuario = ?", [takenOn, id, userId]);
-      return result.affectedRows > 0;
+      const pool = await db();
+      const [[med]] = await pool.query(
+        "SELECT nome, dose, horario, DATE_FORMAT(tomado_em, '%Y-%m-%d') AS tomado_em FROM vc_medicamentos WHERE id = ? AND id_usuario = ?", [id, userId]);
+      if (!med) return false;
+      await pool.query("UPDATE vc_medicamentos SET tomado_em = ? WHERE id = ? AND id_usuario = ?", [takenOn, id, userId]);
+      if (takenOn && med.tomado_em !== takenOn) {
+        await pool.query("INSERT INTO vc_tomadas (id_usuario, id_medicamento, nome, dose, horario, dia) VALUES (?, ?, ?, ?, ?, ?)",
+          [userId, id, med.nome, med.dose, med.horario, takenOn]);
+      } else if (!takenOn && med.tomado_em) {
+        await pool.query("DELETE FROM vc_tomadas WHERE id_usuario = ? AND id_medicamento = ? AND dia = ?", [userId, id, med.tomado_em]);
+      }
+      return true;
     }
     const data = await readLocal();
     const row = data.medicamentos.find((item) => item.id === id && item.id_usuario === userId);
-    if (row) {
-      row.tomado_em = takenOn;
-      await writeLocal(data);
+    if (!row) return false;
+    if (takenOn && row.tomado_em !== takenOn) {
+      data.tomadas.push({ id: data.nextId++, id_usuario: userId, id_medicamento: id, nome: row.nome, dose: row.dose, horario: row.horario, dia: takenOn, tomado_em: new Date().toISOString() });
+      data.tomadas = data.tomadas.slice(-2000);
+    } else if (!takenOn && row.tomado_em) {
+      data.tomadas = data.tomadas.filter((item) => !(item.id_usuario === userId && item.id_medicamento === id && item.dia === row.tomado_em));
     }
-    return Boolean(row);
+    row.tomado_em = takenOn;
+    await writeLocal(data);
+    return true;
+  }
+
+  /* ---------- Histórico para o painel do cuidador ----------
+     As leituras são agrupadas em ~120 intervalos (média, mínimo e máximo de cada um),
+     para o gráfico continuar leve mesmo com o ESP mandando uma leitura por segundo. */
+  const HISTORY_POINTS = 120;
+  const HISTORY_SERIES = [
+    { key: "heart", table: "vc_leituras_cardiacas", columns: ["bpm", "spo2"] },
+    { key: "gas", table: "vc_leituras_gas", columns: ["ppm"] },
+    { key: "temperature", table: "vc_leituras_temperatura", columns: ["celsius"] }
+  ];
+
+  function bucketRows(rows, columns, bucketSeconds) {
+    const buckets = new Map();
+    for (const row of rows) {
+      const t = Math.floor(new Date(row.lido_em).getTime() / 1000 / bucketSeconds) * bucketSeconds;
+      const bucket = buckets.get(t) || buckets.set(t, { t }).get(t);
+      for (const column of columns) {
+        if (row[column] === null || row[column] === undefined) continue;
+        const value = Number(row[column]);
+        const stats = bucket[column] || (bucket[column] = { sum: 0, n: 0, min: value, max: value });
+        stats.sum += value;
+        stats.n++;
+        stats.min = Math.min(stats.min, value);
+        stats.max = Math.max(stats.max, value);
+      }
+    }
+    return [...buckets.values()].sort((a, b) => a.t - b.t).map((bucket) => {
+      const point = { at: new Date(bucket.t * 1000).toISOString() };
+      for (const column of columns) {
+        const stats = bucket[column];
+        point[column] = stats ? { avg: Math.round(stats.sum / stats.n * 10) / 10, min: stats.min, max: stats.max } : null;
+      }
+      return point;
+    });
+  }
+
+  async function loadHistory(userId, hours) {
+    const since = Math.floor(Date.now() / 1000) - hours * 3600;
+    const bucketSeconds = Math.max(60, Math.round(hours * 3600 / HISTORY_POINTS));
+    const result = { hours, bucketMinutes: bucketSeconds / 60 };
+
+    if (usingMysql()) {
+      const pool = await db();
+      await Promise.all(HISTORY_SERIES.map(async ({ key, table, columns }) => {
+        const stats = columns.map((c) => `AVG(${c}) AS ${c}_avg, MIN(${c}) AS ${c}_min, MAX(${c}) AS ${c}_max`).join(", ");
+        const [rows] = await pool.query(
+          `SELECT FLOOR(UNIX_TIMESTAMP(lido_em) / ?) * ? AS t, ${stats} FROM ${table}
+           WHERE id_usuario = ? AND lido_em >= FROM_UNIXTIME(?) GROUP BY t ORDER BY t`,
+          [bucketSeconds, bucketSeconds, userId, since]);
+        result[key] = rows.map((row) => {
+          const point = { at: new Date(Number(row.t) * 1000).toISOString() };
+          for (const c of columns) {
+            point[c] = row[`${c}_avg`] === null ? null
+              : { avg: Math.round(Number(row[`${c}_avg`]) * 10) / 10, min: Number(row[`${c}_min`]), max: Number(row[`${c}_max`]) };
+          }
+          return point;
+        });
+      }));
+      const [doses] = await pool.query(
+        `SELECT id_medicamento, nome, dose, horario, DATE_FORMAT(dia, '%Y-%m-%d') AS dia, tomado_em FROM vc_tomadas
+         WHERE id_usuario = ? AND tomado_em >= NOW() - INTERVAL 7 DAY ORDER BY tomado_em DESC LIMIT 200`, [userId]);
+      result.doses = doses.map(toDose);
+      return result;
+    }
+
+    const data = await readLocal();
+    for (const { key, table, columns } of HISTORY_SERIES) {
+      const rows = data[table.replace(/^vc_/, "")].filter((row) => row.id_usuario === userId && new Date(row.lido_em).getTime() / 1000 >= since);
+      result[key] = bucketRows(rows, columns, bucketSeconds);
+    }
+    const weekAgo = Date.now() - 7 * 86400000;
+    result.doses = data.tomadas.filter((row) => row.id_usuario === userId && new Date(row.tomado_em).getTime() >= weekAgo)
+      .reverse().slice(0, 200).map(toDose);
+    return result;
   }
 
   app.get(["/dashboard", "/api/dashboard"], auth, handle(async (req, res) => {
@@ -264,6 +388,8 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
     if (missing) return res.status(400).json({ message: "Preencha todos os campos obrigatórios." });
     if (values.horario && !TIME_RE.test(values.horario)) return res.status(400).json({ message: "Horário inválido." });
     if (values.data && !DATE_RE.test(values.data)) return res.status(400).json({ message: "Data inválida." });
+    const invalid = config.check?.(values);
+    if (invalid) return res.status(400).json({ message: invalid });
 
     if (usingMysql()) {
       const columns = Object.keys(values);
@@ -331,6 +457,12 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
 
   app.get(["/dashboard/gas", "/api/dashboard/gas"], auth, handle(async (req, res) => {
     res.json(await loadGas(req.userId));
+  }));
+
+  // Painel do cuidador: histórico dos sensores (?horas=6, 24 ou 168) e as doses tomadas nos últimos 7 dias
+  app.get(["/dashboard/historico", "/api/dashboard/historico"], auth, handle(async (req, res) => {
+    const hours = Math.min(Math.max(Number(req.query.horas) || 24, 1), 168);
+    res.json(await loadHistory(req.userId, hours));
   }));
 
   // Gás, batimentos/oxímetro e temperatura de uma vez (o painel consulta a cada poucos segundos)

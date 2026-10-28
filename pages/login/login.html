@@ -53,6 +53,18 @@
 <h2>Que bom ter<br>você de volta.</h2>
 <p class="intro">Acesse sua conta para acompanhar cuidados, alertas e momentos importantes.</p>
 
+<fieldset class="panel-choice">
+  <legend>Qual painel você quer abrir?</legend>
+  <label class="panel-option">
+    <input type="radio" name="painel" value="idoso" checked>
+    <span><strong>Painel do idoso</strong><small>Remédios, lembretes, clima e música</small></span>
+  </label>
+  <label class="panel-option">
+    <input type="radio" name="painel" value="cuidador">
+    <span><strong>Painel do cuidador</strong><small>Histórico, cadastros e aviso do TOMEI</small></span>
+  </label>
+</fieldset>
+
 <div class="auth-tabs">
   <button class="tab active" type="button" onclick="showLogin()">Entrar</button>
   <button class="tab" type="button" onclick="showRegister()">Criar conta</button>
@@ -148,9 +160,21 @@ function saveCurrentUser(user) {
   localStorage.setItem("vitalcare-current-user", JSON.stringify(normalized));
 }
 
-function redirectToDashboard() {
-  window.location.href = "../dashboard/dashboard.html";
+// Abre o painel escolhido (idoso ou cuidador). Já vem marcado o último usado neste aparelho.
+function chosenPanel() {
+  return document.querySelector('input[name="painel"]:checked')?.value || "idoso";
 }
+
+function redirectToDashboard() {
+  const painel = chosenPanel();
+  try { localStorage.setItem("vc-painel", painel); } catch (e) {}
+  window.location.href = painel === "cuidador" ? "../cuidador/cuidador.html" : "../dashboard/dashboard.html";
+}
+
+try {
+  const lastPanel = localStorage.getItem("vc-painel") === "cuidador" || window.location.hash === "#cuidador" ? "cuidador" : "idoso";
+  document.querySelector(`input[name="painel"][value="${lastPanel}"]`).checked = true;
+} catch (e) {}
 
 function showLogin() {
   loginForm.classList.remove("hidden");

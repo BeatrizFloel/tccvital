@@ -40,7 +40,7 @@ const SITE_FAQ = [
   [/\b(temperatura|calor|frio|termometro)\b/,
     "O sensor de temperatura acompanha a temperatura da casa. Se a média ficar acima de 26 graus ou abaixo de 18, o painel avisa e dá orientações, como beber água ou se agasalhar. O clima da cidade aparece separado, na tela principal."],
   [/\b(remedio|remedios|medicamento|medicamentos|comprimido|lembrete|lembretes|consulta|consultas)\b/,
-    "No painel, você cadastra remédios, consultas e lembretes pelo botão \"+ Adicionar\". Na hora certa, a tela mostra o nome, a foto e a dose do remédio, toca um aviso e a Vital lembra em voz alta. As consultas são lembradas na véspera, uma hora antes e quinze minutos antes."],
+    "O cuidador cadastra remédios, consultas e lembretes no Painel do cuidador, pelo botão \"+ Adicionar\". Na hora certa, a tela mostra o nome, a foto e a dose do remédio, toca um aviso e a Vital lembra em voz alta. As consultas são lembradas na véspera, uma hora antes e quinze minutos antes."],
   [/\b(vital|voz|falar|alexa|assistente de voz|microfone)\b/,
     "A Vital é a assistente de voz do painel. É só dizer \"Vital\" e fazer a pergunta, por exemplo: \"Vital, que remédio falta hoje?\". Ela responde no alto-falante e também lembra remédios, consultas e alertas dos sensores."],
   [/\b(login|entrar|cadastro|cadastrar|conta|senha|google|painel|dashboard)\b/,
@@ -148,7 +148,7 @@ function nowTime(context) {
 }
 
 function medicinesText(data, context) {
-  if (!data.medications.length) return "Você ainda não tem remédios cadastrados. Dá para cadastrar no painel, pelo botão \"+ Adicionar\".";
+  if (!data.medications.length) return "Você ainda não tem remédios cadastrados. O cuidador pode cadastrar pelo Painel do cuidador.";
   const pending = data.medications.filter((med) => med.takenOn !== context.hoje);
   if (!pending.length) return "Você já tomou todos os remédios de hoje. Muito bem!";
   const items = pending.map((med) => `${med.name}${med.dose ? `, ${med.dose},` : ""} às ${spokenTime(med.time)}`);
@@ -161,7 +161,7 @@ function appointmentsText(data, context) {
     .map((item) => ({ ...item, day: dayLabel(item.date, context.hoje) }))
     .filter((item) => item.day.diff > 0 || (item.day.diff === 0 && (!now || item.time >= now)))
     .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-  if (!upcoming.length) return "Não encontrei consultas marcadas. Dá para cadastrar no painel, pelo botão \"+ Adicionar\".";
+  if (!upcoming.length) return "Não encontrei consultas marcadas. O cuidador pode cadastrar pelo Painel do cuidador.";
   const [next] = upcoming;
   const more = upcoming.length > 1 ? ` Depois disso, você tem mais ${upcoming.length - 1} ${upcoming.length === 2 ? "consulta" : "consultas"} agendadas.` : "";
   return `Sua próxima consulta é ${next.title}${next.doctor ? ` com ${next.doctor}` : ""}, ${next.day.label} às ${spokenTime(next.time)}.${more}`;
