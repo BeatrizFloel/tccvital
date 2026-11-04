@@ -7,7 +7,7 @@
   <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/vc.css" />
   <link rel="stylesheet" href="../dashboard/painel.css" />
   <style>
@@ -67,6 +67,11 @@
     .dose-state.ok { background: var(--good-soft); color: var(--good-ink); }
     .dose-state.late { background: var(--bad-soft); color: var(--bad-ink); }
     .dose-state.wait { background: var(--warn-soft); color: var(--warn-ink); }
+    /* mesma cor de cada período da caixinha do painel do idoso */
+    .period-chip { padding: 3px 10px; border-radius: 999px; background: var(--manha); color: var(--on-periodo); font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .period-chip.meio { background: var(--meio); }
+    .period-chip.tarde { background: var(--tarde); }
+    .period-chip.noite { background: var(--noite); color: var(--on-noite); }
     .undo-btn { padding: 4px 8px; border: 0; background: transparent; color: var(--muted); font-size: 12px; text-decoration: underline; cursor: pointer; }
     .dose-day { margin: 14px 0 6px; color: var(--ink-2); font-size: 14px; font-weight: 600; }
     .dose-day:first-child { margin-top: 0; }
@@ -545,7 +550,7 @@
         const late = minutesLate(med);
         let badge;
         if (isTaken(med)) badge = `<span class="dose-state ok">✓ Concluído${dose ? ` às ${hhmm(dose.at)}` : ""}</span><button class="undo-btn" type="button" data-undo-med="${med.id}">desfazer</button>`;
-        else if (late >= LATE_MINUTES) badge = `<span class="dose-state late">Pendente · atrasado ${late >= 120 ? `${Math.floor(late / 60)} h` : `${late} min`}</span>`;
+        else if (late >= LATE_MINUTES) badge = `<span class="dose-state late">Pendente, atrasado ${late >= 120 ? `${Math.floor(late / 60)} h` : `${late} min`}</span>`;
         else badge = `<span class="dose-state wait">Pendente</span>`;
         return `
           <li class="med-item">
@@ -557,6 +562,7 @@
               </div>
             </div>
             <div class="item-actions">
+              <span class="period-chip ${periodOf(med.time).id}">${periodOf(med.time).name}</span>
               <span class="time-pill">${escapeHtml(med.time)}</span>
               ${badge}
               ${removeButton("medicamentos", med.id)}

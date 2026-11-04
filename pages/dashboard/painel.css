@@ -1,11 +1,12 @@
 /* Estilos compartilhados pelo painel do idoso (dashboard.html) e pelo painel do cuidador (cuidador.html) */
-.layout { width: min(1320px, 100%); margin: 0 auto; padding: 0 clamp(16px, 3vw, 32px) 56px; }
+.layout { width: min(1180px, 100%); margin: 0 auto; padding: 0 clamp(16px, 4vw, 32px) 56px; }
 
 /* ---------- Topo ---------- */
 .dash-hero {
   margin: 24px 0;
   padding: clamp(22px, 3vw, 32px);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+  text-align: left;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -15,7 +16,7 @@
 .dash-hero h1 { font-size: clamp(28px, 3vw, 36px); }
 .dash-hero p { margin-top: 6px; color: var(--hero-muted); }
 .clock-box { text-align: right; }
-.clock { color: var(--ink); font-size: clamp(32px, 3.4vw, 42px); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.clock { color: var(--on-brand); font-family: var(--font-display); font-size: clamp(32px, 3.4vw, 42px); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
 .date-badge { margin-top: 4px; color: var(--hero-muted); font-size: 14px; }
 
 .block-title {
@@ -46,7 +47,7 @@
 /* ---------- Painéis ---------- */
 .panel {
   padding: 20px;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   border-radius: var(--radius);
   background: var(--surface);
 }
@@ -55,8 +56,8 @@
 .panel-header h2 svg { width: 20px; height: 20px; flex: none; color: var(--accent); fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .panel-actions { display: flex; align-items: center; gap: 8px; }
 .panel-badge {
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
   background: var(--bg-alt);
   color: var(--ink-2);
   font-size: 13px;
@@ -65,8 +66,8 @@
 }
 .panel-add {
   padding: 7px 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
   background: var(--surface);
   color: var(--accent-ink);
   font-size: 14px;
@@ -153,7 +154,7 @@
   gap: 12px;
   padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
 }
 .item-title { font-weight: 600; }
@@ -201,7 +202,7 @@
 .medicine-name { font-size: clamp(28px, 4vw, 36px); }
 .medicine-dose { margin-top: 6px; color: var(--ink-2); font-size: 19px; }
 .medicine-time { margin-top: 8px; color: var(--ink); font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
-.medicine-notice { margin-top: 16px; padding: 14px 16px; border-radius: 10px; background: var(--warn-soft); color: var(--ink); font-size: 20px; font-weight: 600; line-height: 1.4; }
+.medicine-notice { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--warm-soft); color: var(--ink); font-size: 20px; font-weight: 600; line-height: 1.4; }
 .medicine-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
 
 .dash-form-title { font-size: 24px; }
@@ -232,50 +233,71 @@
 .logout-btn:hover { border-color: var(--bad); color: var(--bad-ink); }
 
 /* ---------- Vital (assistente de voz) ---------- */
-.vital-assist { position: fixed; right: clamp(12px, 2vw, 24px); bottom: clamp(12px, 2vw, 24px); z-index: 60; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 12px; }
-.vital-orb {
-  width: 68px;
-  height: 68px;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 50%;
-  background: var(--brand);
-  color: var(--on-brand);
-  box-shadow: var(--shadow-lg);
-  cursor: pointer;
-}
-.vital-orb svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.vital-assist[data-state="listening"] .vital-orb { background: var(--warm); }
-.vital-assist[data-state="off"] .vital-orb, .vital-assist[data-state="blocked"] .vital-orb, .vital-assist[data-state="unsupported"] .vital-orb { background: var(--surface-2); color: var(--muted); }
-.vital-card {
-  width: min(360px, calc(100vw - 24px));
-  padding: 16px;
-  border: 1px solid var(--line);
+.vital-assist {
+  position: fixed;
+  left: max(12px, calc((100% - 1180px) / 2 + 32px));
+  right: max(12px, calc((100% - 1180px) / 2 + 32px));
+  bottom: 12px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--line-strong);
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow-lg);
 }
-.vital-card[hidden] { display: none; }
-.vital-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-.vital-title { display: block; font-size: 18px; }
-.vital-hint { margin-top: 2px; color: var(--muted); font-size: 13px; }
-.vital-close { width: 30px; height: 30px; flex: none; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); font-size: 18px; line-height: 1; cursor: pointer; }
-.vital-unlock { width: 100%; margin-top: 12px; padding: 10px; border: 1px dashed var(--warm); border-radius: 12px; background: var(--warm-soft); color: var(--warm-ink); font-size: 14px; font-weight: 600; cursor: pointer; }
+/* Na hora do remédio a faixa fica acima do aviso: dá para ver que a Vital está ouvindo */
+body:has(#medicineReminder:not(.hidden)) .vital-assist { z-index: 110; }
+.vital-orb { display: grid; flex: none; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--brand); color: var(--on-brand); }
+.vital-orb svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.vital-assist[data-state="listening"] .vital-orb { background: var(--warm); color: var(--on-periodo); }
+.vital-assist[data-state="off"] .vital-orb, .vital-assist[data-state="blocked"] .vital-orb, .vital-assist[data-state="unsupported"] .vital-orb { background: var(--surface-2); color: var(--muted); }
+.vital-text { flex: 1; min-width: 0; }
+.vital-title { display: block; font-size: 19px; line-height: 1.25; }
+.vital-hint { color: var(--muted); font-size: 16px; line-height: 1.3; }
+.vital-unlock { margin-top: 6px; padding: 6px 14px; border: 1px dashed var(--warm); border-radius: 999px; background: var(--warm-soft); color: var(--warm-ink); font-size: 15px; font-weight: 600; cursor: pointer; }
 .vital-unlock[hidden], .vital-heard[hidden], .vital-reply[hidden] { display: none; }
-.vital-heard { margin-top: 12px; color: var(--muted); font-size: 14px; font-style: italic; }
+.vital-heard { margin-top: 2px; color: var(--muted); font-size: 16px; font-style: italic; }
 .vital-heard.interim { opacity: .7; }
-.vital-reply { margin-top: 8px; padding: 12px 14px; border-radius: 14px; border-bottom-left-radius: 4px; background: var(--accent-soft); color: var(--ink); font-size: 15px; line-height: 1.5; }
-.vital-reply.error { background: var(--bad-soft); color: var(--bad-ink); }
-.vital-form { display: flex; gap: 8px; margin-top: 12px; }
-.vital-form input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-2); font-size: 14px; }
+.vital-reply { max-height: 4.2em; margin-top: 2px; overflow-y: auto; color: var(--ink); font-size: 18px; font-weight: 600; line-height: 1.35; }
+.vital-reply.error { color: var(--bad-ink); }
+.vital-form { display: flex; flex: 0 1 300px; gap: 8px; min-width: 0; }
+.vital-form input { flex: 1; min-width: 0; height: 48px; padding: 0 14px; border: 1.5px solid var(--line-strong); border-radius: 999px; background: var(--surface-2); font-size: 16px; }
 .vital-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.vital-send { width: 42px; flex: none; border: 0; border-radius: 12px; background: var(--brand); color: var(--on-brand); cursor: pointer; }
+.vital-send { width: 48px; height: 48px; flex: none; border: 0; border-radius: 50%; background: var(--brand); color: var(--on-brand); cursor: pointer; }
 .vital-send svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.vital-actions { display: flex; gap: 8px; margin-top: 10px; }
-.vital-actions button { flex: 1; padding: 9px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); font-size: 13px; font-weight: 600; cursor: pointer; }
-.vital-actions .vital-talk { border-color: color-mix(in srgb, var(--warm) 50%, transparent); background: var(--warm-soft); color: var(--warm-ink); }
-.vital-actions button:hover { border-color: var(--accent); }
+.vital-actions { display: flex; flex: none; gap: 8px; }
+.vital-actions button { min-height: 48px; padding: 0 16px; border: 1.5px solid var(--line-strong); border-radius: 999px; background: var(--surface); font-size: 15px; font-weight: 700; cursor: pointer; }
+.vital-actions .vital-talk { border-color: transparent; background: var(--warm); color: var(--on-brand); }
+@media (max-width: 1000px) {
+  .vital-assist { flex-wrap: wrap; }
+  .vital-text { flex-basis: calc(100% - 70px); }
+  .vital-form { flex: 1 1 100%; }
+  .vital-toggle { display: none; }
+  .vital-actions { flex: 1 1 100%; }
+  .vital-actions .vital-talk { flex: 1; }
+}
+/* No celular a faixa fica baixa para não cobrir o aviso. A caixa de texto só aparece se a voz não funcionar. */
+@media (max-width: 640px) {
+  .vital-assist { flex-wrap: nowrap; gap: 10px; padding: 8px 10px; }
+  .vital-orb { width: 44px; height: 44px; }
+  .vital-orb svg { width: 22px; height: 22px; }
+  .vital-text { flex-basis: auto; }
+  .vital-title { font-size: 16px; }
+  .vital-hint { display: none; }
+  .vital-unlock { padding: 3px 10px; font-size: 13px; }
+  .vital-reply { max-height: 2.8em; font-size: 16px; }
+  .vital-form { display: none; }
+  .vital-assist[data-state="blocked"], .vital-assist[data-state="unsupported"] { flex-wrap: wrap; }
+  .vital-assist[data-state="blocked"] .vital-form, .vital-assist[data-state="unsupported"] .vital-form { display: flex; }
+  .vital-actions { flex: none; }
+  .vital-actions button { min-height: 44px; padding: 0 12px; }
+}
+/* O aviso do remédio nunca fica atrás da faixa da Vital */
+#medicineReminder { padding-bottom: 116px; }
+#medicineReminder .modal-box { max-height: 100%; }
 
 .vital-toasts { position: fixed; top: calc(var(--header-h) + 12px); right: clamp(12px, 2vw, 24px); z-index: 70; display: flex; flex-direction: column; gap: 10px; width: min(360px, calc(100vw - 24px)); pointer-events: none; }
 .vital-toast {
@@ -295,7 +317,7 @@
 .vital-toast strong { display: block; font-size: 15px; }
 .vital-toast p { margin-top: 2px; color: var(--ink-2); font-size: 14px; }
 .vital-toast button { width: 26px; height: 26px; flex: none; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 18px; cursor: pointer; }
-.layout { padding-bottom: 120px; }
+.layout { padding-bottom: 150px; }
 
 /* Alertas dos sensores: ficam no topo do painel enquanto a situação continuar */
 .sensor-alerts { display: grid; gap: 10px; margin-bottom: 18px; scroll-margin-top: calc(var(--header-h) + 12px); }

@@ -30,12 +30,14 @@ a { text-decoration: none; }
   min-height: calc(100vh - var(--header-h));
   display: grid;
   grid-template-columns: 55% 45%;
+  padding: 12px;
 }
 
 /* IMAGEM */
 .auth-image {
   position: relative;
-  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100vh - var(--header-h) - 24px);
+  border-radius: var(--radius-lg);
   background-image: url("../imagens/download (7).jpg");
   background-size: cover;
   background-position: center 60%;
@@ -119,7 +121,7 @@ a { text-decoration: none; }
   height: 100%;
   padding: 12px 14px;
   border: 1px solid var(--borda);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
 }
 
@@ -140,15 +142,16 @@ a { text-decoration: none; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 100%;
-  height: 58px;
+  height: 54px;
   margin-bottom: 27px;
-  border-radius: 9px;
+  padding: 4px;
+  border-radius: 999px;
   background: var(--bege-tab);
 }
 
 .tab {
   border: 1px solid transparent;
-  border-radius: 9px;
+  border-radius: 999px;
   background: transparent;
   color: var(--azul-texto);
   font-size: 15px;
@@ -205,8 +208,8 @@ a { text-decoration: none; }
   align-items: center;
   margin-bottom: 17px;
   background: var(--bege-input);
-  border: 1px solid var(--borda);
-  border-radius: 7px;
+  border: 1.5px solid var(--borda);
+  border-radius: var(--radius-sm);
 }
 
 .input-box:focus-within {
@@ -244,7 +247,7 @@ a { text-decoration: none; }
   height: 54px;
   margin-top: 4px;
   border: none;
-  border-radius: 7px;
+  border-radius: 999px;
   background: var(--verde);
   color: var(--on-brand);
   font-size: 16px;
@@ -277,8 +280,8 @@ a { text-decoration: none; }
 .google-button {
   width: 100%;
   height: 54px;
-  border: 1px solid var(--borda);
-  border-radius: 7px;
+  border: 1.5px solid var(--borda);
+  border-radius: 999px;
   background: var(--surface);
   color: var(--azul-escuro);
   font-size: 14px;

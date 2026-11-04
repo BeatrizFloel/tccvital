@@ -92,6 +92,17 @@ function removeButton(list, id) {
   return `<button class="item-remove" type="button" data-remove="${list}" data-id="${id}" aria-label="Remover">×</button>`;
 }
 
+// Períodos da caixinha de remédios, tirados do horário que o cuidador cadastra
+const PERIODS = [{ id: "manha", name: "Manhã" }, { id: "meio", name: "Meio-dia" }, { id: "tarde", name: "Tarde" }, { id: "noite", name: "Noite" }];
+
+function periodOf(time) {
+  const hour = Number(String(time).slice(0, 2));
+  if (hour >= 5 && hour < 12) return PERIODS[0];
+  if (hour >= 12 && hour < 14) return PERIODS[1];
+  if (hour >= 14 && hour < 18) return PERIODS[2];
+  return PERIODS[3];
+}
+
 function isTaken(med) {
   return med.takenOn === today();
 }

@@ -7,7 +7,7 @@
 <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" />
 <link rel="stylesheet" href="/vc.css" />
 </head>
 <body>
@@ -35,19 +35,17 @@
 </header>
 
 <main>
-  <!-- ================= HERO ================= -->
+  <!-- ================= TOPO ================= -->
   <section class="page-hero home-hero" id="home">
     <div class="container">
       <div>
-        <h1>VitalCare <span>O cuidado que acompanha</span></h1>
-        <p class="lead">
-          Uma tela em casa que lembra os remédios e as consultas e acompanha os batimentos, a
-          oxigenação, a temperatura e o gás. Quando algo sai do normal, a família fica sabendo.
-        </p>
+        <h1>A caixinha de remédios que avisa a família</h1>
+        <p class="lead">Uma tela em casa lembra a hora de cada remédio. A pessoa confirma falando, e quem cuida acompanha de longe.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="/pages/intrucoes/instrucoes (1).html">Como funciona</a>
           <a class="btn btn-ghost" href="/pages/produtos/produto.html">Ver o produto</a>
         </div>
+        <p class="hero-price">Planos a partir de <span id="precoMinimo">R$ 799,90</span>, em pagamento único.</p>
       </div>
       <div class="hero-frame">
         <img src="/pages/imagens/old age care 1.png" alt="Cuidadora sorrindo ao lado de idosa em cadeira de rodas em um jardim" />
@@ -55,118 +53,149 @@
     </div>
   </section>
 
-  <!-- ================= DIFERENCIAIS ================= -->
+  <!-- ================= CAIXINHA ================= -->
   <section class="section" id="produto">
     <div class="container">
       <div class="section-head">
-        <h2>O que o VitalCare faz</h2>
+        <h2>O dia inteiro de relance</h2>
+        <p>Na hora certa, o compartimento abre e a Vital avisa em voz alta. Depois de tomar, é só dizer: “Vital, tomei o remédio das 12h”.</p>
       </div>
-
-      <div class="grid grid-3">
-        <article class="card">
-          <h3>Tudo em uma tela</h3>
-          <p>Remédios, consultas, clima e sensores ficam no mesmo lugar, sem caderno de anotações e sem vários aparelhos.</p>
+      <div class="caixinha">
+        <article class="slot manha">
+          <div class="well">
+            <div class="lid"><b>Manhã</b><i>7h30</i></div>
+          </div>
+          <ul class="slot-list">
+            <li class="slot-med">
+              <div><b>Omeprazol</b><span class="slot-dose">7h30, 20 mg</span></div>
+              <span class="slot-state ok">✓ Concluído</span>
+            </li>
+          </ul>
         </article>
-        <article class="card">
-          <h3>A rotina de cada pessoa</h3>
-          <p>O cuidador cadastra os remédios, as consultas e os lembretes com os horários de quem está sendo cuidado.</p>
+        <article class="slot meio is-open">
+          <div class="well">
+            <div class="well-pills" aria-hidden="true"><span class="demo-pill"></span><span class="demo-pill"></span></div>
+            <div class="lid"><b>Meio-dia</b><i>12h</i></div>
+          </div>
+          <ul class="slot-list">
+            <li class="slot-med">
+              <div><b>Losartana</b><span class="slot-dose">12h, 50 mg</span></div>
+              <span class="slot-state wait">Pendente</span>
+            </li>
+          </ul>
         </article>
-        <article class="card">
-          <h3>Casa mais segura</h3>
-          <p>Os sensores avisam quando há gás no ar e quando a casa fica quente ou fria demais.</p>
+        <article class="slot tarde">
+          <div class="well">
+            <div class="lid"><b>Tarde</b><i>16h</i></div>
+          </div>
+          <ul class="slot-list">
+            <li class="slot-med">
+              <div><b>Vitamina D</b><span class="slot-dose">16h, 7.000 UI</span></div>
+              <span class="slot-state wait">Pendente</span>
+            </li>
+          </ul>
+        </article>
+        <article class="slot noite">
+          <div class="well">
+            <div class="lid"><b>Noite</b><i>20h</i></div>
+          </div>
+          <ul class="slot-list">
+            <li class="slot-med">
+              <div><b>Metformina</b><span class="slot-dose">20h, 850 mg</span></div>
+              <span class="slot-state wait">Pendente</span>
+            </li>
+          </ul>
         </article>
       </div>
+      <p class="day-note">Exemplo de um dia no painel.</p>
     </div>
   </section>
 
-  <!-- ================= PÚBLICO ALVO / OBJETIVOS ================= -->
-  <section class="section alt" id="instrucoes">
-    <div class="container grid grid-2" style="align-items: start; gap: clamp(32px, 5vw, 64px);">
-      <div>
-        <h2 class="col-title">Para quem é</h2>
-        <div class="audience">
-          <div class="row-item">
-            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3"/><circle cx="16" cy="10" r="2.3"/><path d="M3.5 18c.7-2.6 2.9-4 5.5-4s4.8 1.4 5.5 4"/></svg></span>
-            <div>
-              <h3>Idosos</h3>
-              <p>Quem quer continuar em casa com mais autonomia, principalmente quem precisa de acompanhamento frequente.</p>
-            </div>
-          </div>
-          <div class="row-item">
-            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12h8M8 16h5"/></svg></span>
-            <div>
-              <h3>Familiares e cuidadores</h3>
-              <p>Quem ajuda a organizar os cuidados do dia a dia e quer saber como a pessoa está.</p>
-            </div>
-          </div>
-          <div class="row-item">
-            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8Z"/><path d="M12 11v5M9.5 13.5h5"/></svg></span>
-            <div>
-              <h3>Profissionais e Instituições de Saúde</h3>
-              <p>Quem atende idosos e quer mais informação para complementar o acompanhamento.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h2 class="col-title">O que ele acompanha</h2>
-        <div class="audience">
-          <div class="row-item">
-            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
-            <div>
-              <h3>Saúde</h3>
-              <p>Frequência cardíaca e saturação de oxigênio.</p>
-            </div>
-          </div>
-          <div class="row-item">
-            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-45 12 12)"/><path d="M9.5 9.5l5 5"/></svg></span>
-            <div>
-              <h3>Remédios</h3>
-              <p>Avisa na hora certa e mostra qual remédio tomar.</p>
-            </div>
-          </div>
-          <div class="row-item">
-            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/><path d="M12 10v6"/></svg></span>
-            <div>
-              <h3>Casa</h3>
-              <p>Temperatura e possíveis vazamentos de gás.</p>
-            </div>
-          </div>
-          <div class="row-item">
-            <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg></span>
-            <div>
-              <h3>Compromissos</h3>
-              <p>Lembretes de consultas, exames e outros horários marcados.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= POR QUE VITALCARE ================= -->
-  <section class="section" id="equipe">
+  <!-- ================= O QUE MAIS FAZ ================= -->
+  <section class="section" style="padding-top: 0;">
     <div class="container">
-      <div class="why">
-        <h2>Por que criamos o VitalCare</h2>
-        <p>
-          Muitos idosos dependem de anotações, de aparelhos separados e de um familiar por perto para
-          lembrar do básico. Juntamos sinais vitais, lembretes, sensores e alertas em uma tela só,
-          para a rotina ficar mais fácil de acompanhar.
-        </p>
-        <a class="btn btn-primary" href="/pages/produtos/produto.html">Ver o produto</a>
+      <div class="section-head"><h2>O que mais ele acompanha</h2></div>
+      <div class="plain-cols">
+        <div><h3>Sinais vitais</h3><p>Batimentos e oxigenação, com alerta se saírem do normal.</p></div>
+        <div><h3>Casa segura</h3><p>Sensor de gás com alarme e temperatura da casa, com o que fazer em cada alerta.</p></div>
+        <div><h3>Painel do cuidador</h3><p>Cadastro de remédios e consultas, histórico dos sensores e notificações no celular.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PARA QUEM É ================= -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="section-head"><h2>Para quem é</h2></div>
+      <div class="plain-cols">
+        <div><h3>Idosos</h3><p>Quem quer continuar em casa com mais autonomia, principalmente quem precisa de acompanhamento frequente.</p></div>
+        <div><h3>Familiares e cuidadores</h3><p>Quem ajuda a organizar os cuidados do dia a dia e quer saber como a pessoa está.</p></div>
+        <div><h3>Profissionais e instituições de saúde</h3><p>Quem atende idosos e quer mais informação para complementar o acompanhamento.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EQUIPE ================= -->
+  <section class="section" id="equipe" style="padding-top: 0;">
+    <div class="container">
+      <div class="section-head">
+        <h2>Quem fez o VitalCare</h2>
+        <p>Quatro estudantes do UNASP, em um Trabalho de Conclusão de Curso.</p>
+      </div>
+      <ul class="team-row">
+        <li><span class="team-photo"><img src="/pages/imagens/Ellipse 11.png" alt="" /></span><strong>Beatriz Floel</strong><small>Design e projeto</small></li>
+        <li><span class="team-photo"><img src="/pages/imagens/Ellipse 12.png" alt="" /></span><strong>Davi Evangelista</strong><small>Software</small></li>
+        <li><span class="team-photo"><img src="/pages/imagens/Ellipse 13.png" alt="" /></span><strong>Lucas Nunes</strong><small>Hardware e eletrônica</small></li>
+        <li><span class="team-photo"><img src="/pages/imagens/Ellipse 14.png" alt="" /></span><strong>Giovanna Migliorini</strong><small>Documentação e gestão</small></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= POR QUE ================= -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="photo-split">
+        <img src="/pages/imagens/download (7).jpg" alt="" />
+        <article class="card is-solid">
+          <h2>Por que criamos</h2>
+          <p>
+            Muitos idosos dependem de anotações, de aparelhos separados e de um familiar por perto para
+            lembrar do básico. Juntamos sinais vitais, lembretes, sensores e alertas em uma tela só.
+          </p>
+          <a class="btn btn-primary" href="/pages/produtos/produto.html">Ver o produto</a>
+        </article>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="site-footer" id="referencias">
-  <div class="container">
-    <p>© 2026 VitalCare. Trabalho de Conclusão de Curso, UNASP.</p>
+<footer class="site-footer">
+  <div class="footer-box">
+    <div class="footer-main">
+      <div>
+        <h2>Fale com a gente</h2>
+        <p class="footer-lead">Tire suas dúvidas ou peça um orçamento</p>
+        <a class="btn btn-primary" href="/pages/produtos/produto.html#orcamento">Solicitar orçamento</a>
+      </div>
+      <div class="footer-contact">
+        <p>A proposta chega por e-mail em poucos segundos. Para outras dúvidas, é só escrever.</p>
+        <a class="footer-mail" href="mailto:vitalcarecontatar@gmail.com"><span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></span>vitalcarecontatar@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-card">
+      <div><strong>Projeto</strong>Trabalho de Conclusão de Curso, UNASP</div>
+      <div><strong>Páginas</strong>
+        <span class="footer-links"><a href="/pages/intrucoes/instrucoes (1).html">Instruções</a><a href="/pages/produtos/produto.html">Produto</a><a href="/pages/equipe/equipe (1).html">Equipe</a></span>
+      </div>
+    </div>
   </div>
+  <p class="footer-copy">© 2026 VitalCare</p>
 </footer>
 
+<script type="module">
+  import { PLANOS, formatarPreco } from "/shared/planos.js";
+  document.getElementById("precoMinimo").textContent = formatarPreco(Math.min(...PLANOS.map((plano) => plano.preco)));
+</script>
 <script src="/vc.js"></script>
 </body>
 </html>

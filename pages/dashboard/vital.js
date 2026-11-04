@@ -1,6 +1,6 @@
 /* ================= Vital — assistente de voz do painel =================
    - Fica ouvindo a palavra "Vital". Ex.: "Vital, que remédio falta hoje?" ou "Vital" ... (pausa) ... pergunta.
-   - Responde em voz alta (alto-falante) e também por escrito no cartão da Vital.
+   - Responde em voz alta (alto-falante) e também por escrito na faixa da Vital.
    - Avisa em voz alta: hora dos remédios, consultas (véspera, 1 hora e 15 minutos antes),
      lembretes diários e alertas dos sensores (gás, batimentos, oxigenação e temperatura da casa),
      com alarme sonoro nos alertas graves.
@@ -290,10 +290,10 @@
     }
   }
 
-  /* ---------- cartão da Vital na tela ---------- */
+  /* ---------- faixa da Vital na tela ---------- */
   const STATUS = {
     off: ["Vital desativada", "Ative para conversar por voz e ouvir os lembretes."],
-    idle: ["Diga “Vital” para falar comigo", "Ex.: “Vital, que remédio falta hoje?”"],
+    idle: ["Diga “Vital” para falar comigo", "Ex.: “Vital, tomei o remédio das 12h”"],
     listening: ["Estou ouvindo…", "Pode fazer sua pergunta."],
     thinking: ["Pensando…", "Só um instante."],
     speaking: ["Falando…", ""],
@@ -345,37 +345,30 @@
     root.className = "vital-assist";
     root.setAttribute("aria-label", "Vital, assistente de voz");
     root.innerHTML = `
-      <button class="vital-orb" type="button" aria-label="Abrir ou fechar a Vital" aria-expanded="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-      </button>
-      <div class="vital-card" hidden>
-        <div class="vital-head">
-          <div>
-            <strong class="vital-title"></strong>
-            <p class="vital-hint"></p>
-          </div>
-          <button class="vital-close" type="button" aria-label="Fechar">×</button>
-        </div>
+      <span class="vital-orb" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      </span>
+      <div class="vital-text">
+        <strong class="vital-title"></strong>
+        <p class="vital-hint"></p>
         <button class="vital-unlock" type="button" hidden>Toque aqui para ativar o som da Vital</button>
         <p class="vital-heard" hidden></p>
         <p class="vital-reply" hidden aria-live="polite"></p>
-        <form class="vital-form">
-          <label class="sr-only" for="vitalInput">Escreva para a Vital</label>
-          <input id="vitalInput" type="text" maxlength="500" placeholder="Ou escreva sua pergunta…" autocomplete="off" />
-          <button class="vital-send" type="submit" aria-label="Enviar">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7Z"/><path d="m11 13 9-9"/></svg>
-          </button>
-        </form>
-        <div class="vital-actions">
-          <button class="vital-talk" type="button">Falar agora</button>
-          <button class="vital-toggle" type="button" aria-pressed="true"></button>
-        </div>
+      </div>
+      <form class="vital-form">
+        <label class="sr-only" for="vitalInput">Escreva para a Vital</label>
+        <input id="vitalInput" type="text" maxlength="500" placeholder="Ou escreva aqui…" autocomplete="off" />
+        <button class="vital-send" type="submit" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7Z"/><path d="m11 13 9-9"/></svg>
+        </button>
+      </form>
+      <div class="vital-actions">
+        <button class="vital-talk" type="button">Falar agora</button>
+        <button class="vital-toggle" type="button" aria-pressed="true"></button>
       </div>`;
     document.body.appendChild(root);
 
     el.root = root;
-    el.orb = root.querySelector(".vital-orb");
-    el.card = root.querySelector(".vital-card");
     el.title = root.querySelector(".vital-title");
     el.hint = root.querySelector(".vital-hint");
     el.heard = root.querySelector(".vital-heard");
@@ -385,13 +378,6 @@
     el.talk = root.querySelector(".vital-talk");
     el.input = root.querySelector("#vitalInput");
 
-    const open = (show) => {
-      el.card.hidden = !show;
-      el.orb.setAttribute("aria-expanded", String(show));
-      try { localStorage.setItem("vc-vital-aberta", show ? "sim" : "nao"); } catch (e) {}
-    };
-    el.orb.addEventListener("click", () => open(el.card.hidden));
-    root.querySelector(".vital-close").addEventListener("click", () => open(false));
     el.unlock.addEventListener("click", unlockAudio);
     el.toggle.addEventListener("click", () => setVoice(!voiceOn));
     el.talk.addEventListener("click", () => {
@@ -421,9 +407,6 @@
     el.toggle.textContent = voiceOn ? "Desativar voz" : "Ativar voz";
     if (!Recognition) setStatus("unsupported");
     else setStatus(voiceOn ? "idle" : "off");
-    let startOpen = true;
-    try { startOpen = localStorage.getItem("vc-vital-aberta") !== "nao"; } catch (e) {}
-    open(startOpen);
     if (voiceOn) showUnlockHint(true);
   }
 
