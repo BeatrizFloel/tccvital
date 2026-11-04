@@ -3,6 +3,7 @@
    do plano gratuito etc.). Assim a assistente do site e a Vital nunca ficam sem responder.
    - siteAnswer(texto)                        : dúvidas frequentes sobre o VitalCare
    - vitalAnswer(texto, dados, contexto, nome): rotina da pessoa (remédios, consultas, sensores...)
+   - takenAnswer(texto, dados, contexto, nome): "Vital, tomei o remédio das 12h" (com ou sem IA)
    Os valores vêm de /shared/planos.js e proposta.js (os mesmos do site). */
 import { PLANOS, formatarPreco } from "../shared/planos.js";
 import { PROPOSTA } from "./proposta.js";
@@ -40,7 +41,7 @@ const SITE_FAQ = [
   [/\b(temperatura|calor|frio|termometro)\b/,
     "O sensor de temperatura acompanha a temperatura da casa. Se a média ficar acima de 26 graus ou abaixo de 18, o painel avisa e dá orientações, como beber água ou se agasalhar. O clima da cidade aparece separado, na tela principal."],
   [/\b(remedio|remedios|medicamento|medicamentos|comprimido|lembrete|lembretes|consulta|consultas)\b/,
-    "O cuidador cadastra remédios, consultas e lembretes no Painel do cuidador, pelo botão \"+ Adicionar\". Na hora certa, a tela mostra o nome, a foto e a dose do remédio, toca um aviso e a Vital lembra em voz alta. As consultas são lembradas na véspera, uma hora antes e quinze minutos antes."],
+    "O cuidador cadastra remédios, consultas e lembretes no Painel do cuidador, pelo botão \"+ Adicionar\". Na hora certa, a tela mostra o remédio, o horário e um aviso, e a Vital lembra em voz alta. Depois de tomar, é só dizer \"Vital, tomei o remédio das 12h\" e ele aparece como concluído. As consultas são lembradas na véspera, uma hora antes e quinze minutos antes."],
   [/\b(vital|voz|falar|alexa|assistente de voz|microfone)\b/,
     "A Vital é a assistente de voz do painel. É só dizer \"Vital\" e fazer a pergunta, por exemplo: \"Vital, que remédio falta hoje?\". Ela responde no alto-falante e também lembra remédios, consultas e alertas dos sensores."],
   [/\b(login|entrar|cadastro|cadastrar|conta|senha|google|painel|dashboard)\b/,
@@ -172,16 +173,101 @@ function remindersText(data) {
   return `Seus lembretes de todo dia são: ${listPhrase(data.reminders.map((item) => `${item.title} às ${spokenTime(item.time)}`))}.`;
 }
 
-// Acha o remédio citado na frase pelo nome (ou pela primeira palavra do nome)
-function findMedicine(q, medications) {
-  return medications.find((med) => {
-    const name = normalize(med.name);
-    const first = name.split(" ")[0];
-    return name && (q.includes(name) || (first.length >= 4 && q.includes(first)));
+// Acha os remédios citados na frase pelo nome (ou, se nenhum bater, pela primeira palavra do nome)
+function findMedicines(q, medications) {
+  const exact = medications.filter((med) => normalize(med.name) && q.includes(normalize(med.name)));
+  if (exact.length) return exact;
+  return medications.filter((med) => {
+    const first = normalize(med.name).split(" ")[0];
+    return first.length >= 4 && q.includes(first);
   });
 }
 
-/* Devolve { reply, takeMedicationId? }: quando a pessoa diz que tomou um remédio, quem chama marca no painel */
+/* ---------- "Vital, tomei o remédio das 12h" ---------- */
+const HOUR_WORDS = { uma: 1, duas: 2, tres: 3, quatro: 4, cinco: 5, seis: 6, sete: 7, oito: 8, nove: 9, dez: 10, onze: 11, doze: 12 };
+// "das 12h", "as 8 e meia", "das oito", "20h30", "das 12 30" (o reconhecimento de voz escreve "12:30", e o normalize tira os dois pontos)
+const SAID_TIME = new RegExp(`\\b(?:(?:das|as|pras)\\s+(\\d{1,2})|das\\s+(${Object.keys(HOUR_WORDS).join("|")})|(\\d{1,2})(?=h))(?:\\s*(?:hs|h|horas|hora))?(?:\\s*(?:e\\s*)?(meia|\\d{2})\\b)?`);
+const TOOK = /\b(tomei|tomado|tomada)\b/;
+// "não tomei", "será que tomei", "esqueci se tomei", "tomei não": aqui ninguém está confirmando nada
+const NOT_TOOK = /\b(nao|nem|nunca|esqueci|sera|se|quando|qual|quais|que)\b.*\b(tomei|tomado|tomada)\b|\b(tomei|tomado|tomada) nao\b/;
+const ALL_OF_THEM = /\b(os remedios|os medicamentos|os comprimidos|todos|todas|ambos|ambas|os dois|as duas|os tres|as tres)\b/;
+
+// Horários que a pessoa pode ter dito: "das 8" serve para 08:00 e 20:00, "das 8 da noite" só para 20:00
+function saidTimes(q) {
+  const text = q.replace(/\b(?:(?:do|de|ao) )?meio dia\b/, "as 12").replace(/\b(?:(?:da|de|a) )?meia noite\b/, "as 0");
+  const match = text.match(SAID_TIME);
+  if (!match) return null;
+  const word = match[1] || match[2] || match[3];
+  const hour = HOUR_WORDS[word] ?? Number(word);
+  const minute = match[4] === "meia" ? 30 : Number(match[4] || 0);
+  if (hour > 23 || minute > 59) return null;
+  const at = (value) => `${String(value).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  if (hour === 0 || hour >= 12 || /\b(?:da|de) manha\b/.test(q)) return [at(hour)];
+  if (/\b(?:da|de) (?:tarde|noite)\b/.test(q)) return [at(hour + 12)];
+  return [at(hour), at(hour + 12)];
+}
+
+// Entre doses pendentes, a que a pessoa mais provavelmente tomou: a última que já passou da hora, ou então a próxima
+function likelyTime(meds, now) {
+  const sorted = [...meds].sort((a, b) => a.time.localeCompare(b.time));
+  const due = sorted.filter((med) => !now || med.time <= now);
+  return (due.at(-1) || sorted[0]).time;
+}
+
+/* Quando a pessoa confirma que tomou um remédio, devolve { reply, takeMedicationIds } para quem chama marcar no painel.
+   Devolve null se a frase não for uma confirmação. Roda antes da IA: marcar uma dose não pode depender dela. */
+export function takenAnswer(text, data, context, userName) {
+  const q = normalize(text);
+  if (!TOOK.test(q) || NOT_TOOK.test(q) || String(text).trim().endsWith("?")) return null;
+  if (!data.medications.length) return { reply: medicinesText(data, context), takeMedicationIds: [] };
+
+  const name = userName && userName !== "a pessoa" ? userName : "";
+  const now = nowTime(context);
+  const times = saidTimes(q);
+  const named = findMedicines(q, data.medications);
+  const found = (named.length ? named : data.medications).filter((med) => !times || times.includes(med.time));
+  if (!found.length) return { reply: `Não encontrei esse remédio nesse horário. ${medicinesText(data, context)}`, takeMedicationIds: [] };
+
+  const pending = found.filter((med) => med.takenOn !== context.hoje);
+  if (!pending.length) {
+    return {
+      reply: named.length || times
+        ? `O remédio ${listPhrase([...new Set(found.map((med) => med.name))])} já estava marcado como tomado hoje.`
+        : "Todos os remédios de hoje já estão marcados como tomados.",
+      takeMedicationIds: []
+    };
+  }
+
+  let doses;
+  if (named.length) {
+    // a mesma Losartana pode estar cadastrada às 8h e às 20h: marca uma dose de cada remédio citado
+    doses = [...new Set(pending.map((med) => normalize(med.name)))].map((medName) => {
+      const sameName = pending.filter((med) => normalize(med.name) === medName);
+      const time = likelyTime(sameName, now);
+      return sameName.find((med) => med.time === time);
+    });
+  } else if (times) {
+    const time = likelyTime(pending, now);
+    doses = pending.filter((med) => med.time === time);
+  } else {
+    doses = pending.filter((med) => !now || med.time <= now);
+  }
+
+  // Nunca marca um remédio que a pessoa pode não ter tomado: na dúvida, pergunta
+  if (!doses.length || (doses.length > 1 && !named.length && !ALL_OF_THEM.test(q))) {
+    const options = doses.length ? doses : pending;
+    const asked = times ? `Às ${spokenTime(options[0].time)} você tem ${listPhrase(options.map((med) => med.name))}.` :
+      `Qual remédio você tomou? Ainda ${options.length === 1 ? "falta" : "faltam"} ${listPhrase(options.map((med) => med.name))}.`;
+    return { reply: `${asked} Diga, por exemplo: Vital, tomei ${options.length > 1 && times ? `os remédios das ${spokenTime(options[0].time)}` : `a ${options[0].name}`}.`, takeMedicationIds: [] };
+  }
+
+  const list = listPhrase(doses.map((med) => `${med.name} das ${spokenTime(med.time)}`));
+  return {
+    reply: `Pronto, ${doses.length > 1 ? "os remédios" : "o remédio"} ${list} ${doses.length > 1 ? "estão concluídos" : "está concluído"}. Muito bem${name ? `, ${name}` : ""}!`,
+    takeMedicationIds: doses.map((med) => med.id)
+  };
+}
+
 export function vitalAnswer(text, data, context, userName) {
   const q = normalize(text);
   const name = userName && userName !== "a pessoa" ? userName : "";
@@ -191,16 +277,7 @@ export function vitalAnswer(text, data, context, userName) {
     return { reply: "Ligue agora para o SAMU, no 192, ou peça para alguém ligar. Se puder, sente-se e fique em um lugar seguro até a ajuda chegar." };
   }
 
-  if (has(/\b(tomei|ja tomei|tomado|tomada)\b/)) {
-    const med = findMedicine(q, data.medications);
-    if (med && med.takenOn === context.hoje) return { reply: `O remédio ${med.name} já estava marcado como tomado hoje.` };
-    if (med) return { reply: `Pronto, marquei o remédio ${med.name} como tomado. Muito bem${name ? `, ${name}` : ""}!`, takeMedicationId: med.id };
-    const pending = data.medications.filter((item) => item.takenOn !== context.hoje);
-    if (!pending.length) return { reply: "Todos os remédios de hoje já estão marcados como tomados." };
-    return { reply: `Qual remédio você tomou? Ainda ${pending.length === 1 ? "falta" : "faltam"} ${listPhrase(pending.map((item) => item.name))}.` };
-  }
-
-  if (has(/\b(remedio|remedios|medicamento|medicamentos|comprimido|comprimidos|pilula|tomar)\b/)) return { reply: medicinesText(data, context) };
+  if (has(/\b(remedio|remedios|medicamento|medicamentos|comprimido|comprimidos|pilula|tomar|tomei)\b/)) return { reply: medicinesText(data, context) };
   if (has(/\b(consulta|consultas|medico|medica|doutor|doutora|exame|exames|dentista)\b/)) return { reply: appointmentsText(data, context) };
   if (has(/\b(lembrete|lembretes|compromisso|compromissos|agenda)\b/)) return { reply: `${remindersText(data)} ${appointmentsText(data, context)}` };
   if (has(/\b(batimento|batimentos|coracao|pulso|frequencia|cardiac)/)) return { reply: heartText(data) };

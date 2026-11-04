@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VitalCare — A Aventura das Galinhas</title>
+<title>VitalCare | A Aventura das Galinhas</title>
 <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" />
 <link rel="stylesheet" href="/vc.css" />
 <style>
   .story p + p { margin-top: 12px; }
   .facts { display: grid; gap: 12px; }
   .facts li { display: flex; align-items: center; gap: 12px; color: var(--ink); font-weight: 500; }
-  .facts .icon-box { width: 36px; height: 36px; margin: 0; border-radius: 10px; }
-  .facts .icon-box svg { width: 17px; height: 17px; }
-  .game-video-wrap h2 { margin-bottom: 18px; font-size: 22px; text-align: center; }
+  .facts .icon-box { margin: 0; }
+  .facts .icon-box svg { width: 22px; height: 22px; }
+  .game-video-wrap h2 { margin-bottom: 18px; font-size: 24px; }
   .shots { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .shots figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--hero-2); }
+  .shots figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-alt); }
   .shots img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; image-rendering: pixelated; }
   .shots figcaption { padding: 10px 14px; font-size: 14px; color: var(--ink-2); background: var(--surface, transparent); }
   @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
@@ -53,11 +53,10 @@
       <h1>A Aventura das Galinhas</h1>
       <p class="lead">Uma jornada cheia de saltos, ovos voadores e galinhas nada amigáveis.</p>
     </div>
-    <svg class="hero-pulse" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40h420l18-22 16 36 18-50 16 36h712"/></svg>
   </section>
 
   <section class="section">
-    <div class="container grid grid-2" data-reveal>
+    <div class="container grid grid-2">
       <article class="card story">
         <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 5.4L20 9.3l-4.5 3.9 1.4 5.8L12 16l-4.9 3 1.4-5.8L4 9.3l5.9-.9Z"/></svg></span>
         <h2 style="font-size: 24px; margin-bottom: 14px;">A História</h2>
@@ -67,7 +66,7 @@
         </p>
         <p>
           Elas atacam dos céus lançando ovos e bloqueiam a passagem. Para voltar à sua vida
-          normal, o jovem precisa enfrentar e derrotar cada uma delas — saltando entre plataformas,
+          normal, o jovem precisa enfrentar e derrotar cada uma delas, saltando entre plataformas,
           desviando dos ataques e recuperando vida pelo caminho.
         </p>
       </article>
@@ -88,7 +87,7 @@
   </section>
 
   <section class="section alt">
-    <div class="container game-video-wrap reveal-item">
+    <div class="container game-video-wrap">
       <h2>Imagens do Jogo</h2>
       <div class="shots">
         <figure>
@@ -109,17 +108,17 @@
 
   <section class="section">
     <div class="container">
-      <div class="why cta reveal-item">
+      <div class="why">
         <h2>Pronto para enfrentar as galinhas?</h2>
         <p>
           Pule, desvie dos ovos, colete corações e derrote as galinhas malvadas para ajudar o
           jovem a voltar para casa. Cada fase é um novo desafio!
         </p>
         <a href="https://gd.games/games/fc7aea2a-bb79-4d81-a7e3-62472e37f653" class="btn btn-primary" target="_blank" rel="noopener">Jogar agora</a>
-        <p class="note" style="margin: 22px 0 0; color: var(--hero-muted);">Desenvolvido com GDevelop • Compatível com navegadores modernos</p>
+        <p style="margin: 18px 0 0; color: var(--muted); font-size: 15px;">Feito no GDevelop. Roda no navegador.</p>
       </div>
 
-      <div class="grid grid-2" style="margin-top: 24px;" data-reveal>
+      <div class="grid grid-2" style="margin-top: 24px;">
         <article class="card">
           <h3 style="margin-bottom: 16px;">Como Jogar</h3>
           <ul class="check-list">
@@ -145,8 +144,7 @@
 
 <footer class="site-footer">
   <div class="container">
-    <p>© 2026 VitalCare • Todos os direitos reservados</p>
-    <p>Feito com <span class="heart">♥</span> para você</p>
+    <p>© 2026 VitalCare. Trabalho de Conclusão de Curso, UNASP.</p>
   </div>
 </footer>
 

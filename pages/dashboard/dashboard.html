@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VitalCare — Dashboard</title>
+  <title>VitalCare | Dashboard</title>
   <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/vc.css" />
   <link rel="stylesheet" href="painel.css" />
   <style>
@@ -18,22 +18,9 @@
     .elder-grid .med-meta { font-size: 15px; }
     .elder-grid .med-thumb { width: 56px; height: 56px; border-radius: 14px; }
     .elder-grid .time-pill { font-size: 16px; }
-    .tomei-btn {
-      min-width: 112px;
-      padding: 12px 20px;
-      border: 0;
-      border-radius: 14px;
-      background: var(--brand);
-      color: var(--on-brand);
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: .04em;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-    }
-    .tomei-btn:hover { background: var(--brand-strong); }
-    .taken-pill { min-width: 112px; padding: 10px 14px; border-radius: 14px; background: var(--good-soft); color: var(--good-ink); font-size: 15px; font-weight: 700; text-align: center; }
-    .pending-pill { padding: 8px 12px; border-radius: 999px; background: var(--warn-soft); color: var(--warn-ink); font-size: 14px; font-weight: 700; white-space: nowrap; }
+    .taken-pill, .pending-pill { min-width: 124px; padding: 10px 14px; border-radius: 10px; font-size: 16px; font-weight: 700; text-align: center; white-space: nowrap; }
+    .taken-pill { background: var(--good-soft); color: var(--good-ink); }
+    .pending-pill { background: var(--warn-soft); color: var(--warn-ink); }
     .med-item.is-taken { opacity: .8; }
     .reminder-item .item-title { font-size: 17px; }
 
@@ -57,7 +44,7 @@
     @media (max-width: 1000px) { .elder-grid { grid-template-columns: 1fr; } }
     @media (max-width: 520px) {
       .elder-grid .item-actions { flex-wrap: wrap; width: 100%; }
-      .tomei-btn, .taken-pill { width: 100%; }
+      .taken-pill, .pending-pill { flex: 1; }
     }
   </style>
 </head>
@@ -185,8 +172,8 @@
       <h3 id="reminderTitle" class="medicine-name"></h3>
       <p id="reminderDose" class="medicine-dose"></p>
       <div id="reminderTime" class="medicine-time"></div>
+      <p id="reminderNotice" class="medicine-notice"></p>
       <div class="medicine-actions">
-        <button id="confirmMedicine" class="btn btn-primary" type="button">TOMEI</button>
         <button id="snoozeMedicine" class="btn btn-ghost" type="button">Lembrar mais tarde</button>
       </div>
     </div>
@@ -200,14 +187,15 @@
 <script>
     /* ================= Painel do idoso =================
        Mostra só o clima, os lembretes, os remédios (cadastrados pelo cuidador) e a música.
-       "TOMEI" fica salvo no banco e aparece na hora no painel do cuidador.
+       Na hora do remédio aparece um aviso. A pessoa confirma por voz ("Vital, tomei o remédio das 12h"):
+       a confirmação fica salva no banco e aparece no painel do cuidador.
        Os sensores continuam sendo lidos para o alarme de emergência (gás, oxigenação...). */
     const state = { medications: [], appointments: [], reminders: [], music: [], location: null, gas: null, heart: null, temperature: null };
     let weather = null;
-    let reminderMedicationId = null;
+    let reminderMedications = [];   // ids dos remédios do aviso aberto
     const shownReminders = new Set();
 
-    /* ---------- Remédios (com o botão TOMEI) ---------- */
+    /* ---------- Remédios ---------- */
     function renderMedications() {
       const medList = document.getElementById("medList");
       const pending = state.medications.filter((med) => !isTaken(med)).length;
@@ -234,7 +222,7 @@
               <span class="time-pill">${escapeHtml(med.time)}</span>
               ${taken
                 ? `<span class="taken-pill">✓ Concluído</span>`
-                : `<span class="pending-pill">Pendente</span><button class="tomei-btn" type="button" data-take-med="${med.id}">TOMEI</button>`}
+                : `<span class="pending-pill">Pendente</span>`}
             </div>
           </li>
         `;
@@ -569,35 +557,52 @@
     });
 
     /* ---------- Lembrete na hora do remédio ---------- */
-    function showMedicineReminder(medicine) {
-      reminderMedicationId = medicine.id;
-      document.getElementById("reminderTitle").textContent = medicine.name;
-      document.getElementById("reminderDose").textContent = medicine.dose;
-      document.getElementById("reminderTime").textContent = medicine.time;
-      document.getElementById("reminderImage").src = VitalRemedios.imagem(medicine.name);
+    // "08:30" -> "8h30", "12:00" -> "12h"
+    function hourLabel(time) {
+      const [hour, minute] = time.split(":").map(Number);
+      return minute ? `${hour}h${String(minute).padStart(2, "0")}` : `${hour}h`;
+    }
+
+    function fillMedicineReminder(medicines) {
+      const many = medicines.length > 1;
+      reminderMedications = medicines.map((medicine) => medicine.id);
+      document.getElementById("reminderTitle").textContent = medicines.map((medicine) => medicine.name).join(" e ");
+      document.getElementById("reminderDose").textContent = medicines
+        .filter((medicine) => medicine.dose)
+        .map((medicine) => (many ? `${medicine.name}: ${medicine.dose}` : medicine.dose)).join(" · ");
+      document.getElementById("reminderTime").textContent = [...new Set(medicines.map((medicine) => medicine.time))].join(" e ");
+      document.getElementById("reminderNotice").textContent =
+        `Depois de tomar, diga: “Vital, tomei ${many ? "os remédios" : "o remédio"} das ${hourLabel(medicines[0].time)}”.`;
+      document.getElementById("reminderImage").src = VitalRemedios.imagem(medicines[0].name);
+    }
+
+    function showMedicineReminder(medicines) {
+      fillMedicineReminder(medicines);
       document.getElementById("medicineReminder").classList.remove("hidden");
-      window.VitalVoice?.onMedicineDue(medicine);
+      window.VitalVoice?.onMedicineDue(medicines);
     }
 
     function closeMedicineReminder() {
       document.getElementById("medicineReminder").classList.add("hidden");
     }
 
+    // Confirmou por voz: tira do aviso o que já foi tomado e fecha quando não sobrar nada
+    function syncMedicineReminder() {
+      if (document.getElementById("medicineReminder").classList.contains("hidden")) return;
+      const open = state.medications.filter((medicine) => reminderMedications.includes(medicine.id) && !isTaken(medicine));
+      if (!open.length) closeMedicineReminder();
+      else if (open.length !== reminderMedications.length) fillMedicineReminder(open);
+    }
+
     function checkMedicineSchedule() {
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-      const due = state.medications.find((medicine) => medicine.time === currentTime && !isTaken(medicine));
-      const key = due && `${due.id}-${today()}-${currentTime}`;
-      if (due && !shownReminders.has(key)) {
+      const due = state.medications.filter((medicine) => medicine.time === currentTime && !isTaken(medicine));
+      const key = `${today()}-${currentTime}`;
+      if (due.length && !shownReminders.has(key)) {
         shownReminders.add(key);
         showMedicineReminder(due);
       }
-    }
-
-    async function setTaken(id) {
-      window.VitalVoice?.onMedicineDone(id);
-      await api(`/api/dashboard/medicamentos/${id}`, { method: "PATCH", body: JSON.stringify({ takenOn: today() }) });
-      await loadDashboard();
     }
 
     /* ---------- Carregar tudo do banco ---------- */
@@ -613,19 +618,16 @@
       const data = await api("/api/dashboard");
       Object.assign(state, data);
       renderAll();
+      syncMedicineReminder();
       checkMedicineSchedule();
     }
 
-    // TOMEI na lista, tocar uma música e remover música
+    // Tocar uma música e remover música
     document.querySelector(".layout").addEventListener("click", async (event) => {
-      const take = event.target.closest("[data-take-med]");
       const play = event.target.closest("[data-play-music]");
       const remove = event.target.closest("[data-remove]");
       try {
-        if (take) {
-          take.disabled = true;
-          await setTaken(Number(take.dataset.takeMed));
-        } else if (play) {
+        if (play) {
           playingMusicId = Number(play.dataset.playMusic);
           renderMusic();
         } else if (remove && confirm("Remover esta música do painel?")) {
@@ -633,21 +635,15 @@
           await loadDashboard();
         }
       } catch (error) {
-        if (take) take.disabled = false;
         alert(error.message);
       }
-    });
-
-    document.getElementById("confirmMedicine").addEventListener("click", async () => {
-      closeMedicineReminder();
-      if (reminderMedicationId) await setTaken(reminderMedicationId).catch(() => {});
     });
 
     // "Lembrar mais tarde" e o × adiam o aviso: a Vital lembra de novo em 10 minutos
     function snoozeMedicine() {
       closeMedicineReminder();
-      const med = state.medications.find((item) => item.id === reminderMedicationId);
-      if (med) window.VitalVoice?.onMedicineSnooze(med);
+      const medicines = state.medications.filter((item) => reminderMedications.includes(item.id));
+      if (medicines.length) window.VitalVoice?.onMedicineSnooze(medicines);
     }
 
     document.getElementById("snoozeMedicine").addEventListener("click", snoozeMedicine);

@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VitalCare — Login</title>
+<title>VitalCare | Login</title>
 <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/vc.css">
 <link rel="stylesheet" href="login.css">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -41,7 +41,6 @@
 <section class="auth-image">
   <div class="image-overlay"></div>
   <div class="image-content">
-    <span class="image-badge">Cuidado inteligente para idosos</span>
     <h1>“Cuidar é estar<br>presente, mesmo<br>quando você não pode<br>estar por perto.”</h1>
   </div>
 </section>
@@ -49,7 +48,6 @@
 <section class="auth-panel">
 <div class="auth-content">
 
-<span class="safe-title">ÁREA SEGURA VITALCARE</span>
 <h2>Que bom ter<br>você de volta.</h2>
 <p class="intro">Acesse sua conta para acompanhar cuidados, alertas e momentos importantes.</p>
 
@@ -61,7 +59,7 @@
   </label>
   <label class="panel-option">
     <input type="radio" name="painel" value="cuidador">
-    <span><strong>Painel do cuidador</strong><small>Histórico, cadastros e aviso do TOMEI</small></span>
+    <span><strong>Painel do cuidador</strong><small>Histórico, cadastros e aviso das doses</small></span>
   </label>
 </fieldset>
 
@@ -75,7 +73,6 @@
 <form id="loginForm" class="auth-form">
   <label for="login-email">E-mail</label>
   <div class="input-box">
-    <span class="input-icon">✉</span>
     <input id="login-email" type="email" placeholder="email@exemplo.com" autocomplete="email" required>
   </div>
 
@@ -85,9 +82,8 @@
   </div>
 
   <div class="input-box">
-    <span class="input-icon">▣</span>
     <input id="login-password" type="password" placeholder="Digite sua senha" autocomplete="current-password" required>
-    <button class="show-password" type="button" onclick="togglePassword('login-password')">◉</button>
+    <button class="show-password" type="button" onclick="togglePassword('login-password')">Ver</button>
   </div>
 
   <button class="main-button" type="submit">Entrar na minha conta</button>
@@ -102,26 +98,22 @@
 <form id="registerForm" class="auth-form hidden">
   <label for="register-name">Nome completo</label>
   <div class="input-box">
-    <span class="input-icon">●</span>
     <input id="register-name" type="text" placeholder="Digite seu nome" autocomplete="name" required>
   </div>
 
   <label for="register-email">E-mail</label>
   <div class="input-box">
-    <span class="input-icon">✉</span>
     <input id="register-email" type="email" placeholder="email@exemplo.com" autocomplete="email" required>
   </div>
 
   <label for="register-password">Senha</label>
   <div class="input-box">
-    <span class="input-icon">▣</span>
     <input id="register-password" type="password" placeholder="Crie uma senha" minlength="6" autocomplete="new-password" required>
-    <button class="show-password" type="button" onclick="togglePassword('register-password')">◉</button>
+    <button class="show-password" type="button" onclick="togglePassword('register-password')">Ver</button>
   </div>
 
   <label for="register-confirm">Confirmar senha</label>
   <div class="input-box">
-    <span class="input-icon">▣</span>
     <input id="register-confirm" type="password" placeholder="Digite a senha novamente" minlength="6" autocomplete="new-password" required>
   </div>
 

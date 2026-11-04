@@ -91,7 +91,7 @@ const SCHEMA = [
     lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_temperatura_usuario (id_usuario, lido_em)
   )`,
-  // Cada "TOMEI" do idoso (botão ou voz): o painel do cuidador mostra o horário e o histórico
+  // Cada dose confirmada pelo idoso (por voz): o painel do cuidador mostra o horário e o histórico
   `CREATE TABLE IF NOT EXISTS vc_tomadas (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,

@@ -12,7 +12,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { PLANOS, formatarPreco } from "../shared/planos.js";
 import { PROPOSTA } from "./proposta.js";
 import { geminiGenerate, toGeminiContents } from "./gemini.js";
-import { siteAnswer, vitalAnswer } from "./assistente-local.js";
+import { siteAnswer, takenAnswer, vitalAnswer } from "./assistente-local.js";
 
 const MODEL = "claude-opus-5-5";
 const MAX_HISTORY = 20;          // últimas mensagens enviadas para a IA
@@ -38,7 +38,7 @@ Como usar
 2. Conexão dos dispositivos: conectar os sensores de saúde e do ambiente.
 3. Acompanhamento pelo painel: ver data, horário, temperatura, lembretes e as leituras dos sensores.
 4. Recebimento de alertas: avisos de medicamentos, horários programados e alterações no ambiente.
-Para usar o painel, a pessoa cria uma conta na página Login (com e-mail e senha ou com a conta Google). O cuidador cadastra medicamentos, consultas e lembretes no "Painel do cuidador" (botões "+ Adicionar"), onde também vê o histórico dos sensores e recebe aviso quando o idoso toca em "TOMEI". O painel do idoso mostra só o clima, os lembretes, os remédios do dia (com o botão "TOMEI") e a música (Spotify ou YouTube). Para medir batimentos e oxigenação, basta apoiar o dedo no sensor; as leituras aparecem no painel em poucos segundos.
+Para usar o painel, a pessoa cria uma conta na página Login (com e-mail e senha ou com a conta Google). O cuidador cadastra medicamentos, consultas e lembretes no "Painel do cuidador" (botões "+ Adicionar"), onde também vê o histórico dos sensores e recebe aviso quando o idoso confirma um remédio. O painel do idoso mostra só o clima, os lembretes, os remédios do dia (cada um como "Pendente" ou "Concluído") e a música (Spotify ou YouTube). Na hora do remédio aparece um aviso na tela; depois de tomar, a pessoa diz "Vital, tomei o remédio das 12h" e ele fica concluído. Para medir batimentos e oxigenação, basta apoiar o dedo no sensor; as leituras aparecem no painel em poucos segundos.
 
 Planos (todos incluem o equipamento, a instalação e o software gratuito)
 ${planos}
@@ -81,7 +81,7 @@ Como responder
 Dados da pessoa
 - Cada mensagem da pessoa vem acompanhada de um bloco <painel> com a data e a hora atuais, os remédios com o horário e se já foram tomados hoje, as consultas, os lembretes, o clima e as últimas leituras dos sensores. Use somente esses dados para falar da rotina dela; se algo não estiver no painel, diga que não encontrou e sugira pedir ao cuidador para cadastrar pelo Painel do cuidador.
 - Leituras de sensor antigas (com mais de 10 minutos) podem estar desatualizadas: avise isso se for falar delas.
-- Quando a pessoa disser que já tomou um remédio, use a ferramenta marcar_remedio_tomado com o id do remédio certo e depois confirme em uma frase. Se não estiver claro qual remédio foi, pergunte antes. Nunca marque um remédio que a pessoa não disse que tomou.
+- Quando a pessoa disser que já tomou um remédio, pelo nome ou pelo horário ("o remédio das 12h"), use a ferramenta marcar_remedio_tomado com o id do remédio certo e depois confirme em uma frase. Se não estiver claro qual remédio foi, pergunte antes. Nunca marque um remédio que a pessoa não disse que tomou.
 
 Você também pode conversar sobre o dia a dia, fazer companhia e responder dúvidas sobre o VitalCare.
 
@@ -365,6 +365,18 @@ export function registerAssistantRoutes(app, dashboard) {
       return `Pronto: ${med.name} marcado como tomado hoje.`;
     };
 
+    // "Vital, tomei o remédio das 12h": resolve aqui mesmo, sem esperar a IA
+    const taken = takenAnswer(messages.at(-1).content, data, context, userName);
+    if (taken) {
+      try {
+        for (const id of taken.takeMedicationIds) await markTaken(id);
+        return res.json({ reply: taken.reply, changed });
+      } catch (error) {
+        console.error("Vital: erro ao marcar o remédio:", error.message);
+        return res.status(500).json({ message: "Não consegui marcar o remédio agora. Tente de novo." });
+      }
+    }
+
     const provider = aiProvider();
     if (provider) {
       try {
@@ -376,9 +388,7 @@ export function registerAssistantRoutes(app, dashboard) {
     }
 
     try {
-      const answer = vitalAnswer(messages.at(-1).content, data, context, userName);
-      if (answer.takeMedicationId) await markTaken(answer.takeMedicationId);
-      return res.json({ reply: answer.reply, changed });
+      return res.json({ reply: vitalAnswer(messages.at(-1).content, data, context, userName).reply, changed });
     } catch (error) {
       console.error("Vital: erro nas respostas prontas:", error.message);
       return res.status(500).json({ message: "Não consegui responder agora. Tente de novo." });

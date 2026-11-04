@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VitalCare — Instruções</title>
+<title>VitalCare | Instruções</title>
 <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" />
 <link rel="stylesheet" href="/vc.css" />
 </head>
 <body>
@@ -39,12 +39,12 @@
   <section class="page-hero">
     <div class="container">
       <h1>Como utilizar o VitalCare?</h1>
-      <p class="lead">Um sistema desenvolvido para tornar o acompanhamento diário mais simples, acessível e organizado.</p>
+      <p class="lead">Quatro passos, da instalação aos avisos.</p>
 
       <div class="video-placeholder">
         <span class="play-ring" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4.5v15L19.5 12z"/></svg></span>
         <h2>Vídeo demonstrativo</h2>
-        <p>Assista ao Vitalcare em ação (vídeo disponível em breve)</p>
+        <p>Disponível em breve.</p>
       </div>
     </div>
   </section>
@@ -56,30 +56,30 @@
         <h2>Passo a passo</h2>
       </div>
 
-      <ol class="timeline" data-reveal style="margin: 0; padding: 0; list-style: none;">
+      <ol class="timeline" style="margin: 0; padding: 0; list-style: none;">
         <li class="step">
-          <span class="step-num">01</span>
+          <span class="step-num">1</span>
           <article class="card">
             <h3>Configuração inicial</h3>
             <p>Configure os dados do usuário, horários de medicamentos, compromissos e preferências de monitoramento.</p>
           </article>
         </li>
         <li class="step">
-          <span class="step-num">02</span>
+          <span class="step-num">2</span>
           <article class="card">
             <h3>Conexão dos dispositivos</h3>
             <p>Conecte os sensores responsáveis pela coleta das informações de saúde e monitoramento do ambiente.</p>
           </article>
         </li>
         <li class="step">
-          <span class="step-num">03</span>
+          <span class="step-num">3</span>
           <article class="card">
             <h3>Acompanhamento pelo painel</h3>
             <p>Visualize data, horário, temperatura, lembretes e informações coletadas pelos sensores.</p>
           </article>
         </li>
         <li class="step">
-          <span class="step-num">04</span>
+          <span class="step-num">4</span>
           <article class="card">
             <h3>Recebimento de alertas</h3>
             <p>O sistema emite avisos relacionados a medicamentos, horários programados e alterações identificadas no ambiente.</p>
@@ -91,7 +91,7 @@
 
   <!-- ================= RECURSOS + LEMBRAR ================= -->
   <section class="section">
-    <div class="container grid" style="grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start;" data-reveal>
+    <div class="container grid" style="grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start;">
       <article class="card">
         <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 11h2l1.5-3 2 6 1.5-3h3"/></svg></span>
         <h2 style="font-size: 24px; margin-bottom: 20px;">Recursos principais</h2>
@@ -111,8 +111,8 @@
         </div>
       </article>
 
-      <article class="card" style="border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); background: color-mix(in srgb, var(--warn-soft) 55%, var(--surface));">
-        <span class="icon-box" style="background: var(--warn-soft); color: var(--warn-ink); border-color: color-mix(in srgb, var(--warn) 45%, transparent);"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg></span>
+      <article class="card" style="background: var(--warn-soft); border-color: transparent;">
+        <span class="icon-box" style="color: var(--warn-ink);"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg></span>
         <h2 style="font-size: 24px; margin-bottom: 20px;">Importante lembrar</h2>
         <ul class="dot-list">
           <li>As informações coletadas não substituem avaliação, diagnóstico ou acompanhamento realizado por profissionais de saúde.</li>
@@ -127,14 +127,12 @@
 
 <footer class="site-footer">
   <div class="container">
-    <p>© 2026 VitalCare•Todos os direitos reservados</p>
-    <p>Feito com <span class="heart">♥</span> para você</p>
+    <p>© 2026 VitalCare. Trabalho de Conclusão de Curso, UNASP.</p>
   </div>
 </footer>
 
 <style>
   @media (max-width: 860px) { main .section > .container.grid[style] { grid-template-columns: 1fr !important; } }
-  .timeline > li.reveal { transform: translateX(-20px); }
 </style>
 <script src="/vc.js"></script>
 </body>

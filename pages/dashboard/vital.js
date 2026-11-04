@@ -14,7 +14,7 @@
   const WAKE_RE = /\b(?:vital|vitau|vitao|vitar|vitall)\b/;
   const QUESTION_WINDOW_MS = 9000;      // depois de "Vital", quanto tempo espera a pergunta
   const HISTORY_RESET_MS = 10 * 60000;  // conversa "esquece" depois de 10 min parada
-  const MED_REPEAT_MS = 3 * 60000;      // repete o aviso do remédio enquanto não confirmar
+  const MED_REPEAT_MS = 3 * 60000;      // repete o aviso do remédio enquanto a pessoa não confirmar por voz
   const MED_MAX_REPEATS = 3;
   const SNOOZE_MS = 10 * 60000;         // "Lembrar mais tarde"
   // de quanto em quanto tempo a Vital repete um alerta de sensor enquanto ninguém tocar em "Entendi"
@@ -38,7 +38,7 @@
   const sensorAlertAt = {};
   let audioContext = null;
   let alarmTimer = null;
-  const medRepeat = {};        // id -> { count, timer }
+  let medRepeatTimer = null;
   const snoozed = {};          // id -> horário (ms) para avisar de novo
 
   /* ---------- utilidades ---------- */
@@ -228,7 +228,7 @@
     if (!match) return;
     // o que veio depois de "Vital" é a pergunta
     const after = normal.slice(match.index + match[0].length).trim();
-    if (after.split(" ").filter(Boolean).length >= 2) {
+    if (after.split(" ").filter(Boolean).length >= 2 || after === "tomei") {
       ask(after);
     } else {
       mode = "question";
@@ -346,7 +346,6 @@
     root.setAttribute("aria-label", "Vital, assistente de voz");
     root.innerHTML = `
       <button class="vital-orb" type="button" aria-label="Abrir ou fechar a Vital" aria-expanded="false">
-        <span class="vital-ring"></span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
       </button>
       <div class="vital-card" hidden>
@@ -449,33 +448,31 @@
     speak(spoken || text);
   }
 
-  // Remédio: chamado pelo painel quando abre o aviso "Hora do remédio"
-  function onMedicineDue(med) {
+  // Remédio: chamado pelo painel quando abre o aviso "Hora do remédio" (pode ser mais de um no mesmo horário)
+  function onMedicineDue(meds) {
     const name = firstName();
-    const dose = med.dose ? `, ${med.dose}` : "";
-    const sayIt = () => speak(`${name ? name + ", " : ""}está na hora do remédio ${med.name}${dose}. Quando tomar, toque em "Já tomei" ou diga: Vital, já tomei.`);
-    clearInterval(medRepeat[med.id]?.timer);
-    medRepeat[med.id] = { count: 1, timer: null };
-    sayIt();
-    medRepeat[med.id].timer = setInterval(() => {
-      const current = state.medications.find((item) => item.id === med.id);
+    const sayIt = (list) => {
+      const many = list.length > 1;
+      const names = list.map((med) => `${med.name}${med.dose ? `, ${med.dose}` : ""}`).join(" e ");
+      speak(`${name ? name + ", " : ""}está na hora ${many ? "dos remédios" : "do remédio"} ${names}. Quando tomar, diga: Vital, tomei ${many ? "os remédios" : "o remédio"} das ${spokenTime(list[0].time)}.`);
+    };
+    let count = 1;
+    clearInterval(medRepeatTimer);
+    sayIt(meds);
+    medRepeatTimer = setInterval(() => {
+      const pending = state.medications.filter((item) => meds.some((med) => med.id === item.id) && !isTaken(item));
       const stillOpen = !document.getElementById("medicineReminder").classList.contains("hidden");
-      if (!current || isTaken(current) || !stillOpen || medRepeat[med.id].count >= MED_MAX_REPEATS) {
-        clearInterval(medRepeat[med.id].timer);
+      if (!pending.length || !stillOpen || count >= MED_MAX_REPEATS) {
+        clearInterval(medRepeatTimer);
         return;
       }
-      medRepeat[med.id].count++;
-      sayIt();
+      count++;
+      sayIt(pending);
     }, MED_REPEAT_MS);
   }
-  function onMedicineDone(id) {
-    clearInterval(medRepeat[id]?.timer);
-    delete snoozed[id];
-    synth?.cancel();
-  }
-  function onMedicineSnooze(med) {
-    clearInterval(medRepeat[med.id]?.timer);
-    snoozed[med.id] = Date.now() + SNOOZE_MS;
+  function onMedicineSnooze(meds) {
+    clearInterval(medRepeatTimer);
+    meds.forEach((med) => { snoozed[med.id] = Date.now() + SNOOZE_MS; });
     synth?.cancel();
     speak("Tudo bem, eu lembro de novo daqui a 10 minutos.");
   }
@@ -494,12 +491,10 @@
     const hi = name ? `${name}, ` : "";
 
     // remédios adiados ("Lembrar mais tarde")
-    for (const [id, when] of Object.entries(snoozed)) {
-      if (Date.now() < when) continue;
-      delete snoozed[id];
-      const med = state.medications.find((item) => String(item.id) === id);
-      if (med && !isTaken(med)) showMedicineReminder(med);
-    }
+    const awake = Object.keys(snoozed).filter((id) => Date.now() >= snoozed[id]);
+    awake.forEach((id) => delete snoozed[id]);
+    const backDue = state.medications.filter((item) => awake.includes(String(item.id)) && !isTaken(item));
+    if (backDue.length) showMedicineReminder(backDue);
 
     // consultas: véspera (às 19h), 1 hora antes e 15 minutos antes
     for (const item of state.appointments) {
@@ -588,5 +583,5 @@
   }
 
   // simulateHeard: usado só em testes, para simular o que o microfone ouviu
-  window.VitalVoice = { init, onMedicineDue, onMedicineDone, onMedicineSnooze, checkSensors, stopAlarm, speak, ask, simulateHeard: handleHeard };
+  window.VitalVoice = { init, onMedicineDue, onMedicineSnooze, checkSensors, stopAlarm, speak, ask, simulateHeard: handleHeard };
 }());
