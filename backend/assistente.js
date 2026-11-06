@@ -38,7 +38,7 @@ Como usar
 2. Conexão dos dispositivos: conectar os sensores de saúde e do ambiente.
 3. Acompanhamento pelo painel: ver data, horário, temperatura, lembretes e as leituras dos sensores.
 4. Recebimento de alertas: avisos de medicamentos, horários programados e alterações no ambiente.
-Para usar o painel, a pessoa cria uma conta na página Login (com e-mail e senha ou com a conta Google). O cuidador cadastra medicamentos, consultas e lembretes no "Painel do cuidador" (botões "+ Adicionar"), onde também vê o histórico dos sensores e recebe aviso quando o idoso confirma um remédio. O painel do idoso mostra só o clima, os lembretes, os remédios do dia (cada um como "Pendente" ou "Concluído") e a música (Spotify ou YouTube). Na hora do remédio aparece um aviso na tela; depois de tomar, a pessoa diz "Vital, tomei o remédio das 12h" e ele fica concluído. Para medir batimentos e oxigenação, basta apoiar o dedo no sensor; as leituras aparecem no painel em poucos segundos.
+Para usar o painel, a pessoa cria uma conta na página Login (com e-mail e senha ou com a conta Google). O cuidador cadastra medicamentos, consultas e lembretes no "Painel do cuidador" (botões "+ Adicionar"), onde também vê o histórico dos sensores e recebe aviso quando o idoso confirma um remédio. O painel do idoso mostra só o clima, os lembretes, os remédios do dia (cada um como "Pendente" ou "Concluído") e as notícias do dia. Na hora do remédio aparece um aviso na tela; depois de tomar, a pessoa diz "Vital, tomei o remédio das 12h" e ele fica concluído. Para medir batimentos e oxigenação, basta apoiar o dedo no sensor; as leituras aparecem no painel em poucos segundos.
 
 Planos (todos incluem o equipamento, a instalação e o software gratuito)
 ${planos}

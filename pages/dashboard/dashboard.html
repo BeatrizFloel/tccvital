@@ -7,13 +7,13 @@
   <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Rubik:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baskervville:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="/vc.css" />
   <link rel="stylesheet" href="painel.css" />
   <style>
     /* ---------- Painel do idoso: letras e botões maiores ---------- */
     .elder-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 24px; margin: 12px 4px 18px; }
-    .elder-top h1 { font-size: clamp(28px, 3.4vw, 38px); }
+    .elder-top h1 { color: var(--accent-ink); font-size: clamp(30px, 3.6vw, 42px); }
     .elder-top p:empty { display: none; }
     .elder-top p { color: var(--bad-ink); }
     .elder-top .clock { color: var(--ink); font-size: clamp(40px, 5vw, 58px); }
@@ -22,31 +22,31 @@
     .day-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 4px 30px; }
     .day-head h2 { font-size: 22px; }
     .elder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    /* Lembretes são bilhetes do cuidador: único lugar com letra de mão */
+    /* Lembretes são bilhetes do cuidador */
     .reminder-list { gap: 12px; }
     .reminder-list .reminder-item { border: 0; border-radius: 4px; background: var(--papel); color: var(--on-papel); }
-    .reminder-list .item-title { font-family: var(--font-hand); font-size: 30px; font-weight: 700; line-height: 1.1; }
+    .reminder-list .item-title { font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.2; }
     .reminder-list .reminder-meta { color: var(--on-papel); font-size: 16px; }
     .reminder-list .time-pill { color: var(--on-papel); font-size: 18px; }
 
-    /* ---------- Música (Spotify / YouTube) ---------- */
-    .music-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-    .music-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 4px 4px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-2); }
-    .music-chip.active { border-color: var(--accent); background: var(--accent-soft); }
-    .music-chip button { border: 0; background: transparent; font: inherit; cursor: pointer; }
-    .music-play { display: inline-flex; align-items: center; gap: 8px; padding: 6px 4px; font-size: 15px; font-weight: 600; color: var(--ink); }
-    .music-tag { padding: 2px 8px; border-radius: 999px; color: #fff; font-size: 11px; font-weight: 700; }
-    .music-tag.spotify { background: #1DB954; color: #062b12; }
-    .music-tag.youtube { background: #E62117; }
-    .music-chip .item-remove { width: 28px; height: 28px; font-size: 16px; }
-    .music-player iframe { display: block; width: 100%; border: 0; border-radius: 14px; }
-    .music-player .yt { aspect-ratio: 16 / 9; height: auto; }
-    .music-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-    .music-links a { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; }
-    .music-links a:hover { border-color: var(--accent); }
-    .music-player:empty { display: none; }
+    /* ---------- Notícias: uma manchete grande e poucas outras, como a primeira página de um jornal ---------- */
+    .news { margin-top: 16px; }
+    .news-source { color: var(--muted); font-size: 15px; }
+    .news-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px clamp(20px, 3vw, 36px); }
+    .news-grid > * { min-width: 0; }
+    .news-lead img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; margin-bottom: 14px; border-radius: var(--radius-sm); background: var(--bg-alt); }
+    .news-lead a { color: inherit; }
+    .news-lead h3 { font-size: clamp(23px, 2.5vw, 29px); font-weight: 700; line-height: 1.2; }
+    .news-lead p { margin-top: 8px; color: var(--ink-2); font-size: 18px; line-height: 1.5; }
+    .news-more { display: grid; align-content: start; }
+    .news-more li { padding-block: 14px; border-top: 1px solid var(--line-strong); }
+    .news-more li:first-child { padding-top: 0; border-top: 0; }
+    .news-more a { display: block; color: var(--ink); font-size: 19px; font-weight: 600; line-height: 1.3; }
+    .news a:hover h3, .news-more a:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .news-time { display: block; margin-top: 4px; color: var(--muted); font-size: 16px; font-weight: 400; }
+    .news-empty { color: var(--ink-2); font-size: 18px; }
 
-    @media (max-width: 860px) { .elder-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 860px) { .elder-grid, .news-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -118,37 +118,13 @@
       </div>
   </section>
 
-  <section class="panel" style="margin-top: 16px;">
+  <section class="panel news" aria-labelledby="newsTitle">
     <div class="panel-header">
-      <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Música</h2>
-      <button class="panel-add" type="button" id="openMusicForm">+ Conectar Spotify ou YouTube</button>
+      <h2 id="newsTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h13v14a1 1 0 0 0 1 1H6a2 2 0 0 1-2-2V5Z"/><path d="M17 9h3v9a2 2 0 0 1-2 2"/><path d="M7.5 9h6M7.5 12.5h6M7.5 16h4"/></svg>Notícias de hoje</h2>
+      <span class="news-source">Fonte: Agência Brasil</span>
     </div>
-    <div id="musicList" class="music-list"></div>
-    <div id="musicPlayer" class="music-player"></div>
-    <div class="music-links">
-      <a href="https://open.spotify.com/" target="_blank" rel="noopener"><span class="music-tag spotify">Spotify</span>Abrir o Spotify</a>
-      <a href="https://music.youtube.com/" target="_blank" rel="noopener"><span class="music-tag youtube">YouTube</span>Abrir o YouTube Music</a>
-    </div>
+    <div id="newsList"><p class="news-empty">Buscando as notícias...</p></div>
   </section>
-
-  <div id="musicModal" class="modal hidden">
-    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="musicFormTitle">
-      <button id="closeMusicForm" class="modal-close" type="button" aria-label="Fechar">×</button>
-      <form id="musicForm" novalidate>
-        <h3 id="musicFormTitle" class="dash-form-title">Conectar música</h3>
-        <p class="dash-form-hint">No Spotify ou no YouTube, toque em “Compartilhar” → “Copiar link” e cole aqui. Vale música, álbum, playlist ou vídeo.</p>
-        <div class="dash-form-grid">
-          <div class="field dash-field full"><label for="musicUrl">Link</label><input id="musicUrl" name="url" type="url" placeholder="https://open.spotify.com/playlist/..." required autocomplete="off" /></div>
-          <div class="field dash-field full"><label for="musicTitle">Nome (opcional)</label><input id="musicTitle" name="title" type="text" maxlength="120" placeholder="Ex.: Músicas da Jovem Guarda" autocomplete="off" /></div>
-        </div>
-        <p id="musicFormError" class="dash-form-error" role="alert"></p>
-        <div class="medicine-actions">
-          <button class="btn btn-primary" type="submit">Salvar</button>
-          <button id="cancelMusicForm" class="btn btn-ghost" type="button">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   <div id="medicineReminder" class="modal hidden" aria-live="assertive">
     <div class="modal-box medicine-alert" role="dialog" aria-modal="true" aria-labelledby="reminderTitle">
@@ -174,11 +150,11 @@
 <script src="vital.js"></script>
 <script>
     /* ================= Painel do idoso =================
-       Mostra só o clima, os lembretes, os remédios (cadastrados pelo cuidador) e a música.
+       Mostra só o clima, os lembretes, os remédios (cadastrados pelo cuidador) e as notícias do dia.
        Na hora do remédio aparece um aviso. A pessoa confirma por voz ("Vital, tomei o remédio das 12h"):
        a confirmação fica salva no banco e aparece no painel do cuidador.
        Os sensores continuam sendo lidos para o alarme de emergência (gás, oxigenação...). */
-    const state = { medications: [], appointments: [], reminders: [], music: [], location: null, gas: null, heart: null, temperature: null };
+    const state = { medications: [], appointments: [], reminders: [], location: null, gas: null, heart: null, temperature: null };
     let weather = null;
     let reminderMedications = [];   // ids dos remédios do aviso aberto
     const shownReminders = new Set();
@@ -459,100 +435,39 @@
       });
     }
 
-    /* ---------- Música: links do Spotify e do YouTube tocando dentro do painel ---------- */
-    let playingMusicId = null;
-
-    // Converte o link copiado do app em { tipo, link limpo, endereço do player }
-    function musicSource(link) {
-      let url;
-      try { url = new URL(String(link).trim()); } catch (error) { return null; }
-      const host = url.hostname.replace(/^(www|m)\./, "");
-      if (host === "open.spotify.com") {
-        const match = url.pathname.match(/^(?:\/intl-[a-z-]+)?(?:\/embed)?\/(track|album|playlist|artist|episode|show)\/([A-Za-z0-9]+)/);
-        return match && { kind: "spotify", url: `https://open.spotify.com/${match[1]}/${match[2]}`, embed: `https://open.spotify.com/embed/${match[1]}/${match[2]}` };
-      }
-      if (host === "youtube.com" || host === "music.youtube.com" || host === "youtu.be") {
-        const id = host === "youtu.be" ? url.pathname.slice(1) : url.searchParams.get("v") || (url.pathname.match(/^\/(?:shorts|embed|live)\/([\w-]+)/) || [])[1];
-        const list = url.searchParams.get("list");
-        const ok = (value) => value && /^[\w-]+$/.test(value);
-        if (ok(id)) {
-          const extra = ok(list) ? `list=${list}` : "";
-          return { kind: "youtube", url: `https://www.youtube.com/watch?v=${id}${extra ? "&" + extra : ""}`, embed: `https://www.youtube.com/embed/${id}${extra ? "?" + extra : ""}` };
-        }
-        if (ok(list)) return { kind: "youtube", url: `https://www.youtube.com/playlist?list=${list}`, embed: `https://www.youtube.com/embed/videoseries?list=${list}` };
-      }
-      return null;
+    /* ---------- Notícias do dia (Agência Brasil, pelo servidor) ---------- */
+    function newsTime(iso) {
+      if (!iso) return "";
+      const date = new Date(iso);
+      const hour = date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      const sameDay = date.toDateString() === new Date().toDateString();
+      return `<span class="news-time">${sameDay ? `Hoje, às ${hour}` : date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</span>`;
     }
 
-    function renderMusic() {
-      const list = document.getElementById("musicList");
-      const items = state.music.map((item) => ({ ...item, source: musicSource(item.url) })).filter((item) => item.source);
-      if (!items.length) {
-        list.innerHTML = `<p class="empty-note" style="width: 100%;">Nenhuma música conectada. Toque em “+ Conectar Spotify ou YouTube” e cole o link de uma playlist.</p>`;
-        document.getElementById("musicPlayer").innerHTML = "";
-        return;
-      }
-      if (!items.some((item) => item.id === playingMusicId)) playingMusicId = items[0].id;
-
-      list.innerHTML = items.map((item) => `
-        <span class="music-chip${item.id === playingMusicId ? " active" : ""}">
-          <button class="music-play" type="button" data-play-music="${item.id}">
-            <span class="music-tag ${item.source.kind}">${item.source.kind === "spotify" ? "Spotify" : "YouTube"}</span>
-            ${escapeHtml(item.title || (item.source.kind === "spotify" ? "Spotify" : "YouTube"))}
-          </button>
-          ${removeButton("musicas", item.id)}
-        </span>`).join("");
-
-      const playing = items.find((item) => item.id === playingMusicId);
-      const player = document.getElementById("musicPlayer");
-      if (player.dataset.src !== playing.source.embed) {
-        player.dataset.src = playing.source.embed;
-        player.innerHTML = playing.source.kind === "spotify"
-          ? `<iframe src="${playing.source.embed}" height="352" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Player do Spotify"></iframe>`
-          : `<iframe class="yt" src="${playing.source.embed}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" title="Player do YouTube"></iframe>`;
-      }
-    }
-
-    function openMusicForm(show) {
-      document.getElementById("musicModal").classList.toggle("hidden", !show);
-      if (show) {
-        document.getElementById("musicForm").reset();
-        document.getElementById("musicFormError").textContent = "";
-        document.getElementById("musicUrl").focus();
-      }
-    }
-
-    document.getElementById("openMusicForm").addEventListener("click", () => openMusicForm(true));
-    document.getElementById("closeMusicForm").addEventListener("click", () => openMusicForm(false));
-    document.getElementById("cancelMusicForm").addEventListener("click", () => openMusicForm(false));
-    document.getElementById("musicModal").addEventListener("click", (event) => {
-      if (event.target.id === "musicModal") openMusicForm(false);
-    });
-
-    document.getElementById("musicForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const error = document.getElementById("musicFormError");
-      const source = musicSource(document.getElementById("musicUrl").value);
-      if (!source) {
-        error.textContent = "Esse link não é do Spotify nem do YouTube. Copie pelo botão “Compartilhar” do app.";
-        return;
-      }
-      const submit = event.target.querySelector('[type="submit"]');
-      submit.disabled = true;
+    async function loadNews() {
+      const box = document.getElementById("newsList");
       try {
-        const { id } = await api("/api/dashboard/musicas", {
-          method: "POST",
-          body: JSON.stringify({ url: source.url, title: document.getElementById("musicTitle").value.trim() })
-        });
-        playingMusicId = id;
-        openMusicForm(false);
-        await loadDashboard();
-      } catch (err) {
-        error.textContent = err.message;
-      } finally {
-        submit.disabled = false;
+        const { news } = await api("/api/noticias");
+        const [lead, ...others] = news;
+        box.innerHTML = `
+          <div class="news-grid">
+            <article class="news-lead">
+              <a href="${escapeHtml(lead.link)}" target="_blank" rel="noopener">
+                ${lead.image ? `<img src="${escapeHtml(lead.image)}" alt="" loading="lazy" onerror="this.remove()" />` : ""}
+                <h3>${escapeHtml(lead.title)}</h3>
+              </a>
+              <p>${escapeHtml(lead.summary)}</p>
+              ${newsTime(lead.publishedAt)}
+            </article>
+            <ul class="news-more">
+              ${others.map((item) => `<li><a href="${escapeHtml(item.link)}" target="_blank" rel="noopener">${escapeHtml(item.title)}${newsTime(item.publishedAt)}</a></li>`).join("")}
+            </ul>
+          </div>`;
+      } catch (error) {
+        // mantém as notícias que já estavam na tela
+        if (!box.querySelector(".news-grid")) box.innerHTML = `<p class="news-empty">As notícias não carregaram. Confira a internet. O painel tenta de novo em alguns minutos.</p>`;
       }
-    });
+    }
 
     /* ---------- Lembrete na hora do remédio ---------- */
     // "08:30" -> "8h30", "12:00" -> "12h"
@@ -606,7 +521,6 @@
     function renderAll() {
       renderMedications();
       renderReminders();
-      renderMusic();
       renderClimate();
       updateSensorAlerts();
     }
@@ -619,23 +533,6 @@
       checkMedicineSchedule();
     }
 
-    // Tocar uma música e remover música
-    document.querySelector(".layout").addEventListener("click", async (event) => {
-      const play = event.target.closest("[data-play-music]");
-      const remove = event.target.closest("[data-remove]");
-      try {
-        if (play) {
-          playingMusicId = Number(play.dataset.playMusic);
-          renderMusic();
-        } else if (remove && confirm("Remover esta música do painel?")) {
-          await api(`/api/dashboard/${remove.dataset.remove}/${remove.dataset.id}`, { method: "DELETE" });
-          await loadDashboard();
-        }
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
     // "Lembrar mais tarde" e o × adiam o aviso: a Vital lembra de novo em 10 minutos
     function snoozeMedicine() {
       closeMedicineReminder();
@@ -645,9 +542,6 @@
 
     document.getElementById("snoozeMedicine").addEventListener("click", snoozeMedicine);
     document.getElementById("closeReminder").addEventListener("click", snoozeMedicine);
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") openMusicForm(false);
-    });
 
     document.getElementById("refreshWeather").addEventListener("click", async () => {
       weather = null;
@@ -688,6 +582,7 @@
         return;
       }
 
+      loadNews();
       await loadWeather();
       if (await updateLocation(false)) await loadWeather();
 
@@ -698,6 +593,7 @@
       setInterval(() => { if (!document.hidden) loadDashboard().catch(() => {}); }, 60000);
       connectLive();
       setInterval(loadWeather, 15 * 60 * 1000);
+      setInterval(loadNews, 20 * 60 * 1000);
     }
 
     start();

@@ -125,6 +125,13 @@ const SENSOR_FIELDS = {
 };
 const HISTORY_SIZE = 30;
 
+// Limpeza do banco: o ESP manda uma leitura a cada 3 segundos e os gráficos só usam 7 dias.
+// O histórico de doses (vc_tomadas) não entra aqui: é registro de saúde e quase não ocupa espaço.
+const KEEP_READINGS_DAYS = 30;
+const CLEANUP_EVERY_MS = 60 * 60 * 1000;
+const CLEANUP_LIMIT = 20000;   // por tabela e por vez, para não travar o banco
+const READING_TABLES = ["vc_leituras_gas", "vc_leituras_cardiacas", "vc_leituras_temperatura"];
+
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -533,6 +540,34 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
     await writeLocal(data);
   }
 
+  // Apaga as leituras antigas da conta, no máximo uma vez por hora.
+  // Roda junto com o envio do sensor porque na Vercel não existe tarefa rodando em segundo plano.
+  const lastCleanup = new Map();
+
+  async function removeOldReadings(userId) {
+    if (Date.now() - (lastCleanup.get(userId) || 0) < CLEANUP_EVERY_MS) return;
+    lastCleanup.set(userId, Date.now());
+    try {
+      if (usingMysql()) {
+        const pool = await db();
+        for (const table of READING_TABLES) {
+          await pool.query(`DELETE FROM ${table} WHERE id_usuario = ? AND lido_em < NOW() - INTERVAL ${KEEP_READINGS_DAYS} DAY LIMIT ${CLEANUP_LIMIT}`, [userId]);
+        }
+        return;
+      }
+      const data = await readLocal();
+      const limit = Date.now() - KEEP_READINGS_DAYS * 86400000;
+      for (const table of READING_TABLES) {
+        const list = table.replace(/^vc_/, "");
+        data[list] = data[list].filter((row) => row.id_usuario !== userId || new Date(row.lido_em).getTime() >= limit);
+      }
+      await writeLocal(data);
+    } catch (error) {
+      // a leitura nova já foi salva: se a limpeza falhar, tenta de novo na próxima hora
+      console.error("Não consegui apagar as leituras antigas:", error.message);
+    }
+  }
+
   // Avisados a cada leitura salva (o tempo-real.js usa para mandar na hora para o app)
   const sensorListeners = new Set();
 
@@ -546,6 +581,7 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
     if (!userId) return { status: 404, reply: { message: "Nenhuma conta com esse e-mail." } };
 
     await saveReadings(userId, values);
+    await removeOldReadings(userId);
     sensorListeners.forEach((listener) => listener(userId));
     const reply = { message: "Leitura recebida.", saved: values, ignored };
     if (values.gas !== undefined) reply.level = values.gas;

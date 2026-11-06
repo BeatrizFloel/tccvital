@@ -76,3 +76,16 @@ CREATE TABLE IF NOT EXISTS vc_leituras_temperatura (
   lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_temperatura_usuario (id_usuario, lido_em)
 );
+
+-- Cada dose confirmada pelo idoso (por voz): o painel do cuidador mostra o horário e o histórico
+CREATE TABLE IF NOT EXISTS vc_tomadas (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_usuario INT NOT NULL,
+  id_medicamento INT NOT NULL,
+  nome VARCHAR(120) NOT NULL,
+  dose VARCHAR(60) NULL,
+  horario VARCHAR(5) NOT NULL,
+  dia DATE NOT NULL,
+  tomado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_tomada_usuario (id_usuario, tomado_em)
+);

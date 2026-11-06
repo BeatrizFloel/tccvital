@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node backend/server.js",
     "start": "node backend/server.js",
-    "banco": "node backend/testar-banco.js"
+    "banco": "node backend/testar-banco.js",
+    "simular": "node backend/simular-sensores.js"
   },
   "keywords": [],
   "author": "",

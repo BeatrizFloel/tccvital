@@ -7,6 +7,7 @@ import mysql from "mysql2/promise";
 import { sendEmail, hasMailConfig } from "./email.js";
 import { registerDashboardRoutes } from "./dashboard.js";
 import { registerAssistantRoutes } from "./assistente.js";
+import { registerNewsRoutes } from "./noticias.js";
 import { startRealtime } from "./tempo-real.js";
 import { PROPOSTA, FUNCOES, consultarCep, montarProposta, montarAvisoEquipe } from "./proposta.js";
 import crypto from "node:crypto";
@@ -94,7 +95,16 @@ function getPool() {
       enableKeepAlive: true,
       keepAliveInitialDelay: 10000,
       maxIdle: 2,
-      idleTimeout: 60000
+      idleTimeout: 60000,
+      timezone: "Z"
+    });
+
+    // Banco e site sempre em UTC. Sem isso, com o banco em horário de Brasília e a Vercel em UTC,
+    // toda leitura chega 3 horas "velha": o painel mostra "Sem leitura" e os alertas não disparam
+    pool.on("connection", (connection) => {
+      connection.query("SET time_zone = '+00:00'", (error) => {
+        if (error) console.error("Não consegui ajustar o fuso do banco:", error.message);
+      });
     });
 
     // Se a conexão tiver caído mesmo assim, tenta mais uma vez com uma conexão nova
@@ -246,6 +256,7 @@ app.post(["/login/google", "/api/login/google"], async (req, res) => {
 
 const dashboard = registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secretKey, tableName, readLocalUsers, backendDirectory });
 registerAssistantRoutes(app, dashboard);
+registerNewsRoutes(app, dashboard);
 
 /* ---------- Orçamento: proposta automática por e-mail (modelo em proposta.js) ---------- */
 app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
