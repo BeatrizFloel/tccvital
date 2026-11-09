@@ -13,6 +13,7 @@ import { PLANOS, formatarPreco } from "../shared/planos.js";
 import { PROPOSTA } from "./proposta.js";
 import { geminiGenerate, toGeminiContents } from "./gemini.js";
 import { siteAnswer, takenAnswer, vitalAnswer } from "./assistente-local.js";
+import { clientIp } from "./limite.js";
 
 const MODEL = "claude-opus-5-5";
 const MAX_HISTORY = 20;          // últimas mensagens enviadas para a IA
@@ -314,8 +315,7 @@ export function registerAssistantRoutes(app, dashboard) {
     const messages = cleanHistory(req.body?.messages);
     if (!messages) return res.status(400).json({ message: "Envie sua pergunta." });
 
-    const visitor = String(req.get("x-forwarded-for") || req.ip || "").split(",")[0].trim();
-    if (!allowed(`site:${visitor}`)) {
+    if (!allowed(`site:${clientIp(req)}`)) {
       return res.status(429).json({ message: "Você enviou muitas perguntas seguidas. Aguarde alguns minutos e tente de novo." });
     }
 

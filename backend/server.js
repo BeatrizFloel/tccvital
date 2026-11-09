@@ -10,6 +10,7 @@ import { registerAssistantRoutes } from "./assistente.js";
 import { registerNewsRoutes } from "./noticias.js";
 import { startRealtime } from "./tempo-real.js";
 import { PROPOSTA, FUNCOES, consultarCep, montarProposta, montarAvisoEquipe } from "./proposta.js";
+import { createLimiter, clientIp } from "./limite.js";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -17,7 +18,27 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const app = express();
-const secretKey = process.env.JWT_SECRET || "vitalcare-development-secret";
+const isProduction = process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
+
+// Chave que assina os tokens de login. Sem ela, qualquer um poderia criar um token falso.
+// Gere uma com:  node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+function loadSecretKey() {
+  const secret = String(process.env.JWT_SECRET || "").trim();
+  if (secret.length >= 32) return secret;
+  if (isProduction) {
+    throw new Error("JWT_SECRET ausente ou curta demais (mínimo 32 caracteres). Defina JWT_SECRET nas variáveis de ambiente.");
+  }
+  console.warn("AVISO: JWT_SECRET não definida no .env. Usando uma chave temporária (os logins valem só até reiniciar o servidor).");
+  return crypto.randomBytes(48).toString("base64url");
+}
+const secretKey = loadSecretKey();
+
+// Limites contra abuso (por IP e por e-mail)
+const loginByIp = createLimiter({ max: 30, windowMs: 15 * 60 * 1000 });
+const loginFailsByEmail = createLimiter({ max: 8, windowMs: 15 * 60 * 1000 });
+const signupByIp = createLimiter({ max: 10, windowMs: 60 * 60 * 1000 });
+const quoteByIp = createLimiter({ max: 3, windowMs: 60 * 60 * 1000 });
+const quoteByEmail = createLimiter({ max: 2, windowMs: 24 * 60 * 60 * 1000 });
 let pool;
 const tableName = process.env.DB_TABLE || "vital_care";
 if (!/^[A-Za-z0-9_]+$/.test(tableName)) throw new Error("DB_TABLE inválida");
@@ -60,6 +81,8 @@ app.get(["/api/login", "/login"], (_req, res) => res.status(200).json({ message:
 app.get(["/api/cadastro", "/cadastro"], (_req, res) => res.status(200).json({ message: "Use POST para criar o cadastro." }));
 
 const LOST_CONNECTION_CODES = new Set(["PROTOCOL_CONNECTION_LOST", "ECONNRESET", "ETIMEDOUT", "EPIPE", "ECONNREFUSED"]);
+const SAFE_TO_RETRY_RE = /^\s*(SELECT|SHOW|SET|CREATE TABLE IF NOT EXISTS)\b/i;
+const isSafeToRetry = (sql) => SAFE_TO_RETRY_RE.test(typeof sql === "string" ? sql : sql?.sql || "");
 
 function getPool() {
   if (!pool) {
@@ -107,13 +130,14 @@ function getPool() {
       });
     });
 
-    // Se a conexão tiver caído mesmo assim, tenta mais uma vez com uma conexão nova
+    // Se a conexão tiver caído mesmo assim, tenta mais uma vez com uma conexão nova.
+    // Só repete leituras: um INSERT/UPDATE/DELETE pode ter sido gravado antes da queda e duplicaria.
     const query = pool.query.bind(pool);
     pool.query = async (...args) => {
       try {
         return await query(...args);
       } catch (error) {
-        if (!LOST_CONNECTION_CODES.has(error.code)) throw error;
+        if (!LOST_CONNECTION_CODES.has(error.code) || !isSafeToRetry(args[0])) throw error;
         console.warn("Conexão com o banco caiu, tentando de novo:", error.code);
         return query(...args);
       }
@@ -129,6 +153,9 @@ app.post(["/cadastro", "/api/cadastro"], async (req, res) => {
 
   if (!name || !email || !password) return res.status(400).json({ message: "Nome, e-mail e senha são obrigatórios." });
   if (password.length < 6) return res.status(400).json({ message: "A senha deve ter pelo menos 6 caracteres." });
+  if (name.length > 120) return res.status(400).json({ message: "O nome pode ter no máximo 120 caracteres." });
+  if (email.length > 150 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Digite um e-mail válido." });
+  if (!signupByIp.allow(clientIp(req))) return res.status(429).json({ message: "Muitos cadastros seguidos. Tente novamente mais tarde." });
 
   try {
     if (!hasDatabaseConfig()) {
@@ -153,6 +180,8 @@ app.post(["/cadastro", "/api/cadastro"], async (req, res) => {
     const newUser = { id_usuario: result.insertId, nome: name, email };
     return res.status(201).json({ message: "Usuário criado com sucesso!", token: createToken(newUser), user: { id: newUser.id_usuario, name, email } });
   } catch (error) {
+    // Dois cadastros com o mesmo e-mail ao mesmo tempo: o UNIQUE do banco barra o segundo
+    if (error.code === "ER_DUP_ENTRY") return res.status(409).json({ message: "Usuário já cadastrado." });
     console.error("Erro no cadastro:", error.message);
     return res.status(500).json({ message: "Não foi possível salvar o cadastro." });
   }
@@ -163,12 +192,21 @@ app.post(["/login", "/api/login"], async (req, res) => {
   const password = String(req.body?.password || "");
   if (!email || !password) return res.status(400).json({ message: "E-mail e senha são obrigatórios." });
 
+  // Barra quem tenta muitas senhas: por IP (todas as tentativas) e por conta (só as erradas)
+  const tooMany = () => res.status(429).json({ message: "Muitas tentativas de login. Aguarde 15 minutos e tente de novo." });
+  if (!loginByIp.allow(clientIp(req)) || loginFailsByEmail.blocked(email)) return tooMany();
+  const wrongPassword = () => {
+    loginFailsByEmail.add(email);
+    return res.status(401).json({ message: "E-mail ou senha inválidos." });
+  };
+
   try {
     if (!hasDatabaseConfig()) {
       if (process.env.VERCEL === "1") return res.status(503).json({ message: "Banco de dados não configurado no deploy. Defina MYSQL_URL na Vercel." });
       const users = await readLocalUsers();
       const user = users.find((item) => item.email === email);
-      if (!user || !(await bcrypt.compare(password, user.senha))) return res.status(401).json({ message: "E-mail ou senha inválidos." });
+      if (!user || !(await bcrypt.compare(password, user.senha))) return wrongPassword();
+      loginFailsByEmail.reset(email);
       const token = createToken(user);
       return res.json({ message: "Login bem-sucedido!", token, user: { id: user.id_usuario, name: user.nome, email: user.email } });
     }
@@ -179,9 +217,8 @@ app.post(["/login", "/api/login"], async (req, res) => {
       [email]
     );
     const user = rows[0];
-    if (!user || !user.senha || !(await bcrypt.compare(password, user.senha))) {
-      return res.status(401).json({ message: "E-mail ou senha inválidos." });
-    }
+    if (!user || !user.senha || !(await bcrypt.compare(password, user.senha))) return wrongPassword();
+    loginFailsByEmail.reset(email);
 
     const token = createToken(user);
     return res.json({ message: "Login bem-sucedido!", token, user: { id: user.id_usuario, name: user.nome, email: user.email } });
@@ -238,11 +275,18 @@ app.post(["/login/google", "/api/login/google"], async (req, res) => {
       const [rows] = await db.query(`SELECT id_usuario, nome, email FROM ${tableName} WHERE email = ? LIMIT 1`, [email]);
       user = rows[0];
       if (!user) {
-        const [result] = await db.query(
-          `INSERT INTO ${tableName} (nome, email, senha, data_cadastro) VALUES (?, ?, ?, CURDATE())`,
-          [name, email, randomPassword]
-        );
-        user = { id_usuario: result.insertId, nome: name, email };
+        try {
+          const [result] = await db.query(
+            `INSERT INTO ${tableName} (nome, email, senha, data_cadastro) VALUES (?, ?, ?, CURDATE())`,
+            [name, email, randomPassword]
+          );
+          user = { id_usuario: result.insertId, nome: name, email };
+        } catch (error) {
+          // Outro pedido criou a conta no mesmo instante: usa a que ficou salva
+          if (error.code !== "ER_DUP_ENTRY") throw error;
+          const [again] = await db.query(`SELECT id_usuario, nome, email FROM ${tableName} WHERE email = ? LIMIT 1`, [email]);
+          user = again[0];
+        }
       }
     }
 
@@ -272,6 +316,10 @@ app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ message: "Digite um e-mail válido." });
   if (cep.length !== 8) return res.status(400).json({ message: "Digite um CEP válido (8 números)." });
   if (!hasMailConfig()) return res.status(503).json({ message: "Envio de e-mail não configurado. Defina BREVO_API_KEY (chave de API do Brevo) no .env." });
+  // Evita que o formulário vire disparador de e-mails: poucos pedidos por IP e por destinatário
+  if (quoteByEmail.blocked(email) || !quoteByIp.allow(clientIp(req))) {
+    return res.status(429).json({ message: "Recebemos vários pedidos seguidos. Se precisar, fale com a equipe por e-mail." });
+  }
 
   const local = await consultarCep(cep);
   if (!local) return res.status(400).json({ message: "CEP não encontrado. Confira os números." });
@@ -283,6 +331,7 @@ app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
   // 1) proposta para o cliente (é o que importa para quem preencheu o formulário)
   try {
     await sendEmail({ to: { email, name: nome }, replyTo: teamEmail, subject: proposta.assunto, text: proposta.texto, html: proposta.html });
+    quoteByEmail.add(email);
   } catch (error) {
     console.error("Erro ao enviar a proposta:", error.message);
     return res.status(502).json({ message: error.publicMessage || "Não foi possível enviar o e-mail agora. Tente novamente." });
@@ -297,7 +346,10 @@ app.post(["/orcamento", "/api/orcamento"], async (req, res) => {
   return res.json({ message: "Pronto! Enviamos a proposta para o seu e-mail." });
 });
 
-app.use(express.static(projectRoot));
+// Só as páginas do site ficam públicas (o código do backend, o banco e o .ino não)
+app.get("/index.html", (_req, res) => res.sendFile(path.join(projectRoot, "index.html")));
+for (const file of ["vc.css", "vc.js"]) app.get(`/${file}`, (_req, res) => res.sendFile(path.join(projectRoot, file)));
+for (const folder of ["pages", "shared"]) app.use(`/${folder}`, express.static(path.join(projectRoot, folder)));
 
 export default app;
 

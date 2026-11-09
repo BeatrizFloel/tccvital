@@ -5,26 +5,27 @@ import jwt from "jsonwebtoken";
 import fs from "node:fs/promises";
 import path from "node:path";
 
+// Cada campo: [coluna no banco, tamanho máximo (igual ao VARCHAR da tabela), nome para a mensagem de erro]
 const LISTS = {
   medicamentos: {
     table: "vc_medicamentos",
-    fields: { name: "nome", dose: "dose", time: "horario" },
+    fields: { name: ["nome", 120, "nome"], dose: ["dose", 60, "dose"], time: ["horario", 5, "horário"] },
     required: ["name", "time"]
   },
   consultas: {
     table: "vc_consultas",
-    fields: { title: "titulo", doctor: "medico", date: "data", time: "horario" },
+    fields: { title: ["titulo", 120, "título"], doctor: ["medico", 120, "médico"], date: ["data", 10, "data"], time: ["horario", 5, "horário"] },
     required: ["title", "date", "time"]
   },
   lembretes: {
     table: "vc_lembretes",
-    fields: { title: "titulo", detail: "detalhe", time: "horario" },
+    fields: { title: ["titulo", 120, "título"], detail: ["detalhe", 200, "detalhe"], time: ["horario", 5, "horário"] },
     required: ["title", "time"]
   },
   // Músicas do idoso: links do Spotify ou do YouTube que tocam direto no painel
   musicas: {
     table: "vc_musicas",
-    fields: { title: "titulo", url: "url" },
+    fields: { title: ["titulo", 120, "título"], url: ["url", 200, "link"] },
     required: ["url"],
     check: (values) => MUSIC_URL_RE.test(values.url) ? null : "Cole um link do Spotify ou do YouTube."
   }
@@ -134,6 +135,17 @@ const READING_TABLES = ["vc_leituras_gas", "vc_leituras_cardiacas", "vc_leituras
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// Confere o formato E se a data existe (2026-13-45 e 2026-02-30 não passam)
+function isValidDate(value) {
+  const text = String(value || "");
+  if (!DATE_RE.test(text)) return false;
+  const [y, m, d] = text.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return y >= 1900 && y <= 2200 && date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+}
+
+const own = (object, key) => Object.hasOwn(object, key);
 
 export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secretKey, tableName, readLocalUsers, backendDirectory }) {
   const localPath = path.join(backendDirectory, ".data", "dashboard.json");
@@ -384,17 +396,19 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   }));
 
   app.post(["/dashboard/:list", "/api/dashboard/:list"], auth, handle(async (req, res) => {
+    if (!own(LISTS, req.params.list)) return res.status(404).json({ message: "Lista inexistente." });
     const config = LISTS[req.params.list];
-    if (!config) return res.status(404).json({ message: "Lista inexistente." });
 
     const values = {};
-    for (const [key, column] of Object.entries(config.fields)) {
-      values[column] = String(req.body?.[key] ?? "").trim().slice(0, 200) || null;
+    for (const [key, [column, max, label]] of Object.entries(config.fields)) {
+      const value = String(req.body?.[key] ?? "").trim();
+      if (value.length > max) return res.status(400).json({ message: `O campo ${label} pode ter no máximo ${max} caracteres.` });
+      values[column] = value || null;
     }
-    const missing = config.required.find((key) => !values[config.fields[key]]);
+    const missing = config.required.find((key) => !values[config.fields[key][0]]);
     if (missing) return res.status(400).json({ message: "Preencha todos os campos obrigatórios." });
     if (values.horario && !TIME_RE.test(values.horario)) return res.status(400).json({ message: "Horário inválido." });
-    if (values.data && !DATE_RE.test(values.data)) return res.status(400).json({ message: "Data inválida." });
+    if (values.data && !isValidDate(values.data)) return res.status(400).json({ message: "Data inválida." });
     const invalid = config.check?.(values);
     if (invalid) return res.status(400).json({ message: invalid });
 
@@ -415,8 +429,8 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   }));
 
   app.delete(["/dashboard/:list/:id", "/api/dashboard/:list/:id"], auth, handle(async (req, res) => {
+    if (!own(LISTS, req.params.list)) return res.status(404).json({ message: "Lista inexistente." });
     const config = LISTS[req.params.list];
-    if (!config) return res.status(404).json({ message: "Lista inexistente." });
     const id = Number(req.params.id);
 
     if (usingMysql()) {
@@ -433,9 +447,9 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   app.patch(["/dashboard/medicamentos/:id", "/api/dashboard/medicamentos/:id"], auth, handle(async (req, res) => {
     const id = Number(req.params.id);
     const takenOn = req.body?.takenOn ? String(req.body.takenOn) : null;
-    if (takenOn && !DATE_RE.test(takenOn)) return res.status(400).json({ message: "Data inválida." });
+    if (takenOn && !isValidDate(takenOn)) return res.status(400).json({ message: "Data inválida." });
 
-    await setMedicationTaken(req.userId, id, takenOn);
+    if (!(await setMedicationTaken(req.userId, id, takenOn))) return res.status(404).json({ message: "Remédio não encontrado." });
     return res.json({ message: "Atualizado." });
   }));
 
@@ -590,7 +604,7 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
 
   app.post(["/sensores", "/api/sensores", "/sensores/:tipo", "/api/sensores/:tipo"], handle(async (req, res) => {
     const tipo = req.params.tipo || "";
-    if (!(tipo in SENSOR_HELP)) return res.status(404).json({ message: "Sensor inexistente. Use gas, cardiaco ou temperatura." });
+    if (!own(SENSOR_HELP, tipo)) return res.status(404).json({ message: "Sensor inexistente. Use gas, cardiaco ou temperatura." });
     if (process.env.SENSOR_KEY && req.get("x-sensor-key") !== process.env.SENSOR_KEY) return res.status(401).json({ message: "Chave do sensor inválida." });
 
     const { status, reply } = await receiveSensors(req.body, tipo);
@@ -598,7 +612,7 @@ export function registerDashboardRoutes(app, { hasDatabaseConfig, getPool, secre
   }));
 
   return {
-    auth, handle, loadDashboardData, setMedicationTaken, isValidDate: (value) => DATE_RE.test(String(value || "")),
+    auth, handle, loadDashboardData, setMedicationTaken, isValidDate,
     loadSensors, receiveSensors, findSensorOwner, onSensors: (listener) => sensorListeners.add(listener)
   };
 }

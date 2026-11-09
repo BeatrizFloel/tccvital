@@ -5,6 +5,15 @@
       "maxDuration": 60
     }
   },
+  "redirects": [
+    { "source": "/backend/:path*", "destination": "/", "permanent": false },
+    { "source": "/esp32/:path*", "destination": "/", "permanent": false },
+    { "source": "/.data/:path*", "destination": "/", "permanent": false },
+    { "source": "/database.sql", "destination": "/", "permanent": false },
+    { "source": "/package.json", "destination": "/", "permanent": false },
+    { "source": "/package-lock.json", "destination": "/", "permanent": false },
+    { "source": "/.env.example", "destination": "/", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index.js" }
   ]
