@@ -15,12 +15,15 @@
     .notify-btn { padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; }
     .notify-btn[hidden] { display: none; }
     .stat-value .status { font-size: 12px; }
+    .stat-sub { margin-top: 4px; color: var(--muted); font-size: 13px; }
+    /* 5 cards (batimentos, oxigenação, gás, temperatura, remédios) */
+    .cards { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 
     /* ---------- Histórico (gráficos) ---------- */
     .range-tabs { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
     .range-tabs button { padding: 6px 12px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
     .range-tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
-    .history-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .history-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     .hc { position: relative; height: 190px; touch-action: pan-y; cursor: default; -webkit-user-select: none; user-select: none; }
     .hc svg { display: block; width: 100%; height: 100%; overflow: visible; }
     .hc .grid { stroke: var(--line); stroke-width: 1; }
@@ -141,6 +144,11 @@
       <div class="stat-value"><span id="nowGas">--</span><span id="nowGasStatus" class="panel-badge status"></span></div>
     </article>
     <article class="stat-card">
+      <div class="stat-label">Temperatura agora</div>
+      <div class="stat-value"><span id="nowTemp">--</span><span id="nowTempStatus" class="panel-badge status"></span></div>
+      <div class="stat-sub" id="nowHumidity"></div>
+    </article>
+    <article class="stat-card">
       <div class="stat-label">Remédios de hoje</div>
       <div class="stat-value"><span id="nowMeds">--</span><span id="nowMedsStatus" class="panel-badge status"></span></div>
     </article>
@@ -180,6 +188,15 @@
       <div class="hc" id="chartGas"></div>
       <div class="hc-summary" id="sumGas"></div>
       <p class="hc-note" id="noteGas"></p>
+    </article>
+    <article class="panel">
+      <div class="panel-header">
+        <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/><path d="M12 10v6"/></svg>Temperatura do ambiente</h2>
+        <span class="panel-badge">°C</span>
+      </div>
+      <div class="hc" id="chartTemp"></div>
+      <div class="hc-summary" id="sumTemp"></div>
+      <p class="hc-note" id="noteTemp"></p>
     </article>
   </section>
 
@@ -242,7 +259,7 @@
 <script>
     /* ================= Painel do cuidador =================
        Mesma conta do idoso (o protótipo manda as leituras para ela).
-       - Histórico dos batimentos, oxímetro e gás: GET /api/dashboard/historico
+       - Histórico dos batimentos, oxímetro, gás e temperatura: GET /api/dashboard/historico
        - Cadastra remédios, lembretes e consultas, que aparecem no painel do idoso
        - Avisa (tela, som e notificação) quando o idoso confirma um remédio por voz ou quando um remédio atrasa */
     const state = { medications: [], appointments: [], reminders: [], gas: null, heart: null, temperature: null };
@@ -359,6 +376,10 @@
         const label = gasStatus(gas.level);
         return [label, { Normal: "good", "Atenção": "warn", Perigo: "bad" }[label]];
       });
+      const temp = seriesOf(state.temperature, "celsius").at(-1);
+      show("nowTemp", "nowTempStatus", temp, temp && `${formatNumber(temp.value, 1)} °C`, () => temperatureStatus(temp.value));
+      const humidity = seriesOf(state.temperature, "humidity").at(-1);
+      document.getElementById("nowHumidity").textContent = humidity ? `Umidade ${formatNumber(humidity.value)}%` : "";
 
       const total = state.medications.length;
       const taken = state.medications.filter(isTaken).length;
@@ -395,7 +416,9 @@
       ppm: { el: "chartGas", sum: "sumGas", note: "noteGas", source: "gas", unit: "ppm", digits: 0, minSpan: 60, min: 0,
         limits: [[50, "warn", "atenção"], [200, "bad", "perigo"]],
         classify: (level) => { const label = gasStatus(level); return [label, { Normal: "good", "Atenção": "warn", Perigo: "bad" }[label]]; },
-        empty: "Nenhuma leitura de gás neste período." }
+        empty: "Nenhuma leitura de gás neste período." },
+      celsius: { el: "chartTemp", sum: "sumTemp", note: "noteTemp", source: "temperature", unit: "°C", digits: 1, minSpan: 6,
+        zone: [18, 26], classify: temperatureStatus, empty: "Nenhuma leitura de temperatura neste período." }
     };
 
     function niceStep(range, count) {
