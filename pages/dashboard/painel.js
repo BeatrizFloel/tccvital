@@ -221,8 +221,8 @@ function sensorAlerts() {
         `${intro} Está frio. Agasalhe-se, feche as janelas e tome algo quente.`);
     } else if (tone !== "good") {
       add("temp", tone, label === "Muito quente" ? "Casa muito quente" : "Casa quente",
-        `Temperatura média (${AVERAGE_MINUTES.celsius} min): ${value} °C. Beba água, use roupas leves e deixe o ar circular.`,
-        `${intro} Está ${label.toLowerCase()}. Beba água, use roupas leves e deixe o ar circular.`);
+        `Temperatura média (${AVERAGE_MINUTES.celsius} min): ${value} °C. Abra as janelas, beba água e use roupas leves.`,
+        `${intro} Está ${label.toLowerCase()}. Abra as janelas, beba água e use roupas leves.`);
     }
   }
   return alerts;

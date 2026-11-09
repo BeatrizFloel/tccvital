@@ -22,6 +22,11 @@
     .day-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 4px 30px; }
     .day-head h2 { font-size: 22px; }
     .elder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .elder-grid .wide { grid-column: 1 / -1; }
+    /* Temperatura da casa (DHT11): sempre visível, com a orientação do que fazer */
+    .temp-advice { margin: 12px 0 14px; color: var(--ink-2); font-size: 18px; font-weight: 500; line-height: 1.4; }
+    .temp-advice.warn { color: var(--warn-ink); }
+    .temp-advice.bad { color: var(--bad-ink); }
     /* Lembretes são bilhetes do cuidador */
     .reminder-list { gap: 12px; }
     .reminder-list .reminder-item { border: 0; border-radius: 4px; background: var(--papel); color: var(--on-papel); }
@@ -110,6 +115,20 @@
       </div>
 
       <div class="panel">
+        <div class="panel-header" style="margin-bottom: 0;">
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/><path d="M12 10v6"/></svg>Temperatura da casa</h2>
+          <span id="tempStatus" class="panel-badge status">Sem leitura</span>
+        </div>
+        <div class="weather-temp" id="tempValue" style="margin-top: 18px;">--</div>
+        <p class="temp-advice" id="tempAdvice">Aguardando o sensor de temperatura.</p>
+        <div class="weather-grid">
+          <div class="weather-box"><span>Umidade</span><strong id="tempHumidity">--</strong></div>
+          <div class="weather-box"><span>Média 30 min</span><strong id="tempAvg">--</strong></div>
+          <div class="weather-box"><span>Atualizado</span><strong id="tempTime">--</strong></div>
+        </div>
+      </div>
+
+      <div class="panel wide">
         <div class="panel-header">
           <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Bilhetes do cuidador</h2>
           <span class="panel-badge">Todos os dias</span>
@@ -150,7 +169,7 @@
 <script src="vital.js"></script>
 <script>
     /* ================= Painel do idoso =================
-       Mostra só o clima, os lembretes, os remédios (cadastrados pelo cuidador) e as notícias do dia.
+       Mostra o clima, a temperatura da casa, os lembretes, os remédios (cadastrados pelo cuidador) e as notícias do dia.
        Na hora do remédio aparece um aviso. A pessoa confirma por voz ("Vital, tomei o remédio das 12h"):
        a confirmação fica salva no banco e aparece no painel do cuidador.
        Os sensores continuam sendo lidos para o alarme de emergência (gás, oxigenação...). */
@@ -395,11 +414,43 @@
       window.VitalVoice?.checkSensors(alerts.filter((alert) => !silencedAlerts.has(alert.key)));
     }
 
-    /* ---------- Sensores: só o alarme de emergência ---------- */
+    /* ---------- Temperatura da casa: sempre na tela ----------
+       O valor é a última leitura; a orientação usa a média de 30 min, igual aos alertas. */
+    function renderTemperature() {
+      const series = seriesOf(state.temperature, "celsius");
+      const last = series.at(-1);
+      const humidity = seriesOf(state.temperature, "humidity").at(-1);
+      const average = recentAverage(series, AVERAGE_MINUTES.celsius);
+      const advice = document.getElementById("tempAdvice");
+      const showAdvice = (text, tone = "") => { advice.textContent = text; advice.className = `temp-advice${tone ? " " + tone : ""}`; };
+
+      document.getElementById("tempValue").textContent = last ? `${formatNumber(last.value, 1)}°C` : "--";
+      document.getElementById("tempHumidity").textContent = humidity ? `${formatNumber(humidity.value)}%` : "--";
+      document.getElementById("tempAvg").textContent = average !== null ? `${formatNumber(average, 1)}°C` : "--";
+      document.getElementById("tempTime").textContent = last
+        ? new Date(last.at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "--";
+
+      if (!last) {
+        setStatus("tempStatus", "Sem leitura");
+        return showAdvice("Aguardando o sensor de temperatura.");
+      }
+      if (average === null) {
+        setStatus("tempStatus", `Há ${Math.round(minutesSince(last.at))} min`);
+        return showAdvice("O sensor de temperatura não manda leitura há algum tempo.");
+      }
+      const [label, tone] = temperatureStatus(average);
+      setStatus("tempStatus", label, tone);
+      if (average < 18) showAdvice("Está frio. Agasalhe-se, feche as janelas e tome algo quente.", "warn");
+      else if (tone === "good") showAdvice("Temperatura agradável. Não precisa fazer nada.");
+      else showAdvice(`Está ${label.toLowerCase()}. Abra as janelas, beba água e use roupas leves.`, tone);
+    }
+
+    /* ---------- Sensores: temperatura na tela e alarme de emergência ---------- */
     async function loadSensors() {
       if (liveSocket?.readyState === WebSocket.OPEN) return;   // o tempo real já está entregando
       try {
         Object.assign(state, await api("/api/dashboard/sensores"));
+        renderTemperature();
         updateSensorAlerts();
       } catch (error) {
         // sem conexão: mantém a última leitura
@@ -424,6 +475,7 @@
         try { message = JSON.parse(event.data); } catch (error) { return; }
         if (message.type === "sensores") {
           Object.assign(state, message.data);
+          renderTemperature();
           updateSensorAlerts();
         }
       });
