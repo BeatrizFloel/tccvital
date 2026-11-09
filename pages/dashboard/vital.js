@@ -100,7 +100,12 @@
     return SPEECH_WORDS.reduce((result, [pattern, replacement]) => result.replace(pattern, replacement), String(text));
   }
 
-  // Divide em frases (o Chrome corta falas muito longas) e fala uma de cada vez
+  // Fila de falas: uma mensagem só começa quando a anterior termina inteira (nenhuma atropela a outra).
+  // Cada mensagem é dividida em frases (o Chrome corta falas muito longas) e lida uma frase de cada vez.
+  const speechQueue = [];      // { text, parts, resolve }
+  let currentSpeech = null;
+  let speechRun = 0;           // muda quando a fala é interrompida de propósito (stopSpeech)
+
   function speak(text) {
     return new Promise((resolve) => {
       if (!synth || !voiceOn || !text) return resolve();
@@ -109,29 +114,54 @@
         showUnlockHint(true);
         return resolve();
       }
+      // a mesma mensagem já está tocando ou esperando: não repete
+      if ([currentSpeech, ...speechQueue].some((item) => item?.text === text)) return resolve();
       const parts = forSpeech(text).replace(/\s+/g, " ").match(/[^.!?]+[.!?]*/g) || [text];
-      synth.cancel();
-      speaking = true;
-      pauseRecognition();
-      setStatus("speaking");
-      let index = 0;
-      const next = () => {
-        if (index >= parts.length || !voiceOn) {
-          speaking = false;
-          setStatus(busy ? "thinking" : mode === "question" ? "listening" : "idle");
-          resumeRecognition();
-          return resolve();
-        }
-        const utterance = new SpeechSynthesisUtterance(parts[index++].trim());
-        utterance.lang = "pt-BR";
-        if (voice) utterance.voice = voice;
-        utterance.rate = 0.95;
-        utterance.onend = next;
-        utterance.onerror = next;
-        synth.speak(utterance);
-      };
-      next();
+      speechQueue.push({ text, parts, resolve });
+      if (!currentSpeech) playNextSpeech();
     });
+  }
+
+  function playNextSpeech() {
+    currentSpeech = voiceOn ? speechQueue.shift() || null : null;
+    if (!currentSpeech) {
+      speechQueue.splice(0).forEach((item) => item.resolve());
+      speaking = false;
+      setStatus(busy ? "thinking" : mode === "question" ? "listening" : "idle");
+      resumeRecognition();
+      return;
+    }
+    speaking = true;
+    pauseRecognition();
+    setStatus("speaking");
+    const run = speechRun;
+    const { parts, resolve } = currentSpeech;
+    let index = 0;
+    const next = () => {
+      if (run !== speechRun) return;   // foi interrompida: quem interrompeu já cuidou do resto
+      if (index >= parts.length || !voiceOn) {
+        resolve();
+        return playNextSpeech();
+      }
+      const utterance = new SpeechSynthesisUtterance(parts[index++].trim());
+      utterance.lang = "pt-BR";
+      if (voice) utterance.voice = voice;
+      utterance.rate = 0.95;
+      utterance.onend = next;
+      utterance.onerror = next;
+      synth.speak(utterance);
+    };
+    next();
+  }
+
+  // Para de falar na hora e descarta a fila (desativar a voz, "Falar agora", "Lembrar mais tarde")
+  function stopSpeech() {
+    speechRun++;
+    currentSpeech?.resolve();
+    currentSpeech = null;
+    speechQueue.splice(0).forEach((item) => item.resolve());
+    synth?.cancel();
+    speaking = false;
   }
 
   function unlockAudio() {
@@ -333,8 +363,7 @@
       setStatus(Recognition ? "idle" : "unsupported");
       startRecognition();
     } else {
-      synth?.cancel();
-      speaking = false;
+      stopSpeech();
       pauseRecognition();
       setStatus("off");
     }
@@ -387,8 +416,7 @@
         el.input.focus();
         return;
       }
-      synth?.cancel();
-      speaking = false;
+      stopSpeech();
       mode = "question";
       clearTimeout(questionTimer);
       questionTimer = setTimeout(() => { mode = "wake"; if (!busy && !speaking) setStatus("idle"); }, QUESTION_WINDOW_MS);
@@ -456,7 +484,7 @@
   function onMedicineSnooze(meds) {
     clearInterval(medRepeatTimer);
     meds.forEach((med) => { snoozed[med.id] = Date.now() + SNOOZE_MS; });
-    synth?.cancel();
+    stopSpeech();
     speak("Tudo bem, eu lembro de novo daqui a 10 minutos.");
   }
 
@@ -545,7 +573,7 @@
     for (const key of Object.keys(sensorAlertAt)) {
       if (!alerts.some((alert) => alert.key === key)) delete sensorAlertAt[key];   // normalizou: avisa de novo se voltar
     }
-    // graves primeiro (gás em perigo antes de tudo), numa fala só para uma não cortar a outra
+    // graves primeiro (gás em perigo antes de tudo); a fila da voz lê um depois do outro
     const due = alerts
       .filter((alert) => Date.now() - (sensorAlertAt[alert.key] || 0) >= (SENSOR_REPEAT_MS[alert.key] || SENSOR_REPEAT_MS[alert.tone]))
       .sort((a, b) => (b.key === "gas-bad") - (a.key === "gas-bad") || (b.tone === "bad") - (a.tone === "bad"));
