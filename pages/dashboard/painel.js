@@ -54,6 +54,35 @@ async function api(path, options = {}) {
   throw lastError || new Error("Servidor indisponível.");
 }
 
+/* ---------- Versão nova do site: recarrega sozinho ----------
+   O painel fica aberto o dia todo (o idoso não recarrega a página). A cada 5 min compara a página
+   e os scripts com os do servidor; se mudaram, recarrega, mas não com alguém digitando ou com janela aberta. */
+const VERSION_FILES = [window.location.pathname, "/pages/dashboard/painel.js", "/pages/dashboard/vital.js"];
+let loadedVersion = null;
+
+async function siteVersion() {
+  const texts = await Promise.all(VERSION_FILES.map((file) =>
+    fetch(file, { cache: "no-store" }).then((response) => (response.ok ? response.text() : ""))));
+  // impressão digital simples do conteúdo (qualquer mudança nos arquivos muda o número)
+  let hash = 0;
+  for (const char of texts.join("\n")) hash = (hash * 31 + char.charCodeAt(0)) | 0;
+  return hash;
+}
+
+async function checkNewVersion() {
+  if (window.location.protocol === "file:") return;
+  try {
+    const version = await siteVersion();
+    if (loadedVersion === null) { loadedVersion = version; return; }
+    const busy = document.querySelector(".modal:not(.hidden)") || ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName);
+    if (version !== loadedVersion && !busy) window.location.reload();
+  } catch (error) {
+    // sem internet: tenta de novo na próxima vez
+  }
+}
+checkNewVersion();
+setInterval(checkNewVersion, 5 * 60000);
+
 function hasValue(value) {
   return value !== null && value !== undefined && value !== "";
 }
