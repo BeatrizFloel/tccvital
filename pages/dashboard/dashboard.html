@@ -117,6 +117,7 @@
       <div class="panel">
         <div class="panel-header">
           <h2><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>Consultas</h2>
+          <div class="panel-actions"><span class="panel-badge">Próximas</span><button id="addConsult" class="panel-add" type="button">+ Adicionar</button></div>
         </div>
         <ul id="consultList" class="consult-list"></ul>
       </div>
@@ -179,6 +180,27 @@
       <div class="medicine-actions">
         <button id="snoozeMedicine" class="btn btn-ghost" type="button">Lembrar mais tarde</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Nova consulta: o mesmo formulário do painel do cuidador -->
+  <div id="consultFormModal" class="modal hidden">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="consultFormTitle">
+      <button id="closeConsultForm" class="modal-close" type="button" aria-label="Fechar">×</button>
+      <form id="consultForm" novalidate>
+        <h3 id="consultFormTitle" class="dash-form-title">Nova consulta</h3>
+        <div class="dash-form-grid">
+          <div class="field dash-field full"><label for="consult-title">Consulta</label><input id="consult-title" name="title" type="text" placeholder="Ex.: Cardiologista" required autocomplete="off" /></div>
+          <div class="field dash-field full"><label for="consult-doctor">Médico(a) ou local</label><input id="consult-doctor" name="doctor" type="text" placeholder="Ex.: Dra. Ana" autocomplete="off" /></div>
+          <div class="field dash-field"><label for="consult-date">Data</label><input id="consult-date" name="date" type="date" required /></div>
+          <div class="field dash-field"><label for="consult-time">Horário</label><input id="consult-time" name="time" type="time" required /></div>
+        </div>
+        <p id="consultFormError" class="dash-form-error" role="alert"></p>
+        <div class="medicine-actions">
+          <button class="btn btn-primary" type="submit">Salvar</button>
+          <button id="cancelConsultForm" class="btn btn-ghost" type="button">Cancelar</button>
+        </div>
+      </form>
     </div>
   </div>
 </main>
@@ -283,7 +305,7 @@
       const past = state.appointments.filter((item) => item.date < today() && item.date >= sinceIso).sort(byDate).reverse().slice(0, 3);
 
       if (!upcoming.length && !past.length) {
-        consultList.innerHTML = emptyNote("Nenhuma consulta marcada. O cuidador cadastra pelo painel do cuidador.");
+        consultList.innerHTML = emptyNote("Nenhuma consulta marcada. Toque em “+ Adicionar” para cadastrar.");
         return;
       }
 
@@ -293,9 +315,12 @@
             <div class="item-title">${escapeHtml(item.title)}</div>
             ${item.doctor ? `<div class="consult-meta"><span>${escapeHtml(item.doctor)}</span></div>` : ""}
           </div>
-          <div class="consult-when">
-            <span class="day-pill">${isPast ? `Já passou · ${formatDay(item.date)}` : dayLabel(item.date)}</span>
-            <span class="time-pill">${escapeHtml(item.time)}</span>
+          <div class="item-actions">
+            <div class="consult-when">
+              <span class="day-pill">${isPast ? `Já passou · ${formatDay(item.date)}` : dayLabel(item.date)}</span>
+              <span class="time-pill">${escapeHtml(item.time)}</span>
+            </div>
+            ${removeButton("consultas", item.id)}
           </div>
         </li>`;
       consultList.innerHTML = upcoming.map((item) => row(item, false)).join("") + past.map((item) => row(item, true)).join("");
@@ -667,6 +692,60 @@
       const medicines = state.medications.filter((item) => reminderMedications.includes(item.id));
       if (medicines.length) window.VitalVoice?.onMedicineSnooze(medicines);
     }
+
+    /* ---------- Consultas: adicionar e remover (igual ao painel do cuidador) ---------- */
+    const consultModal = document.getElementById("consultFormModal");
+    const consultForm = document.getElementById("consultForm");
+
+    function openConsultForm() {
+      consultForm.reset();
+      document.getElementById("consultFormError").textContent = "";
+      consultModal.classList.remove("hidden");
+      document.getElementById("consult-title").focus();
+    }
+    function closeConsultForm() {
+      consultModal.classList.add("hidden");
+    }
+
+    document.getElementById("addConsult").addEventListener("click", openConsultForm);
+    document.getElementById("closeConsultForm").addEventListener("click", closeConsultForm);
+    document.getElementById("cancelConsultForm").addEventListener("click", closeConsultForm);
+    consultModal.addEventListener("click", (event) => { if (event.target === consultModal) closeConsultForm(); });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeConsultForm(); });
+
+    consultForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const error = document.getElementById("consultFormError");
+      const data = Object.fromEntries([...new FormData(consultForm)].map(([key, value]) => [key, String(value).trim()]));
+      const missing = [["title", "Consulta"], ["date", "Data"], ["time", "Horário"]].find(([name]) => !data[name]);
+      if (missing) {
+        error.textContent = `Preencha o campo “${missing[1]}”.`;
+        return;
+      }
+      const submit = consultForm.querySelector('[type="submit"]');
+      submit.disabled = true;
+      error.textContent = "";
+      try {
+        await api("/api/dashboard/consultas", { method: "POST", body: JSON.stringify(data) });
+        closeConsultForm();
+        await loadDashboard();
+      } catch (err) {
+        error.textContent = err.message;
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    document.getElementById("consultList").addEventListener("click", async (event) => {
+      const remove = event.target.closest("[data-remove]");
+      if (!remove || !confirm("Remover esta consulta? Ela também sai do painel do cuidador.")) return;
+      try {
+        await api(`/api/dashboard/consultas/${remove.dataset.id}`, { method: "DELETE" });
+        await loadDashboard();
+      } catch (error) {
+        alert(error.message);
+      }
+    });
 
     document.getElementById("snoozeMedicine").addEventListener("click", snoozeMedicine);
     document.getElementById("closeReminder").addEventListener("click", snoozeMedicine);
