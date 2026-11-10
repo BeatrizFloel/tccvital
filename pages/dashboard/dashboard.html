@@ -41,6 +41,8 @@
     .day-pill { padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); font-size: 15px; font-weight: 700; white-space: nowrap; }
     .consult-item.is-today { border-color: var(--accent); }
     .consult-item.is-today .day-pill { background: var(--accent); color: var(--surface); }
+    .consult-item.is-past { opacity: .6; }
+    .consult-item.is-past .day-pill { font-weight: 600; }
 
     /* ---------- Notícias: uma manchete grande e poucas outras, como a primeira página de um jornal ---------- */
     .news { margin-top: 16px; }
@@ -115,7 +117,6 @@
       <div class="panel">
         <div class="panel-header">
           <h2><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>Consultas</h2>
-          <span class="panel-badge">Próximas</span>
         </div>
         <ul id="consultList" class="consult-list"></ul>
       </div>
@@ -270,30 +271,34 @@
       return `${date.toLocaleDateString("pt-BR", { weekday: "long" }).replace("-feira", "")}, ${formatDay(isoDate)}`;
     }
 
+    // Próximas consultas primeiro (até 5); depois as dos últimos 30 dias, apagadas, com "Já passou"
+    const PAST_APPOINTMENT_DAYS = 30;
+
     function renderAppointments() {
       const consultList = document.getElementById("consultList");
-      const upcoming = state.appointments
-        .filter((item) => item.date >= today())
-        .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
-        .slice(0, 5);
+      const byDate = (a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`);
+      const since = new Date(Date.now() - PAST_APPOINTMENT_DAYS * 86400000);
+      const sinceIso = `${since.getFullYear()}-${String(since.getMonth() + 1).padStart(2, "0")}-${String(since.getDate()).padStart(2, "0")}`;
+      const upcoming = state.appointments.filter((item) => item.date >= today()).sort(byDate).slice(0, 5);
+      const past = state.appointments.filter((item) => item.date < today() && item.date >= sinceIso).sort(byDate).reverse().slice(0, 3);
 
-      if (!upcoming.length) {
-        consultList.innerHTML = emptyNote("Nenhuma consulta marcada.");
+      if (!upcoming.length && !past.length) {
+        consultList.innerHTML = emptyNote("Nenhuma consulta marcada. O cuidador cadastra pelo painel do cuidador.");
         return;
       }
 
-      consultList.innerHTML = upcoming.map((item) => `
-        <li class="consult-item${item.date === today() ? " is-today" : ""}">
+      const row = (item, isPast) => `
+        <li class="consult-item${item.date === today() ? " is-today" : ""}${isPast ? " is-past" : ""}">
           <div>
             <div class="item-title">${escapeHtml(item.title)}</div>
             ${item.doctor ? `<div class="consult-meta"><span>${escapeHtml(item.doctor)}</span></div>` : ""}
           </div>
           <div class="consult-when">
-            <span class="day-pill">${dayLabel(item.date)}</span>
+            <span class="day-pill">${isPast ? `Já passou · ${formatDay(item.date)}` : dayLabel(item.date)}</span>
             <span class="time-pill">${escapeHtml(item.time)}</span>
           </div>
-        </li>
-      `).join("");
+        </li>`;
+      consultList.innerHTML = upcoming.map((item) => row(item, false)).join("") + past.map((item) => row(item, true)).join("");
     }
 
     /* ---------- Clima (automático pela localização da casa) ---------- */
