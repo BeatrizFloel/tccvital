@@ -18,7 +18,8 @@
   const MED_MAX_REPEATS = 3;
   const SNOOZE_MS = 10 * 60000;         // "Lembrar mais tarde"
   // de quanto em quanto tempo a Vital repete um alerta de sensor enquanto ninguém tocar em "Entendi"
-  const SENSOR_REPEAT_MS = { "gas-bad": 2 * 60000, bad: 5 * 60000, warn: 20 * 60000 };
+  const SENSOR_REPEAT_MS = { "gas-bad": 5 * 60000, bad: 10 * 60000, warn: 30 * 60000 };
+  const SENSOR_RESET_MS = 10 * 60000;   // só "esquece" que já avisou depois de 10 min sem o alerta (leitura oscilando não conta)
   const ALARM_REPEAT_MS = 30000;        // bipe dos alertas graves (gás em perigo, oxigenação/batimentos muito fora)
 
   const el = {};
@@ -570,15 +571,23 @@
       stopAlarm();
     }
 
-    for (const key of Object.keys(sensorAlertAt)) {
-      if (!alerts.some((alert) => alert.key === key)) delete sensorAlertAt[key];   // normalizou: avisa de novo se voltar
+    // por sensor (gás, batimentos...): quando falou por último, em que nível, e quando o alerta apareceu por último
+    const now = Date.now();
+    alerts.forEach((alert) => { if (sensorAlertAt[alert.kind]) sensorAlertAt[alert.kind].seen = now; });
+    for (const kind of Object.keys(sensorAlertAt)) {
+      if (now - sensorAlertAt[kind].seen > SENSOR_RESET_MS) delete sensorAlertAt[kind];   // normalizou de verdade
     }
+    // repete só depois do intervalo, ou na hora se piorou (de "atenção" para grave)
     // graves primeiro (gás em perigo antes de tudo); a fila da voz lê um depois do outro
     const due = alerts
-      .filter((alert) => Date.now() - (sensorAlertAt[alert.key] || 0) >= (SENSOR_REPEAT_MS[alert.key] || SENSOR_REPEAT_MS[alert.tone]))
+      .filter((alert) => {
+        const last = sensorAlertAt[alert.kind];
+        if (!last || (alert.tone === "bad" && last.tone !== "bad")) return true;
+        return now - last.at >= (SENSOR_REPEAT_MS[alert.key] || SENSOR_REPEAT_MS[alert.tone]);
+      })
       .sort((a, b) => (b.key === "gas-bad") - (a.key === "gas-bad") || (b.tone === "bad") - (a.tone === "bad"));
     if (!due.length) return;
-    due.forEach((alert) => { sensorAlertAt[alert.key] = Date.now(); });
+    due.forEach((alert) => { sensorAlertAt[alert.kind] = { at: now, seen: now, tone: alert.tone }; });
     const text = due.map((alert) => alert.spoken).join(" ");
     setTimeout(() => speak(text), alarmStarted ? 1500 : 0);   // espera os bipes terminarem
   }

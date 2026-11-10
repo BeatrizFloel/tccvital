@@ -368,35 +368,45 @@
       spo2: '<path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/>',
       temp: '<path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0Z"/><path d="M12 10v6"/>'
     };
-    const silencedAlerts = new Set();   // alertas que a pessoa já viu ("Entendi"): param o alarme e a repetição da voz
+    // "Entendi" silencia aquele sensor (alarme e voz) enquanto o problema continuar, mesmo que a leitura oscile.
+    // O silêncio só acaba depois de 10 min seguidos sem o alerta (normalizou de verdade).
+    // Se piorar nesse tempo (ex.: gás passou de "Atenção" para "Perigo"), avisa uma única vez e volta ao silêncio.
+    const SILENCE_RESET_MS = 10 * 60000;
+    const silencedAlerts = new Map();   // kind -> { tone, seen }
     let alertsSignature = "";
     let shownAlertKeys = new Set();
 
+    function isSilenced(alert) {
+      const silence = silencedAlerts.get(alert.kind);
+      return Boolean(silence) && !(alert.tone === "bad" && silence.tone !== "bad");
+    }
+
     function updateSensorAlerts() {
       const alerts = sensorAlerts();
-      // quando a situação normaliza (ou muda de nível), o alerta volta a tocar numa próxima vez
-      for (const key of [...silencedAlerts]) if (!alerts.some((alert) => alert.key === key)) silencedAlerts.delete(key);
+      const now = Date.now();
+      alerts.forEach((alert) => { const silence = silencedAlerts.get(alert.kind); if (silence) silence.seen = now; });
+      for (const [kind, silence] of silencedAlerts) if (now - silence.seen > SILENCE_RESET_MS) silencedAlerts.delete(kind);
 
-      const signature = JSON.stringify(alerts.map((alert) => [alert.key, alert.text, silencedAlerts.has(alert.key)]));
+      const signature = JSON.stringify(alerts.map((alert) => [alert.key, alert.text, isSilenced(alert)]));
       if (signature !== alertsSignature) {
         alertsSignature = signature;
         const box = document.getElementById("sensorAlerts");
         box.replaceChildren(...alerts.map((alert) => {
           const item = document.createElement("div");
-          const silenced = silencedAlerts.has(alert.key);
+          const silenced = isSilenced(alert);
           item.className = `sensor-alert ${alert.tone}${silenced ? "" : " loud"}`;
           item.innerHTML = `<div class="sensor-alert-icon"><svg viewBox="0 0 24 24" aria-hidden="true">${ALERT_ICONS[alert.kind]}</svg></div>
             <div class="sensor-alert-body"><strong></strong><p></p></div>`;
           item.querySelector("strong").textContent = alert.title;
           item.querySelector("p").textContent = alert.text;
           if (silenced) {
-            item.insertAdjacentHTML("beforeend", '<span class="silenced">Aviso visto · fica aqui até normalizar</span>');
+            item.insertAdjacentHTML("beforeend", '<span class="silenced">Aviso visto · a Vital não repete enquanto continuar</span>');
           } else {
             const button = document.createElement("button");
             button.type = "button";
             button.textContent = alert.tone === "bad" ? "Entendi, silenciar alarme" : "Entendi";
             button.addEventListener("click", () => {
-              silencedAlerts.add(alert.key);
+              silencedAlerts.set(alert.kind, { tone: alert.tone, seen: Date.now() });
               window.VitalVoice?.stopAlarm();
               updateSensorAlerts();
             });
@@ -411,7 +421,12 @@
         }
         shownAlertKeys = new Set(alerts.map((alert) => alert.key));
       }
-      window.VitalVoice?.checkSensors(alerts.filter((alert) => !silencedAlerts.has(alert.key)));
+      window.VitalVoice?.checkSensors(alerts.filter((alert) => !isSilenced(alert)));
+      // a piora já foi avisada agora: daqui em diante fica silenciada também
+      alerts.forEach((alert) => {
+        const silence = silencedAlerts.get(alert.kind);
+        if (silence && alert.tone === "bad") silence.tone = "bad";
+      });
     }
 
     /* ---------- Temperatura da casa: sempre na tela ----------
