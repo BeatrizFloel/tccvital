@@ -22,7 +22,6 @@
     .day-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 4px 30px; }
     .day-head h2 { font-size: 22px; }
     .elder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .elder-grid .wide { grid-column: 1 / -1; }
     /* Temperatura da casa (DHT11): sempre visível, com a orientação do que fazer */
     .temp-advice { margin: 12px 0 14px; color: var(--ink-2); font-size: 18px; font-weight: 500; line-height: 1.4; }
     .temp-advice.warn { color: var(--warn-ink); }
@@ -33,6 +32,15 @@
     .reminder-list .item-title { font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.2; }
     .reminder-list .reminder-meta { color: var(--on-papel); font-size: 16px; }
     .reminder-list .time-pill { color: var(--on-papel); font-size: 18px; }
+    /* Consultas: letras grandes, com "Hoje"/"Amanhã" em destaque */
+    .consult-list { gap: 12px; }
+    .consult-list .item-title { font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.2; }
+    .consult-list .consult-meta { color: var(--ink-2); font-size: 16px; }
+    .consult-list .time-pill { font-size: 18px; }
+    .consult-when { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .day-pill { padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); font-size: 15px; font-weight: 700; white-space: nowrap; }
+    .consult-item.is-today { border-color: var(--accent); }
+    .consult-item.is-today .day-pill { background: var(--accent); color: var(--surface); }
 
     /* ---------- Notícias: uma manchete grande e poucas outras, como a primeira página de um jornal ---------- */
     .news { margin-top: 16px; }
@@ -94,7 +102,26 @@
     <p id="medEmpty" class="empty-note" style="margin-top: 12px;" hidden>Nenhum remédio cadastrado. O cuidador cadastra pelo painel do cuidador.</p>
   </section>
 
+  <!-- Lembretes e consultas: cadastrados pelo cuidador, ficam logo abaixo dos remédios -->
   <section class="elder-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Lembretes</h2>
+          <span class="panel-badge">Todos os dias</span>
+        </div>
+        <ul id="reminderList" class="reminder-list"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>Consultas</h2>
+          <span class="panel-badge">Próximas</span>
+        </div>
+        <ul id="consultList" class="consult-list"></ul>
+      </div>
+  </section>
+
+  <section class="elder-grid" style="margin-top: 16px;">
       <div class="panel">
         <div class="panel-header" style="margin-bottom: 0;">
           <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 1 0 6 16.5"/><path d="M6 19h11.5"/></svg>Clima</h2>
@@ -126,14 +153,6 @@
           <div class="weather-box"><span>Média 30 min</span><strong id="tempAvg">--</strong></div>
           <div class="weather-box"><span>Atualizado</span><strong id="tempTime">--</strong></div>
         </div>
-      </div>
-
-      <div class="panel wide">
-        <div class="panel-header">
-          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>Bilhetes do cuidador</h2>
-          <span class="panel-badge">Todos os dias</span>
-        </div>
-        <ul id="reminderList" class="reminder-list"></ul>
       </div>
   </section>
 
@@ -169,7 +188,7 @@
 <script src="vital.js"></script>
 <script>
     /* ================= Painel do idoso =================
-       Mostra o clima, a temperatura da casa, os lembretes, os remédios (cadastrados pelo cuidador) e as notícias do dia.
+       Mostra os remédios, os lembretes e as consultas (cadastrados pelo cuidador), o clima, a temperatura da casa e as notícias do dia.
        Na hora do remédio aparece um aviso. A pessoa confirma por voz ("Vital, tomei o remédio das 12h"):
        a confirmação fica salva no banco e aparece no painel do cuidador.
        Os sensores continuam sendo lidos para o alarme de emergência (gás, oxigenação...). */
@@ -237,6 +256,42 @@
             ${item.detail ? `<div class="reminder-meta"><span>${escapeHtml(item.detail)}</span></div>` : ""}
           </div>
           <span class="time-pill">${escapeHtml(item.time)}</span>
+        </li>
+      `).join("");
+    }
+
+    // "Hoje", "Amanhã" ou o dia da semana com a data (ex.: "sexta, 14/11")
+    function dayLabel(isoDate) {
+      const [y, m, d] = isoDate.split("-").map(Number);
+      const date = new Date(y, m - 1, d);
+      const days = Math.round((date - new Date(new Date().toDateString())) / 86400000);
+      if (days === 0) return "Hoje";
+      if (days === 1) return "Amanhã";
+      return `${date.toLocaleDateString("pt-BR", { weekday: "long" }).replace("-feira", "")}, ${formatDay(isoDate)}`;
+    }
+
+    function renderAppointments() {
+      const consultList = document.getElementById("consultList");
+      const upcoming = state.appointments
+        .filter((item) => item.date >= today())
+        .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
+        .slice(0, 5);
+
+      if (!upcoming.length) {
+        consultList.innerHTML = emptyNote("Nenhuma consulta marcada.");
+        return;
+      }
+
+      consultList.innerHTML = upcoming.map((item) => `
+        <li class="consult-item${item.date === today() ? " is-today" : ""}">
+          <div>
+            <div class="item-title">${escapeHtml(item.title)}</div>
+            ${item.doctor ? `<div class="consult-meta"><span>${escapeHtml(item.doctor)}</span></div>` : ""}
+          </div>
+          <div class="consult-when">
+            <span class="day-pill">${dayLabel(item.date)}</span>
+            <span class="time-pill">${escapeHtml(item.time)}</span>
+          </div>
         </li>
       `).join("");
     }
@@ -588,6 +643,7 @@
     function renderAll() {
       renderMedications();
       renderReminders();
+      renderAppointments();
       renderClimate();
       updateSensorAlerts();
     }
@@ -654,7 +710,7 @@
       if (await updateLocation(false)) await loadWeather();
 
       // abre o compartimento quando chega a hora, mesmo sem novidade do servidor
-      setInterval(() => { renderMedications(); checkMedicineSchedule(); }, 30000);
+      setInterval(() => { renderMedications(); renderAppointments(); checkMedicineSchedule(); }, 30000);
       setInterval(loadSensors, 5000);
       // remédios e lembretes novos cadastrados pelo cuidador aparecem sozinhos
       setInterval(() => { if (!document.hidden) loadDashboard().catch(() => {}); }, 60000);
