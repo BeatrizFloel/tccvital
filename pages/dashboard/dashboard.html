@@ -26,6 +26,15 @@
     .temp-advice { margin: 12px 0 14px; color: var(--ink-2); font-size: 18px; font-weight: 500; line-height: 1.4; }
     .temp-advice.warn { color: var(--warn-ink); }
     .temp-advice.bad { color: var(--bad-ink); }
+    /* Sensores da casa (gás, batimentos, oxigenação) */
+    .sensor-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+    .sensor-value { display: flex; align-items: baseline; gap: 8px; margin-top: 16px; }
+    .sensor-value span { font-family: var(--font-display); font-size: 48px; font-weight: 700; line-height: 1; }
+    .sensor-value small { color: var(--muted); font-size: 18px; font-weight: 600; }
+    .sensor-note { margin-top: 10px; color: var(--ink-2); font-size: 17px; font-weight: 500; line-height: 1.4; }
+    .sensor-note.warn { color: var(--warn-ink); }
+    .sensor-note.bad { color: var(--bad-ink); }
+    @media (max-width: 860px) { .sensor-grid { grid-template-columns: 1fr; } }
     /* Lembretes são bilhetes do cuidador */
     .reminder-list { gap: 12px; }
     .reminder-list .reminder-item { border: 0; border-radius: 4px; background: var(--papel); color: var(--on-papel); }
@@ -123,6 +132,34 @@
       </div>
   </section>
 
+  <!-- Sensores da casa: sempre na tela (os alertas continuam aparecendo lá em cima quando algo sai do normal) -->
+  <section class="sensor-grid" aria-label="Sensores da casa">
+      <div class="panel">
+        <div class="panel-header" style="margin-bottom: 0;">
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.4 1.2-3.8 2.3-5 .3 1.5 1 2.5 2.2 3C11 8.5 11 5.5 12 3Z"/></svg>Gás</h2>
+          <span id="gasStatus" class="panel-badge status">Sem leitura</span>
+        </div>
+        <div class="sensor-value"><span id="gasValue">--</span><small>ppm</small></div>
+        <p class="sensor-note" id="gasNote">Aguardando o sensor de gás.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-header" style="margin-bottom: 0;">
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Batimentos</h2>
+          <span id="bpmStatus" class="panel-badge status">Sem leitura</span>
+        </div>
+        <div class="sensor-value"><span id="bpmValue">--</span><small>bpm</small></div>
+        <p class="sensor-note" id="bpmNote">Coloque o dedo no sensor para medir.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-header" style="margin-bottom: 0;">
+          <h2><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/></svg>Oxigenação</h2>
+          <span id="spo2Status" class="panel-badge status">Sem leitura</span>
+        </div>
+        <div class="sensor-value"><span id="spo2Value">--</span><small>%</small></div>
+        <p class="sensor-note" id="spo2Note">Coloque o dedo no sensor para medir.</p>
+      </div>
+  </section>
+
   <section class="elder-grid" style="margin-top: 16px;">
       <div class="panel">
         <div class="panel-header" style="margin-bottom: 0;">
@@ -211,7 +248,8 @@
 <script src="vital.js"></script>
 <script>
     /* ================= Painel do idoso =================
-       Mostra os remédios, os lembretes e as consultas (cadastrados pelo cuidador), o clima, a temperatura da casa e as notícias do dia.
+       Mostra os remédios, os lembretes e as consultas (cadastrados pelo cuidador), os sensores da casa
+       (gás, batimentos, oxigenação e temperatura), o clima e as notícias do dia.
        Na hora do remédio aparece um aviso. A pessoa confirma por voz ("Vital, tomei o remédio das 12h"):
        a confirmação fica salva no banco e aparece no painel do cuidador.
        Os sensores continuam sendo lidos para o alarme de emergência (gás, oxigenação...). */
@@ -545,11 +583,54 @@
       else showAdvice(`Está ${label.toLowerCase()}. Abra as janelas, beba água e use roupas leves.`, tone);
     }
 
-    /* ---------- Sensores: temperatura na tela e alarme de emergência ---------- */
+    /* ---------- Gás, batimentos e oxigenação: sempre na tela ---------- */
+    function renderSensorCard(prefix, point, text, classify, notes) {
+      const note = document.getElementById(`${prefix}Note`);
+      const showNote = (value, tone = "") => { note.textContent = value; note.className = `sensor-note${tone ? " " + tone : ""}`; };
+      document.getElementById(`${prefix}Value`).textContent = point ? text : "--";
+      if (!point) {
+        setStatus(`${prefix}Status`, "Sem leitura");
+        return showNote(notes.empty);
+      }
+      const at = new Date(point.at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      if (minutesSince(point.at) > SENSOR_STALE_MINUTES) {
+        setStatus(`${prefix}Status`, `Há ${Math.round(minutesSince(point.at))} min`);
+        return showNote(`Última leitura às ${at}. ${notes.stale}`);
+      }
+      const [label, tone] = classify();
+      setStatus(`${prefix}Status`, label, tone);
+      showNote(`${notes[tone] || ""} Atualizado às ${at}.`.trim(), tone === "good" ? "" : tone);
+    }
+
+    function renderSensorCards() {
+      const gas = state.gas && hasValue(state.gas.level) ? { value: state.gas.level, at: state.gas.updatedAt } : null;
+      renderSensorCard("gas", gas, gas && formatNumber(gas.value), () => {
+        const label = gasStatus(gas.value);
+        return [label, { Normal: "good", "Atenção": "warn", Perigo: "bad" }[label]];
+      }, {
+        empty: "Aguardando o sensor de gás.", stale: "Confira se o sensor está ligado.",
+        good: "Nenhum vazamento.", warn: "Verifique o fogão e o botijão e abra as janelas.", bad: "Saia de casa e ligue para os Bombeiros (193)."
+      });
+
+      const bpm = seriesOf(state.heart, "bpm").at(-1);
+      renderSensorCard("bpm", bpm, bpm && formatNumber(bpm.value), () => heartStatus(bpm.value), {
+        empty: "Coloque o dedo no sensor para medir.", stale: "Coloque o dedo no sensor para medir de novo.",
+        good: "", warn: "Sente-se e descanse.", bad: "Se sentir mal, ligue para o SAMU (192)."
+      });
+
+      const spo2 = seriesOf(state.heart, "spo2").at(-1);
+      renderSensorCard("spo2", spo2, spo2 && formatNumber(spo2.value), () => oxygenStatus(spo2.value), {
+        empty: "Coloque o dedo no sensor para medir.", stale: "Coloque o dedo no sensor para medir de novo.",
+        good: "", warn: "Sente-se e respire devagar.", bad: "Se houver falta de ar, ligue para o SAMU (192)."
+      });
+    }
+
+    /* ---------- Sensores: valores na tela e alarme de emergência ---------- */
     async function loadSensors() {
       if (liveSocket?.readyState === WebSocket.OPEN) return;   // o tempo real já está entregando
       try {
         Object.assign(state, await api("/api/dashboard/sensores"));
+        renderSensorCards();
         renderTemperature();
         updateSensorAlerts();
       } catch (error) {
@@ -575,6 +656,7 @@
         try { message = JSON.parse(event.data); } catch (error) { return; }
         if (message.type === "sensores") {
           Object.assign(state, message.data);
+          renderSensorCards();
           renderTemperature();
           updateSensorAlerts();
         }
@@ -795,6 +877,7 @@
 
       // abre o compartimento quando chega a hora, mesmo sem novidade do servidor
       setInterval(() => { renderMedications(); renderAppointments(); checkMedicineSchedule(); }, 30000);
+      loadSensors();
       setInterval(loadSensors, 5000);
       // remédios e lembretes novos cadastrados pelo cuidador aparecem sozinhos
       setInterval(() => { if (!document.hidden) loadDashboard().catch(() => {}); }, 60000);
