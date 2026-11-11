@@ -18,10 +18,10 @@ const char* ACCOUNT_EMAIL = "byacururu@gmail.com";    // e-mail da conta usada p
 const char* SENSOR_KEY    = "";                       // deixe vazio (so use se colocar SENSOR_KEY no .env)
 
 // Para onde vao as leituras:
-//   1 = site na Vercel (https://tccvital.vercel.app) pela internet. Nao precisa do computador ligado.
+//   1 = site na Vercel (https://tccvital-3.vercel.app) pela internet. Nao precisa do computador ligado.
 //   0 = backend no computador (npm run dev), em tempo real. Computador, celular e ESP no mesmo Wi-Fi.
 #define ENVIAR_PARA_VERCEL 1
-const char* VERCEL_URL    = "https://tccvital.vercel.app/api/sensores";
+const char* VERCEL_URL    = "https://tccvital-3.vercel.app/api/sensores";
 const char* SERVER_HOST   = "192.168.42.115";         // so no modo 0: IP que aparece no terminal do npm run dev
 const uint16_t SERVER_PORT = 3000;
 

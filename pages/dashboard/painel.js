@@ -1,7 +1,7 @@
 /* ================= Funções comuns dos painéis =================
    Usado pelo painel do idoso (dashboard.html) e pelo do cuidador (cuidador.html).
    Cada página define o próprio `state` (medicamentos, sensores...). */
-const API_CANDIDATES = [window.location.origin, "https://tccvital.vercel.app"]
+const API_CANDIDATES = [window.location.origin, "https://tccvital-3.vercel.app"]
   .filter((value, index, list) => value && value !== "null" && list.indexOf(value) === index);
 let apiBase = null;
 

@@ -192,7 +192,7 @@ function togglePassword(id) {
 async function sendAuthRequest(path, payload) {
   const candidates = [
     window.location.origin,
-    "https://tccvital.vercel.app"
+    "https://tccvital-3.vercel.app"
   ].filter((value, index, arr) => value && value !== "null" && arr.indexOf(value) === index);
 
   for (const apiBase of candidates) {
@@ -279,7 +279,7 @@ let googleClient = null;
 let googleClientId = null;
 
 async function loadGoogleConfig() {
-  const candidates = [window.location.origin, "https://tccvital.vercel.app"]
+  const candidates = [window.location.origin, "https://tccvital-3.vercel.app"]
     .filter((value, index, arr) => value && value !== "null" && arr.indexOf(value) === index);
   for (const apiBase of candidates) {
     try {

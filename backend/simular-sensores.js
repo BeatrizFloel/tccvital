@@ -2,7 +2,7 @@
    Uso (na pasta do projeto, com o servidor ligado em outro terminal):
      npm run simular -- email@da.conta
      npm run simular -- email@da.conta gas        (simula vazamento de gás, para ver o alerta)
-     npm run simular -- email@da.conta normal https://tccvital.vercel.app
+     npm run simular -- email@da.conta normal https://tccvital-3.vercel.app
    Cuidado: no site da Vercel as leituras falsas ficam salvas no banco de verdade.
    Se SENSOR_KEY estiver no .env, ela é enviada junto. Pare com Ctrl+C. */
 import "dotenv/config";

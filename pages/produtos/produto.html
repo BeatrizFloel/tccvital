@@ -364,7 +364,7 @@
       submit.disabled = true;
       mostrar("Enviando...", true);
       // Tenta o próprio site e, se a página foi aberta pelo Live Server, o servidor da Vercel
-      var servidores = [location.origin, "https://tccvital.vercel.app"]
+      var servidores = [location.origin, "https://tccvital-3.vercel.app"]
         .filter(function (url, i, lista) { return url && url !== "null" && lista.indexOf(url) === i; });
       try {
         var ultimoErro = null;
