@@ -33,9 +33,16 @@ const char* SENSOR_KEY = "";                       // deixe vazio (só preencha 
 #define OXI_SDA 18        // oxímetro MAX30102: SDA no D18
 #define OXI_SCL 19        // oxímetro MAX30102: SCL no D19
 
-const int LIMIAR_GAS = 400;                 // limiar ajustado com base na leitura de repouso (~80)
 const unsigned long INTERVALO_ENVIO = 5000; // manda para o site a cada 5 segundos
 const long DEDO_MINIMO = 50000;             // abaixo disso, não tem dedo no oxímetro
+
+// --- Gás (MQ-2) ---
+// Ao ligar, o ESP32 mede o ar limpo. Tem gás quando a leitura sobe GAS_ACIMA_DO_NORMAL acima disso.
+// Menor = mais sensível. O aviso só vai para o site se o gás continuar por GAS_TEMPO_MINIMO.
+const int GAS_ACIMA_DO_NORMAL = 60;
+const unsigned long GAS_TEMPO_MINIMO = 30000;   // 30 segundos
+float gasBase = 0;                // leitura do ar limpo (ajustada devagar enquanto não há gás)
+unsigned long gasDesde = 0;       // quando o gás começou (0 = sem gás agora)
 
 DHT dht(DHTPIN, DHTTYPE);
 WiFiClientSecure clienteHttps;
@@ -119,6 +126,16 @@ void setup() {
   dht.begin();
   pinMode(MQ2_AOUT, INPUT);
 
+  // Gás: mede o ar limpo por 10 segundos (ligue longe de gás e fogo)
+  Serial.print("Medindo o ar limpo para o sensor de gás (10 s)...");
+  long soma = 0;
+  for (int i = 0; i < 100; i++) {
+    soma += analogRead(MQ2_AOUT);
+    delay(100);
+  }
+  gasBase = soma / 100.0;
+  Serial.printf(" pronto! Ar limpo = %.0f\n", gasBase);
+
   // Oxímetro MAX30102 (I2C: SDA no D18, SCL no D19)
   oximetroOk = tentaOximetro(OXI_SDA, OXI_SCL);
   if (oximetroOk) {
@@ -152,15 +169,30 @@ void loop() {
   bool dhtOk = !(isnan(umidade) || isnan(temperatura));
   bool temDedo = oximetroOk && ultimoIR >= DEDO_MINIMO;
 
-  // Converte a leitura do pino para a escala do site
-  // (LIMIAR_GAS vira 50 = começo do "Atenção"; ar limpo ~80 vira ~10 = "Normal")
-  int gasSite = valorAnalogico * 50 / LIMIAR_GAS;
+  // Gás na escala do site: subir GAS_ACIMA_DO_NORMAL acima do ar limpo vira 50 (começo do "Atenção");
+  // 4 vezes isso vira 200 (começo do "Perigo")
+  float acima = valorAnalogico - gasBase;
+  int gasSite = acima > 0 ? (int)(acima * 50 / GAS_ACIMA_DO_NORMAL) : 0;
+  bool temGas = gasSite >= 50;
+  if (temGas) {
+    if (gasDesde == 0) gasDesde = millis();
+  } else {
+    gasDesde = 0;
+    gasBase = gasBase * 0.98 + valorAnalogico * 0.02;   // sem gás: acompanha o sensor esquentando aos poucos
+  }
+  unsigned long segundosComGas = temGas ? (millis() - gasDesde) / 1000 : 0;
+  bool gasConfirmado = temGas && millis() - gasDesde >= GAS_TEMPO_MINIMO;
+  // antes dos 30 s, manda 49 (logo abaixo do aviso): o site só avisa se o gás continuar
+  int gasEnviado = (temGas && !gasConfirmado) ? 49 : gasSite;
 
   // Print de depuração local no Monitor Serial
   Serial.println("-------------------------------");
   if (dhtOk) Serial.printf("Temp: %.1f°C | Umid: %.1f%%\n", temperatura, umidade);
   else Serial.println("[Erro DHT11] Leitura inválida (a temperatura não vai nesta rodada).");
-  Serial.printf("Gás: %d no pino (site: %d)\n", valorAnalogico, gasSite);
+  Serial.printf("Gás: %d no pino (ar limpo: %.0f) -> site: %d", valorAnalogico, gasBase, gasEnviado);
+  if (gasConfirmado) Serial.println("  ** GÁS CONFIRMADO: aviso no site **");
+  else if (temGas) Serial.printf("  (gás há %lu s; avisa aos 30 s)\n", segundosComGas);
+  else Serial.println();
   if (!oximetroOk) Serial.println("Oxímetro: não conectado");
   else if (!temDedo) Serial.println("Oxímetro: sem dedo no sensor");
   else if (!bpmValido && !spo2Valido) Serial.println("Oxímetro: calculando... (mantenha o dedo parado)");
@@ -171,7 +203,7 @@ void loop() {
     // Monta o JSON só com o que foi lido certo
     String corpoJSON = "{\"email\":\"" + String(account_email) + "\"";
     if (dhtOk) corpoJSON += ",\"celsius\":" + String(temperatura) + ",\"humidity\":" + String(umidade);
-    corpoJSON += ",\"gas\":" + String(gasSite);
+    corpoJSON += ",\"gas\":" + String(gasEnviado);
     if (temDedo && bpmValido) corpoJSON += ",\"bpm\":" + String(bpm);
     if (temDedo && spo2Valido) corpoJSON += ",\"spo2\":" + String(spo2);
     corpoJSON += "}";
