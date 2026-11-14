@@ -719,7 +719,7 @@
         .map((medicine) => (many ? `${medicine.name}: ${medicine.dose}` : medicine.dose)).join(", ");
       document.getElementById("reminderTime").textContent = [...new Set(medicines.map((medicine) => medicine.time))].join(" e ");
       document.getElementById("reminderNotice").textContent =
-        `Depois de tomar, diga: “Vital, tomei ${many ? "os remédios" : "o remédio"} das ${hourLabel(medicines[0].time)}”.`;
+        `Depois de tomar, escreva para a Vital: “tomei ${many ? "os remédios" : "o remédio"} das ${hourLabel(medicines[0].time)}”.`;
       document.getElementById("reminderImage").src = VitalRemedios.imagem(medicines[0].name);
     }
 

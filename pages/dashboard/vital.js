@@ -23,7 +23,8 @@
   const ALARM_REPEAT_MS = 30000;        // bipe dos alertas graves (gás em perigo, oxigenação/batimentos muito fora)
 
   const el = {};
-  let voiceOn = readPref();
+  // A Vital agora é só por escrito: sem microfone e sem voz (o bipe dos alertas graves continua)
+  const voiceOn = false;
   let recognition = null;
   let listening = false;       // reconhecimento ligado
   let mode = "wake";           // "wake" (esperando "Vital") ou "question" (esperando a pergunta)
@@ -324,7 +325,7 @@
   /* ---------- faixa da Vital na tela ---------- */
   const STATUS = {
     off: ["Vital desativada", "Ative para conversar por voz e ouvir os lembretes."],
-    idle: ["Diga “Vital” para falar comigo", "Ex.: “Vital, tomei o remédio das 12h”"],
+    idle: ["Escreva para a Vital", "Ex.: “tomei o remédio das 12h” ou “que remédio falta hoje?”"],
     listening: ["Estou ouvindo…", "Pode fazer sua pergunta."],
     thinking: ["Pensando…", "Só um instante."],
     speaking: ["Falando…", ""],
@@ -353,49 +354,27 @@
     if (el.unlock) el.unlock.hidden = !show || audioUnlocked;
   }
 
-  function setVoice(on) {
-    voiceOn = on;
-    savePref();
-    el.toggle.setAttribute("aria-pressed", String(on));
-    el.toggle.textContent = on ? "Desativar voz" : "Ativar voz";
-    if (on) {
-      recognitionBroken = false;
-      unlockAudio();
-      setStatus(Recognition ? "idle" : "unsupported");
-      startRecognition();
-    } else {
-      stopSpeech();
-      pauseRecognition();
-      setStatus("off");
-    }
-  }
-
   function buildCard() {
     const root = document.createElement("section");
     root.className = "vital-assist";
-    root.setAttribute("aria-label", "Vital, assistente de voz");
+    root.setAttribute("aria-label", "Vital, assistente por escrito");
     root.innerHTML = `
       <span class="vital-orb" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4Z"/></svg>
       </span>
       <div class="vital-text">
         <strong class="vital-title"></strong>
         <p class="vital-hint"></p>
-        <button class="vital-unlock" type="button" hidden>Toque aqui para ativar o som da Vital</button>
         <p class="vital-heard" hidden></p>
         <p class="vital-reply" hidden aria-live="polite"></p>
       </div>
       <form class="vital-form">
         <label class="sr-only" for="vitalInput">Escreva para a Vital</label>
-        <input id="vitalInput" type="text" maxlength="500" placeholder="Ou escreva aqui…" autocomplete="off" />
+        <input id="vitalInput" type="text" maxlength="500" placeholder="Escreva aqui…" autocomplete="off" />
         <button class="vital-send" type="submit" aria-label="Enviar">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7Z"/><path d="m11 13 9-9"/></svg>
         </button>
-      </form>
-      <div class="vital-actions">
-        <button class="vital-talk" type="button">Falar agora</button>
-        <button class="vital-toggle" type="button" aria-pressed="true"></button>
-      </div>`;
+      </form>`;
     document.body.appendChild(root);
 
     el.root = root;
@@ -403,27 +382,8 @@
     el.hint = root.querySelector(".vital-hint");
     el.heard = root.querySelector(".vital-heard");
     el.reply = root.querySelector(".vital-reply");
-    el.unlock = root.querySelector(".vital-unlock");
-    el.toggle = root.querySelector(".vital-toggle");
-    el.talk = root.querySelector(".vital-talk");
     el.input = root.querySelector("#vitalInput");
 
-    el.unlock.addEventListener("click", unlockAudio);
-    el.toggle.addEventListener("click", () => setVoice(!voiceOn));
-    el.talk.addEventListener("click", () => {
-      if (!voiceOn) setVoice(true);
-      unlockAudio();
-      if (!Recognition || recognitionBroken) {
-        el.input.focus();
-        return;
-      }
-      stopSpeech();
-      mode = "question";
-      clearTimeout(questionTimer);
-      questionTimer = setTimeout(() => { mode = "wake"; if (!busy && !speaking) setStatus("idle"); }, QUESTION_WINDOW_MS);
-      setStatus("listening");
-      startRecognition();
-    });
     root.querySelector(".vital-form").addEventListener("submit", (event) => {
       event.preventDefault();
       unlockAudio();
@@ -432,11 +392,7 @@
       ask(text);
     });
 
-    el.toggle.setAttribute("aria-pressed", String(voiceOn));
-    el.toggle.textContent = voiceOn ? "Desativar voz" : "Ativar voz";
-    if (!Recognition) setStatus("unsupported");
-    else setStatus(voiceOn ? "idle" : "off");
-    if (voiceOn) showUnlockHint(true);
+    setStatus("idle");
   }
 
   /* ---------- avisos (tela + voz) ---------- */
@@ -595,7 +551,6 @@
   /* ---------- início ---------- */
   function init() {
     buildCard();
-    recognition = setupRecognition();
     // Qualquer toque na tela libera o som (exigência dos navegadores)
     ["pointerdown", "keydown", "touchstart"].forEach((type) => document.addEventListener(type, unlockAudio, { once: true, passive: true }));
     setInterval(checkSchedule, 30000);
