@@ -3,24 +3,29 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VitalCare | A Aventura das Galinhas</title>
+<title>VitalCare | Jogo: Finding Grandpa</title>
 <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("vc-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baskervville:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
 <link rel="stylesheet" href="/vc.css" />
 <style>
+  .cover { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); }
+  .cover img { display: block; width: 100%; height: auto; }
+  .cover-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 20px; color: var(--ink-2); font-size: 16px; }
+  .section-title { margin-bottom: 20px; font-size: 28px; }
+  .story-grid { align-items: start; }
+  .story p { color: var(--ink-2); }
   .story p + p { margin-top: 12px; }
-  .facts { display: grid; gap: 12px; }
-  .facts li { display: flex; align-items: center; gap: 12px; color: var(--ink); font-weight: 500; }
-  .facts .icon-box { margin: 0; }
-  .facts .icon-box svg { width: 22px; height: 22px; }
-  .game-video-wrap h2 { margin-bottom: 18px; font-size: 24px; }
-  .shots { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .comic { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .comic img { display: block; width: 100%; height: auto; border: 2px solid var(--ink); border-radius: 6px; }
+  .steps-list { display: grid; gap: 12px; margin: 0 0 28px; padding-left: 22px; color: var(--ink-2); }
+  .steps-list strong { color: var(--ink); }
+  .shots { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .shots figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-alt); }
-  .shots img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; image-rendering: pixelated; }
-  .shots figcaption { padding: 10px 14px; font-size: 14px; color: var(--ink-2); background: var(--surface, transparent); }
-  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+  .shots img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+  .shots figcaption { padding: 10px 14px; font-size: 14px; color: var(--ink-2); }
+  @media (max-width: 760px) { .shots, .comic { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -50,91 +55,113 @@
 <main>
   <section class="page-hero">
     <div class="container">
-      <h1>A Aventura das Galinhas</h1>
-      <p class="lead">Uma jornada cheia de saltos, ovos voadores e galinhas nada amigáveis.</p>
+      <h1>VitalCare: Finding Grandpa</h1>
+      <p class="lead">O vovô fugiu do hospital, e só o neto pode trazê-lo de volta para casa. Uma aventura sobre cuidado, família e paciência.</p>
     </div>
   </section>
-
-  <section class="section">
-    <div class="container grid grid-2">
-      <article class="card story">
-        <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 5.4L20 9.3l-4.5 3.9 1.4 5.8L12 16l-4.9 3 1.4-5.8L4 9.3l5.9-.9Z"/></svg></span>
-        <h2 style="font-size: 24px; margin-bottom: 14px;">A História</h2>
-        <p>
-          Um jovem decide sair de casa em busca de aventura. O que parecia um passeio tranquilo
-          pelos campos muda de rumo quando ele cruza o caminho de um bando de galinhas malvadas.
-        </p>
-        <p>
-          Elas atacam dos céus lançando ovos e bloqueiam a passagem. Para voltar à sua vida
-          normal, o jovem precisa enfrentar e derrotar cada uma delas, saltando entre plataformas,
-          desviando dos ataques e recuperando vida pelo caminho.
-        </p>
-      </article>
-
-      <article class="card">
-        <span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v.5M12 11v5"/></svg></span>
-        <h2 style="font-size: 24px; margin-bottom: 14px;">Curiosidades</h2>
-        <ul class="facts">
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Jogo de plataforma e aventura em 2D</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="13" rx="6" ry="8"/></svg></span>Galinhas que atacam lançando ovos do céu</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg></span>Corações espalhados para recuperar vida</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>Barra de vida que acompanha o personagem</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 12h18M9 5v14M15 5v14"/></svg></span>Inventário para guardar itens da jornada</li>
-          <li><span class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a6 6 0 0 0 6-6C22 6 17.5 2 12 2Z"/></svg></span>Visual em pixel art colorido</li>
-        </ul>
-      </article>
-    </div>
-  </section>
-
-  <section class="section alt">
-    <div class="container game-video-wrap">
-      <h2>Imagens do Jogo</h2>
-      <div class="shots">
-        <figure>
-          <img src="/pages/imagens/galinhas-1.png" alt="O jovem caminha pelo campo enquanto uma galinha voa no céu e solta um ovo" width="791" height="600" loading="lazy" />
-          <figcaption>Cuidado com os ovos que caem do céu!</figcaption>
-        </figure>
-        <figure>
-          <img src="/pages/imagens/galinhas-2.png" alt="Jovem correndo com o inventário aberto e uma galinha voando acima" width="791" height="600" loading="lazy" />
-          <figcaption>Inventário aberto durante a aventura</figcaption>
-        </figure>
-        <figure>
-          <img src="/pages/imagens/galinhas-3.png" alt="Jovem parado ao lado de plataformas de terra com uma galinha no alto" width="800" height="600" loading="lazy" />
-          <figcaption>Plataformas e corações pelo caminho</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
   <section class="section">
     <div class="container">
+      <figure class="cover">
+        <img src="/pages/imagens/jogo-capa.jpg" alt="Tela inicial do jogo: o neto de fones de ouvido, o vovô na cama do hospital e uma enfermeira ao fundo" width="1376" height="768" />
+      </figure>
+      <div class="cover-cta">
+        <a href="https://gd.games/games/ebdefbe4-2402-437a-b663-ef0463f9f3f7" class="btn btn-primary" target="_blank" rel="noopener">Jogar agora</a>
+        <span>Feito no GDevelop. Roda no navegador, sem instalar nada.</span>
+      </div>
+    </div>
+  </section>
+  <section class="section alt">
+    <div class="container">
+      <h2 class="section-title">A História</h2>
+      <div class="grid grid-2 story-grid">
+        <div class="story">
+          <p>
+            Um garoto chega em casa e chama pelo avô, mas ninguém responde. Ele procura em todos os
+            cômodos e não encontra o vovô em lugar nenhum.
+          </p>
+          <p>
+            Aí o celular apita com um <strong>alerta de segurança</strong>: o vovô escapou do
+            <strong>Hospital Central</strong> e foi visto pela última vez na área de emergência.
+            O neto sai correndo pela cidade, decidido a encontrá-lo custe o que custar.
+          </p>
+          <p>
+            No hospital, ele passa pelos corredores e pelos enfermeiros até chegar ao jardim. Lá está
+            o vovô, sentado num banco, lendo um livro. Ele não quer ir embora tão cedo e avisa:
+            <em>“Se você quiser me levar, vai ter que me levar à força.”</em> Começa então o desafio final.
+          </p>
+          <p>
+            No fim, os dois voltam juntos para casa, tomam um chá, olham fotos antigas e terminam o dia
+            lado a lado: <em>“Juntos é onde devemos estar.”</em>
+          </p>
+        </div>
+        <div class="comic">
+          <img src="/pages/imagens/jogo-cena-1.jpg" alt="Quadrinho: o neto abre a porta e chama: Vovô? Estou em casa!" width="462" height="237" loading="lazy" />
+          <img src="/pages/imagens/jogo-cena-2.jpg" alt="Quadrinho: Ele... ele sumiu! E o celular apita" width="466" height="232" loading="lazy" />
+          <img src="/pages/imagens/jogo-cena-3.jpg" alt="Quadrinho: alerta de segurança, o vovô escapou do Hospital Central" width="460" height="236" loading="lazy" />
+          <img src="/pages/imagens/jogo-cena-4.jpg" alt="Quadrinho: Hospital?! Eu preciso recuperar o Vovô agora!" width="457" height="237" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">O caminho até o vovô</h2>
+      <ol class="steps-list">
+        <li><strong>Em casa.</strong> O neto descobre que o vovô sumiu e recebe o alerta do hospital.</li>
+        <li><strong>Na cidade.</strong> Ele explora as ruas e as casas (“Deseja entrar?”) atrás de pistas e itens.</li>
+        <li><strong>No hospital.</strong> Ele atravessa a recepção e os corredores do Hospital da Esperança sem ser pego pelos enfermeiros.</li>
+        <li><strong>No jardim.</strong> Ele encontra o vovô, que não quer voltar e joga almofadas para se defender. Cada um tem a sua barra de vida.</li>
+        <li><strong>De volta para casa.</strong> Vencendo o desafio, os dois voltam juntos e o jogo termina com um final feliz.</li>
+      </ol>
+      <div class="shots">
+        <figure>
+          <img src="/pages/imagens/jogo-hospital.jpg" alt="Mapa da recepção do Hospital da Esperança visto de cima" width="1100" height="600" loading="lazy" />
+          <figcaption>A recepção do hospital</figcaption>
+        </figure>
+        <figure>
+          <img src="/pages/imagens/jogo-jardim.jpg" alt="O neto e o vovô no jardim do hospital, cada um com sua barra de corações" width="1100" height="538" loading="lazy" />
+          <figcaption>O encontro com o vovô no jardim</figcaption>
+        </figure>
+        <figure>
+          <img src="/pages/imagens/jogo-vovo-jardim.jpg" alt="Quadrinho: o vovô no banco do jardim diz que não vai para casa" width="1400" height="764" loading="lazy" />
+          <figcaption>“Eu não vou embora tão cedo…”</figcaption>
+        </figure>
+        <figure>
+          <img src="/pages/imagens/jogo-final.jpg" alt="Quadrinho do final: em casa, chá, fotos da viagem e o pôr do sol juntos" width="1400" height="764" loading="lazy" />
+          <figcaption>O final: de volta para casa</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+  <section class="section alt">
+    <div class="container">
       <div class="why">
-        <h2>Pronto para enfrentar as galinhas?</h2>
+        <h2>Por que esse jogo faz parte do VitalCare?</h2>
         <p>
-          Pule, desvie dos ovos, colete corações e derrote as galinhas malvadas para ajudar o
-          jovem a voltar para casa. Cada fase é um novo desafio!
+          A história mostra o que o VitalCare quer evitar: a família só descobrindo que algo está errado
+          quando o alerta chega. No jogo, o neto corre atrás do avô. Na vida real, o VitalCare lembra os
+          remédios, acompanha os sensores da casa e avisa a família na hora certa.
         </p>
         <a href="https://gd.games/games/ebdefbe4-2402-437a-b663-ef0463f9f3f7" class="btn btn-primary" target="_blank" rel="noopener">Jogar agora</a>
-        <p style="margin: 18px 0 0; font-size: 16px;">Feito no GDevelop. Roda no navegador.</p>
       </div>
-
       <div class="grid grid-2" style="margin-top: 24px;">
         <article class="card">
           <h3 style="margin-bottom: 16px;">Como Jogar</h3>
           <ul class="check-list">
-            <li>Movimente o jovem pelo cenário e salte entre as plataformas;</li>
-            <li>Desvie dos ovos lançados pelas galinhas;</li>
-            <li>Colete os corações para recuperar sua vida;</li>
-            <li>Derrote todas as galinhas para voltar à vida normal.</li>
+            <li>Clique em “Iniciar jogo” e acompanhe os quadrinhos da história;</li>
+            <li>Movimente o neto pela casa, pela cidade e pelo hospital;</li>
+            <li>Escolha “Sim” ou “Não” quando o jogo perguntar se deseja entrar em um lugar;</li>
+            <li>Fuja dos enfermeiros e cuide da sua vida (corações);</li>
+            <li>No jardim, desvie das almofadas do vovô e convença-o a voltar para casa.</li>
           </ul>
         </article>
         <article class="card">
-          <h3 style="margin-bottom: 16px;">Faixa Etária Recomendada</h3>
+          <h3 style="margin-bottom: 16px;">Para Quem é</h3>
           <ul class="check-list">
             <li>Livre para todos os públicos</li>
-            <li>Controles simples e intuitivos</li>
-            <li>Partidas rápidas, ideais para jogar no navegador</li>
-            <li>Diversão leve, sem violência realista</li>
+            <li>Visual em pixel art e história em quadrinhos</li>
+            <li>Partidas rápidas, direto no navegador</li>
+            <li>Uma história leve sobre cuidar de quem a gente ama</li>
           </ul>
         </article>
       </div>
