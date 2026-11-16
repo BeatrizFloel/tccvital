@@ -707,3 +707,20 @@ a.chip:hover { border-color: var(--accent); color: var(--accent-ink); }
 .resource h3 { font-size: 17px; }
 .resource a { display: inline-flex; margin-top: 16px; color: var(--accent-ink); font-size: 14px; font-weight: 600; }
 .resource a:hover { text-decoration: underline; }
+
+/* ---------- Topo das páginas internas: título branco, etiqueta, círculos ao fundo e atalhos ---------- */
+.guide-hero { position: relative; overflow: hidden; padding: clamp(56px, 8vw, 96px) 0; text-align: center; }
+.guide-hero::before, .guide-hero::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255, 255, 255, .16); pointer-events: none; }
+.guide-hero::before { width: 420px; height: 420px; top: -180px; left: -120px; }
+.guide-hero::after { width: 320px; height: 320px; right: -90px; bottom: -160px; }
+.guide-hero .container { position: relative; }
+.guide-tag { display: inline-block; margin-bottom: 16px; padding: 6px 16px; border-radius: 999px; background: rgba(255, 255, 255, .35); color: var(--on-brand); font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.guide-hero h1 { color: #fff; text-shadow: 0 2px 14px rgba(8, 22, 33, .22); }
+.guide-hero .lead { margin-inline: auto; }
+.guide-steps { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 28px 0 0; padding: 0; list-style: none; }
+.guide-steps li { display: flex; }
+.guide-steps li, .guide-steps a { align-items: center; gap: 10px; border-radius: 999px; color: var(--on-brand); font-size: 15px; font-weight: 600; }
+.guide-steps a { display: flex; padding: 8px 18px; background: rgba(255, 255, 255, .9); box-shadow: 0 6px 18px rgba(8, 22, 33, .08); text-decoration: none; transition: transform .15s ease, background .15s ease; }
+.guide-steps a:hover { background: #fff; transform: translateY(-2px); }
+.guide-steps span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--warm); color: var(--on-brand); font-size: 14px; }
+main h2[id], main section[id] { scroll-margin-top: calc(var(--header-h, 72px) + 16px); }
