@@ -356,6 +356,9 @@ html.dark .check-list li::before {
 /* ---------- Home ---------- */
 .home-hero .container, .hero-split { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: clamp(28px, 4vw, 56px); }
 .home-hero h1 { font-size: clamp(40px, 5.6vw, 68px); }
+/* Home usa o topo "guide-hero" (título branco, etiqueta, círculos), mas com o texto à esquerda e a foto ao lado */
+.home-hero.guide-hero { text-align: left; }
+.home-hero.guide-hero .lead { margin-inline: 0; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 .hero-price { margin-top: 16px; color: var(--hero-muted); }
 .hero-frame img { width: 100%; aspect-ratio: 4 / 3.6; object-fit: cover; border-radius: var(--radius); }
